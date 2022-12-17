@@ -1,6 +1,9 @@
 # Physalis
 Django-powered website with modern database of physical problems. 
 
+### Workflow status
+![workflow](https://github.com/Luganskaya-Svetlana/Physalis/actions/workflows/python-package.yml/badge.svg)
+
 ### Install the project
 ```bash 
 git clone https://github.com/Luganskaya-Svetlana/Physalis
