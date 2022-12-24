@@ -4,6 +4,7 @@ from django.db import models
 
 
 class Tag(models.Model):
+    '''Модель тегов'''
     name = models.CharField('название',
                             max_length=150,
                             help_text='Максимум 150 символов')
@@ -23,6 +24,7 @@ class Tag(models.Model):
 
 
 class Source(models.Model):
+    '''Модель источников'''
     name = models.CharField('название',
                             max_length=500,
                             help_text='Максимум 500 символов')
@@ -37,6 +39,7 @@ class Source(models.Model):
 
 
 class Category(models.Model):
+    '''Модель категорий (разделов и подразделов)'''
     name = models.CharField('название',
                             max_length=150,
                             help_text='Максимум 150 символов')
@@ -63,6 +66,7 @@ class Category(models.Model):
 
 
 class PartOfEGE(models.Model):
+    '''Модель частей ЕГЭ'''
     name = models.CharField('название',
                             max_length=150,
                             help_text='Максимум 150 символов')
@@ -77,6 +81,7 @@ class PartOfEGE(models.Model):
 
 
 class TypeInEGE(models.Model):
+    '''Модель типов заданий в ЕГЭ'''
     number = models.PositiveSmallIntegerField('номер')
     max_score = models.PositiveSmallIntegerField('максимальное количество'
                                                  ' баллов')
@@ -91,6 +96,7 @@ class TypeInEGE(models.Model):
 
 
 class Problem(models.Model):
+    '''Модель задач'''
     text = models.TextField('условие',
                             max_length=6000,
                             help_text='Максимум 6 тыс. символов '
