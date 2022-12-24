@@ -10,8 +10,8 @@ class Tag(models.Model):
     slug = models.SlugField('слаг',
                             max_length=150,
                             help_text=('Слаг - текстовый идентификатор,'
-                                       'с помощью которого будут'
-                                       'генерироваться ссылки)'))
+                                       ' с помощью которого будут'
+                                       ' генерироваться ссылки)'))
 
     class Meta:
         verbose_name = 'тэг'
@@ -43,8 +43,11 @@ class Category(models.Model):
     slug = models.SlugField('слаг',
                             max_length=150,
                             help_text=('Слаг - текстовый идентификатор,'
-                                       'с помощью которого будут'
-                                       'генерироваться ссылки)'))
+                                       ' с помощью которого будут'
+                                       ' генерироваться ссылки)'))
+    parent = models.ForeignKey('Category',
+                               default=None,
+                               on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'категория'
@@ -72,7 +75,7 @@ class PartOfEGE(models.Model):
 class TypeInEGE(models.Model):
     number = models.PositiveSmallIntegerField('номер')
     max_score = models.PositiveSmallIntegerField('максимальное количество'
-                                                 'баллов')
+                                                 ' баллов')
 
     class Meta:
         verbose_name = 'тип'
@@ -86,7 +89,7 @@ class TypeInEGE(models.Model):
 class Problem(models.Model):
     text = models.TextField('условие',
                             max_length=6000,
-                            help_text='Максимум 6 тыс. символов'
+                            help_text='Максимум 6 тыс. символов '
                             '(если мало - обратитесь к создательнице сайта)')
     solution = models.TextField('решение',
                                 max_length=6000,
@@ -94,10 +97,12 @@ class Problem(models.Model):
     answer = models.CharField('ответ',
                               max_length=50,
                               help_text='Максимум 50 символов')
-    complexity = models.IntegerField('сложность',
-                                     help_text='число от 1 до 10 включительно',
-                                     validators=[MinValueValidator(1),
-                                                 MaxValueValidator(10)])
+    complexity = models.PositiveSmallIntegerField('сложность',
+                                                  help_text=('число от 1 до 10'
+                                                             ' включительно'),
+                                                  validators=(
+                                                      [MinValueValidator(1),
+                                                       MaxValueValidator(10)]))
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                editable=False)
