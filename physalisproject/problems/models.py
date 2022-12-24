@@ -11,7 +11,7 @@ class Tag(models.Model):
                             max_length=150,
                             help_text=('Слаг - текстовый идентификатор,'
                                        ' с помощью которого будут'
-                                       ' генерироваться ссылки)'))
+                                       ' генерироваться ссылки'))
 
     class Meta:
         verbose_name = 'тэг'
@@ -44,10 +44,12 @@ class Category(models.Model):
                             max_length=150,
                             help_text=('Слаг - текстовый идентификатор,'
                                        ' с помощью которого будут'
-                                       ' генерироваться ссылки)'))
+                                       ' генерироваться ссылки'))
     parent = models.ForeignKey('Category',
                                default=None,
-                               on_delete=models.CASCADE)
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
 
     class Meta:
         verbose_name = 'категория'
