@@ -30,6 +30,21 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+### Configure DataBase
+Commited db is just an example. 
+For loading data to a new db use:
+```bash
+cd physalisproject
+py manage.py makemigrations
+py manage.py migrate
+py manage.py loaddata problems/fixtures/data.json (it will be later)
+```
+For creating superuser (to get access to the admin panel) use:
+```bash
+cd physalisproject
+py manage.py createsuperuser
+```
+
 ### Run the project 
 ```bash
 cd physalisproject
