@@ -96,9 +96,8 @@ class Problem(models.Model):
                               help_text='Максимум 50 символов')
     complexity = models.IntegerField('сложность',
                                      help_text='число от 1 до 10 включительно',
-                                     validators=(
-                                        [MinValueValidator(1),
-                                         MaxValueValidator(10)]))
+                                     validators=[MinValueValidator(1),
+                                                 MaxValueValidator(10)])
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                editable=False)
