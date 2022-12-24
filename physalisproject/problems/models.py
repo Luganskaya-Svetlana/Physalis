@@ -49,7 +49,9 @@ class Category(models.Model):
                                default=None,
                                on_delete=models.CASCADE,
                                blank=True,
-                               null=True)
+                               null=True,
+                               verbose_name=('Название раздела'
+                                             ' (только для подразделов)'))
 
     class Meta:
         verbose_name = 'категория'
@@ -85,7 +87,7 @@ class TypeInEGE(models.Model):
         default_related_name = 'type'
 
     def __str__(self):
-        return self.number
+        return str(self.number)
 
 
 class Problem(models.Model):
@@ -107,14 +109,17 @@ class Problem(models.Model):
                                                        MaxValueValidator(10)]))
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               editable=False)
+                               editable=False,
+                               verbose_name='автор')
     date = models.DateField('дата добавления',
                             auto_now_add=True)
     tags = models.ManyToManyField(Tag,
                                   verbose_name='тэги')
     source = models.ForeignKey(Source,
                                on_delete=models.CASCADE,
-                               verbose_name='источник')
+                               verbose_name='источник',
+                               blank=True,
+                               null=True)
     category = models.ForeignKey(Category,
                                  on_delete=models.CASCADE,
                                  verbose_name='категория')
