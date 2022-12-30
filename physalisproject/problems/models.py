@@ -107,13 +107,19 @@ class Problem(models.Model):
                             '(если мало - обратитесь к создательнице сайта)')
     solution = models.TextField('решение',
                                 max_length=6000,
-                                help_text='Максимум 6 тыс. символов')
+                                help_text='Максимум 6 тыс. символов',
+                                blank=True,
+                                null=True)
     answer = models.CharField('ответ',
                               max_length=50,
-                              help_text='Максимум 50 символов')
+                              help_text='Максимум 50 символов',
+                              blank=True,
+                              null=True)
     complexity = models.PositiveSmallIntegerField('сложность',
                                                   help_text=('число от 1 до 10'
                                                              ' включительно'),
+                                                  blank=True,
+                                                  null=True,
                                                   validators=(
                                                       [MinValueValidator(1),
                                                        MaxValueValidator(10)]))
@@ -124,7 +130,8 @@ class Problem(models.Model):
     date = models.DateField('дата добавления',
                             auto_now_add=True)
     tags = models.ManyToManyField(Tag,
-                                  verbose_name='тэги')
+                                  verbose_name='тэги',
+                                  blank=True)
     source = models.ForeignKey(Source,
                                on_delete=models.CASCADE,
                                verbose_name='источник',
@@ -132,10 +139,14 @@ class Problem(models.Model):
                                null=True)
     category = models.ForeignKey(Category,
                                  on_delete=models.CASCADE,
-                                 verbose_name='категория')
+                                 verbose_name='категория',
+                                 blank=True,
+                                 null=True)
     type_ege = models.ForeignKey(TypeInEGE,
                                  on_delete=models.CASCADE,
-                                 verbose_name='Тип задания')
+                                 verbose_name='Тип задания',
+                                 blank=True,
+                                 null=True)
 
     class Meta:
         verbose_name = 'задача'
