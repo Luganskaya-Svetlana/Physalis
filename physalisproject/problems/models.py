@@ -85,6 +85,10 @@ class TypeInEGE(models.Model):
     number = models.PositiveSmallIntegerField('номер')
     max_score = models.PositiveSmallIntegerField('максимальное количество'
                                                  ' баллов')
+    part_ege = models.ForeignKey(PartOfEGE,
+                                 on_delete=models.CASCADE,
+                                 verbose_name='часть ЕГЭ',
+                                 default=1)
 
     class Meta:
         verbose_name = 'тип'
@@ -129,9 +133,6 @@ class Problem(models.Model):
     category = models.ForeignKey(Category,
                                  on_delete=models.CASCADE,
                                  verbose_name='категория')
-    part_ege = models.ForeignKey(PartOfEGE,
-                                 on_delete=models.CASCADE,
-                                 verbose_name='часть ЕГЭ')
     type_ege = models.ForeignKey(TypeInEGE,
                                  on_delete=models.CASCADE,
                                  verbose_name='Тип задания')
