@@ -94,6 +94,7 @@ class TypeInEGE(models.Model):
         verbose_name = 'тип'
         verbose_name_plural = 'типы'
         default_related_name = 'type'
+        ordering = ['number']
 
     def __str__(self):
         return str(self.number)
