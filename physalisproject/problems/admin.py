@@ -7,7 +7,7 @@ from .models import Category, PartOfEGE, Problem, Source, Tag, TypeInEGE
 class ProblemAdmin(admin.ModelAdmin):
     '''Настройки админки для задач'''
     fields = ('text', 'solution', 'answer', 'complexity', 'source', 'category',
-              'tags', 'part_ege', 'type_ege')  # поля, отображаемые в форме
+              'tags', 'type_ege')  # поля, отображаемые в форме
     list_display = ('id', 'author', 'date')
     # поля, отображаемые на странице со всеми задачами
 
