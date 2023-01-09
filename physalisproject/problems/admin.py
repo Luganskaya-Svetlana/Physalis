@@ -8,7 +8,7 @@ class ProblemAdmin(admin.ModelAdmin):
     '''Настройки админки для задач'''
     fields = ('text', 'solution', 'answer', 'complexity', 'source', 'category',
               'tags', 'type_ege')  # поля, отображаемые в форме
-    list_display = ('id', 'author', 'date')
+    list_display = ('id', 'type_ege', 'author', 'date')
     # поля, отображаемые на странице со всеми задачами
 
     filter_horizontal = ('tags',)
