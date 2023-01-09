@@ -38,8 +38,9 @@ class Source(models.Model):
         return self.name
 
 
-class Category(models.Model):
-    '''Модель категорий (разделов и подразделов)'''
+class CategoryBaseModel(models.Model):
+    '''Базовый класс для категорий и подкатегорий,
+       чтобы снизить количество копипаста'''
     name = models.CharField('название',
                             max_length=150,
                             help_text='Максимум 150 символов')
@@ -48,21 +49,30 @@ class Category(models.Model):
                             help_text=('Слаг - текстовый идентификатор,'
                                        ' с помощью которого будут'
                                        ' генерироваться ссылки'))
-    parent = models.ForeignKey('Category',
-                               default=None,
-                               on_delete=models.CASCADE,
-                               blank=True,
-                               null=True,
-                               verbose_name=('Название раздела'
-                                             ' (только для подразделов)'))
 
     class Meta:
-        verbose_name = 'категория'
-        verbose_name_plural = 'категории'
-        default_related_name = 'category'
+        abstract = True
 
     def __str__(self):
         return self.name
+
+
+class Category(CategoryBaseModel):
+    '''Модель категорий (разделов)'''
+
+    class Meta:
+        verbose_name = 'раздел'
+        verbose_name_plural = 'разделы'
+        default_related_name = 'category'
+
+
+class Subcategory(CategoryBaseModel):
+    '''Модель подкатегорий (подразделов)'''
+
+    class Meta:
+        verbose_name = 'подраздел'
+        verbose_name_plural = 'подразделы'
+        default_related_name = 'subcategory'
 
 
 class PartOfEGE(models.Model):
@@ -140,9 +150,14 @@ class Problem(models.Model):
                                null=True)
     category = models.ForeignKey(Category,
                                  on_delete=models.CASCADE,
-                                 verbose_name='категория',
+                                 verbose_name='раздел',
                                  blank=True,
                                  null=True)
+    subcategory = models.ForeignKey(Subcategory,
+                                    on_delete=models.CASCADE,
+                                    verbose_name='подраздел',
+                                    blank=True,
+                                    null=True)
     type_ege = models.ForeignKey(TypeInEGE,
                                  on_delete=models.CASCADE,
                                  verbose_name='Тип задания',

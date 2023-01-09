@@ -1,13 +1,14 @@
 from django.contrib import admin
 
-from .models import Category, PartOfEGE, Problem, Source, Tag, TypeInEGE
+from .models import (Category, PartOfEGE, Problem, Source, Subcategory, Tag,
+                     TypeInEGE)
 
 
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
     '''Настройки админки для задач'''
     fields = ('text', 'solution', 'answer', 'complexity', 'source', 'category',
-              'tags', 'type_ege')  # поля, отображаемые в форме
+              'subcategory', 'tags', 'type_ege')  # поля, отображаемые в форме
     list_display = ('id', 'type_ege', 'author', 'date')
     # поля, отображаемые на странице со всеми задачами
 
@@ -26,6 +27,7 @@ class ProblemAdmin(admin.ModelAdmin):
 
 # регистрируем все модели, чтобы они отображались в админке
 admin.site.register(Category)
+admin.site.register(Subcategory)
 admin.site.register(PartOfEGE)
 admin.site.register(Source)
 admin.site.register(Tag)
