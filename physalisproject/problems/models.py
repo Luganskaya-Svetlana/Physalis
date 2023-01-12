@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 
 
 class Tag(models.Model):
@@ -170,3 +171,6 @@ class Problem(models.Model):
 
     def __str__(self):
         return f'задача с id {self.id}'
+
+    def get_absolute_url(self):
+        return reverse('problems:detail', kwargs={'pk': self.pk})
