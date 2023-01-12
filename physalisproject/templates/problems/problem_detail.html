@@ -3,7 +3,7 @@
   <div class="card">
     <h3 class="card-title">Задача с id {{problem.id}}</h3>
     <p><b>Условие: </b></p>{{problem.text|linebreaks}}
-    {% if problem.solution%}<p><b>Решение: </b></p>{{problem.solution}}{% endif %}
+    {% if problem.solution%}<p><b>Решение: </b></p>{{problem.solution|linebreaks}}{% endif %}
     {% if problem.answer%}<p><b>Ответ: </b></p>{{problem.answer}}{% endif %}
     {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
     {% if problem.source%}<p><b>Источник: </b>{{problem.source}}{% endif %}</p>
