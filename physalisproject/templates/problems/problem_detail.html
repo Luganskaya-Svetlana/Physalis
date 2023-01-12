@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h3 class="card-title">Задача с id {{problem.id}}</h3>
+    <p><b>Условие: </b></p>{{problem.text|linebreaks}}
+    {% if problem.solution%}<p><b>Решение: </b></p>{{problem.solution}}{% endif %}
+    {% if problem.answer%}<p><b>Ответ: </b></p>{{problem.answer}}{% endif %}
+    {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
+    {% if problem.source%}<p><b>Источник: </b>{{problem.source}}{% endif %}</p>
+    {% if problem.category%}<p><b>Раздел: </b>{{problem.category}}{% endif %}</p>
+    {% if problem.subcategory%}<p><b>Подраздел: </b>{{problem.subcategory}}{% endif %}</p>
+    <p><b>Номер в ЕГЭ: </b>{{problem.type_ege}}</p>
+    {% if problem.tags.all %}<p><b>Тэги:</b></p>
+    {% for tag in problem.tags.all %}
+      <p><li>{{ tag.name }}</li></p>
+    {% endfor %}{% endif %}
+    <p><b>Автор: </b>{{problem.author.username}}</p>
+    <p><b>Дата добавления: </b>{{problem.date}}</p>
+  </div>
+{% endblock %}
