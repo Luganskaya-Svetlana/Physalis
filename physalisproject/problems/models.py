@@ -2,6 +2,9 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.safestring import mark_safe
+from django_cleanup.signals import cleanup_pre_delete
+from sorl.thumbnail import delete, get_thumbnail
 
 
 class Tag(models.Model):
@@ -174,3 +177,47 @@ class Problem(models.Model):
 
     def get_absolute_url(self):
         return reverse('problems:detail', kwargs={'pk': self.pk})
+
+
+class Image(models.Model):
+    RELATIONS = [
+        (1, 'условию'),
+        (2, 'решению'),
+        (3, 'ответу')
+    ]
+    path_to_image = models.ImageField('изображение',
+                                      upload_to='media/%Y/%m',
+                                      default='')
+    problem = models.ForeignKey(Problem,
+                                verbose_name='задача',
+                                on_delete=models.CASCADE)
+    relation = models.PositiveSmallIntegerField('относится к',
+                                                choices=RELATIONS)
+
+    @property
+    def get_img(self):
+        return get_thumbnail(self.path_to_image, '300x300', crop='center',
+                             quality=51)
+
+    def sorl_delete(**kwargs):
+        delete(kwargs['file'])
+
+    cleanup_pre_delete.connect(sorl_delete)
+
+    class Meta:
+        verbose_name = 'изображение'
+        verbose_name_plural = 'изображения'
+        default_related_name = 'image'
+
+    def image_tmb(self):
+        if self.path_to_image:
+            return mark_safe(
+                f'<img src="{self.get_img.url}">'
+            )
+        return 'Нет изображения'
+
+    image_tmb.short_description = 'изображение'
+    image_tmb.allow_tags = True
+
+    def __str__(self):
+        return (f'одно из изображений для {self.problem}')
