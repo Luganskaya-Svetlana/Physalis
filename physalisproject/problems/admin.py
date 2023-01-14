@@ -1,8 +1,14 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import (Category, PartOfEGE, Problem, Source, Subcategory, Tag,
-                     TypeInEGE)
+from .models import (Category, Image, PartOfEGE, Problem, Source, Subcategory,
+                     Tag, TypeInEGE)
+
+
+class ImageInline(admin.TabularInline):
+    model = Image
+    readonly_fields = ('image_tmb',)
+    fields = ('path_to_image', 'relation', 'image_tmb')
 
 
 @admin.register(Problem)
@@ -14,6 +20,7 @@ class ProblemAdmin(admin.ModelAdmin):
     # поля, отображаемые на странице со всеми задачами
 
     filter_horizontal = ('tags',)
+    inlines = (ImageInline,)
 
     def save_model(self, request, obj, form, change):
         if not change:  # если объект создается, а не меняется
