@@ -59,7 +59,7 @@ In settings.py there are default values of SECRET_KEY, DEBUG and ALLOWED_HOSTS, 
 - [ ] Add plots to problems, solutions, answers
 - [ ] Add 4 types of test problems (number with measurement units; 2 or 3 out of 5; changing of 2 values (table); graphic/text to text/formulae match).
 - [ ] Filter problems by topic, difficulty, category etc.
-- [ ] Client-side mathjax rendering
+- [x] Client-side mathjax rendering
 - [ ] Server-side mathjax rendering
 - [ ] Use custom latex preamble to shorten latex formulae typing
 - [ ] Use latex to generate PDF out of selected problems or full variant
