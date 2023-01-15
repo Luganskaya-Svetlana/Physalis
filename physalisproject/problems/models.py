@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_cleanup.signals import cleanup_pre_delete
 from sorl.thumbnail import delete, get_thumbnail
+from PIL import UnidentifiedImageError
+from django.templatetags.static import static
 
 
 class Tag(models.Model):
@@ -196,8 +198,11 @@ class Image(models.Model):
 
     @property
     def get_img(self):
-        return get_thumbnail(self.path_to_image, '300x300', crop='center',
-                             quality=51)
+        try:
+            return get_thumbnail(self.path_to_image, '300x300', crop='center',
+                                 quality=51)
+        except UnidentifiedImageError:
+            return get_thumbnail('static/img/svg.png')
 
     def sorl_delete(**kwargs):
         delete(kwargs['file'])
@@ -210,6 +215,11 @@ class Image(models.Model):
         default_related_name = 'image'
 
     def image_tmb(self):
+        if self.path_to_image.url[-3:] == 'svg':
+            url = static('img/tmb_for_svg.png')
+            return mark_safe(
+                f'<img src="{url}">'
+            )
         if self.path_to_image:
             return mark_safe(
                 f'<img src="{self.get_img.url}">'

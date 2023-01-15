@@ -1,14 +1,16 @@
 from django.contrib import admin
 from django.db.models import Count
 
+from .forms import ImageForm
 from .models import (Category, Image, PartOfEGE, Problem, Source, Subcategory,
                      Tag, TypeInEGE)
 
 
 class ImageInline(admin.TabularInline):
+    form = ImageForm
     model = Image
     readonly_fields = ('image_tmb',)
-    fields = ('path_to_image', 'relation', 'image_tmb')
+    fields = ('path_to_image', 'relation', 'image_tmb',)
 
 
 @admin.register(Problem)
