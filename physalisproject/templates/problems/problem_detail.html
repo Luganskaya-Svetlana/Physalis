@@ -10,7 +10,7 @@
     {% for image in solution_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="600">
     {% endfor %}
-    {% if problem.answer%}<p><b>Ответ: </b></p><p>{{problem.answer}}</p>{% endif %}
+    {% if problem.answer%}<p><b>Ответ: </b></p>{{problem.answer}}{% endif %}
     {% for image in answer_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="600">
     {% endfor %}
