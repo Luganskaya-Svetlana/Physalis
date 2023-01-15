@@ -126,8 +126,8 @@ class Problem(models.Model):
                                 blank=True,
                                 null=True)
     answer = models.CharField('ответ',
-                              max_length=50,
-                              help_text='Максимум 50 символов',
+                              max_length=1000,
+                              help_text='Максимум 1 тыс. символов',
                               blank=True,
                               null=True)
     complexity = models.PositiveSmallIntegerField('сложность',
