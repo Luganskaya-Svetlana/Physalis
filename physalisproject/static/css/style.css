@@ -1,0 +1,12 @@
+body {
+  background-color: #d8d8da;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  margin: 0px auto;
+  width: 723px;
+  max-width: 100%;
+  font-family: Tahoma, Arial;
+  text-align: justify;
+}
