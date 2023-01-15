@@ -126,7 +126,7 @@ class Problem(models.Model):
                                 help_text='Максимум 6 тыс. символов',
                                 blank=True,
                                 null=True)
-    answer = models.CharField('ответ',
+    answer = models.TextField('ответ',
                               max_length=1000,
                               help_text='Максимум 1 тыс. символов',
                               blank=True,
