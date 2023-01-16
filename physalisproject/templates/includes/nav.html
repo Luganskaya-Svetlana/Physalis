@@ -1,3 +1,12 @@
-<nav class="navbar navbar-light" style="background-color: lightgrey;">
-    <a class="navbar-brand" href="/"><h2><p align="center">Физалис</p></h2></a>
+<nav>
+    <a href="/admin/">Admin</a>
+    <a href="/admin/problems/typeinege">Типы</a>
+    <a class="nav-right" href="/admin/problems/problem/{{problem.id}}/change">Править</a>
+    {% if problem.id|add:"-1" == problem.id|add:"-1" %}
+      <a href="/problems/{{problem.id|add:"-1"}}">#{{problem.id|add:"-1"}}</a>
+    {% endif %}
+    {% if problem.id|add:"+1" ==  problem.id|add:"+1"%}
+      <a href="/problems/{{problem.id|add:"+1"}}">#{{problem.id|add:"+1"}}</a>
+    {% endif %}
+    
 </nav>
