@@ -195,6 +195,9 @@ class Image(models.Model):
     relation = models.PositiveSmallIntegerField('относится к',
                                                 choices=RELATIONS)
 
+    width = models.PositiveSmallIntegerField('размер в px',
+                                             default=600)
+
     @property
     def get_img(self):
         return get_thumbnail(self.path_to_image, '300x300', crop='center',
