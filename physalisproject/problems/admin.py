@@ -20,7 +20,7 @@ class ProblemAdmin(admin.ModelAdmin):
               'subcategory', 'tags', 'type_ege')  # поля, отображаемые в форме
     list_display = ('id', 'type_ege', 'author', 'date')
     # поля, отображаемые на странице со всеми задачами
-
+    search_fields = ('id', 'text')  # поля, по которым осущ. поиск в админке
     filter_horizontal = ('tags',)
     inlines = (ImageInline,)
 
