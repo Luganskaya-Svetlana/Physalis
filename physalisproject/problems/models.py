@@ -23,6 +23,7 @@ class Tag(models.Model):
         verbose_name = 'тэг'
         verbose_name_plural = 'тэги'
         default_related_name = 'tags'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -38,6 +39,7 @@ class Source(models.Model):
         verbose_name = 'источник'
         verbose_name_plural = 'источники'
         default_related_name = 'source'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -69,6 +71,7 @@ class Category(CategoryBaseModel):
         verbose_name = 'раздел'
         verbose_name_plural = 'разделы'
         default_related_name = 'category'
+        ordering = ['name']
 
 
 class Subcategory(CategoryBaseModel):
@@ -78,6 +81,7 @@ class Subcategory(CategoryBaseModel):
         verbose_name = 'подраздел'
         verbose_name_plural = 'подразделы'
         default_related_name = 'subcategory'
+        ordering = ['name']
 
 
 class PartOfEGE(models.Model):
@@ -90,6 +94,7 @@ class PartOfEGE(models.Model):
         verbose_name = 'часть'
         verbose_name_plural = 'части'
         default_related_name = 'part'
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
