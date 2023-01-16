@@ -14,4 +14,13 @@ class ProblemView(DetailView):
         data['text_images'] = images.filter(relation=1)
         data['solution_images'] = images.filter(relation=2)
         data['answer_images'] = images.filter(relation=3)
+        # для временной навигации:
+        data['next_problem'] = (Problem.objects
+                                       .all()
+                                       .filter(id=int(problem_pk) + 1)
+                                       .exists())
+        data['previous_problem'] = (Problem.objects
+                                           .all()
+                                           .filter(id=int(problem_pk) - 1)
+                                           .exists())
         return data
