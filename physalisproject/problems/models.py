@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Count
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_cleanup.signals import cleanup_pre_delete
 from sorl.thumbnail import delete, get_thumbnail
-from django.templatetags.static import static
 
 
 class Tag(models.Model):
@@ -100,8 +101,17 @@ class PartOfEGE(models.Model):
         return self.name
 
 
+class TypeInEGEManager(models.Manager):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(problems_count=Count('problems'))
+        # для каждого объекта сохраняем количество связанных с ним задач
+        return queryset
+
+
 class TypeInEGE(models.Model):
     '''Модель типов заданий в ЕГЭ'''
+    objects = TypeInEGEManager()
     number = models.PositiveSmallIntegerField('номер')
     max_score = models.PositiveSmallIntegerField('максимальное количество'
                                                  ' баллов')
@@ -118,6 +128,9 @@ class TypeInEGE(models.Model):
 
     def __str__(self):
         return str(self.number)
+
+    def get_absolute_url(self):
+        return reverse('typesinege:list',)
 
 
 class Problem(models.Model):

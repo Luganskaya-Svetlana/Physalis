@@ -1,6 +1,6 @@
 <nav>
     <a href="/admin/">Admin</a>
-    <a href="/admin/problems/typeinege">Типы</a>
+    <a href="{% url 'typesinege:list'%}">Типы</a>
     <a class="nav-right" href="/admin/problems/problem/{{problem.id}}/change">Править</a>
     {% if previous_problem %}
       <a href="/problems/{{problem.id|add:"-1"}}">#{{problem.id|add:"-1"}}</a>
