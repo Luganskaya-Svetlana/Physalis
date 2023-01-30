@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import Count
 
 from .forms import ImageForm
 from .models import (Category, Image, PartOfEGE, Problem, Source, Subcategory,
@@ -44,12 +43,6 @@ class TypeInEGEAdmin(admin.ModelAdmin):
     @admin.display(description='количество задач')
     def problems_count(self, obj):
         return obj.problems_count
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        queryset = queryset.annotate(problems_count=Count('problems'))
-        # для каждого объекта сохраняем количество связанных с ним задач
-        return queryset
 
 
 # регистрируем все модели, чтобы они отображались в админке
