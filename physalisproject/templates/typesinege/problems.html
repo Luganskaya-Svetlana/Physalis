@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Задачи</h1>
+    {% for problem in problems %}
+      <p><a href="{{problem.get_absolute_url}}">#{{problem.id}}</a></p>
+    {% endfor %}
+
+{% endblock %}
