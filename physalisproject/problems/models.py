@@ -130,7 +130,7 @@ class TypeInEGE(models.Model):
         return str(self.number)
 
     def get_absolute_url(self):
-        return reverse('typesinege:list',)
+        return reverse('typesinege:problems', kwargs={'number': self.number})
 
 
 class Problem(models.Model):

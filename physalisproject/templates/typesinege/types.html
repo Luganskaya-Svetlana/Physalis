@@ -6,7 +6,7 @@
     <h1>Типы</h1>
     <ul>
         {% for type in types %}
-            <li><a href="{{ type.get_absolute_url }}">{{ type.number }} ({{type.problems_count}})</a></li>
+            <li><a href="{{ type.get_absolute_url }}">{{ type.number }} ({{type.problems_count}} шт.)</a></li>
         {% endfor %}
     </ul>
 
