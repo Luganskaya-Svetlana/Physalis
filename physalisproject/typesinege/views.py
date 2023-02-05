@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic.list import ListView
+from problems.filters import ProblemTypeFilter
 from problems.models import Problem, TypeInEGE
 
 
@@ -20,4 +21,11 @@ class ProblemsView(ListView):
     def get_queryset(self):
         number = self.kwargs['number']
         self.type = get_object_or_404(TypeInEGE, number=number)
-        return Problem.objects.filter(type_ege=self.type)
+        return Problem.objects.filter(type_ege=self.type).order_by('id')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['filter'] = ProblemTypeFilter(self.request.GET,
+                                           queryset=self.get_queryset())
+        data['title'] = f'Тип {self.kwargs["number"]}'
+        return data
