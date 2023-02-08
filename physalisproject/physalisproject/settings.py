@@ -21,8 +21,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
+    'django_filters',
     'sorl.thumbnail',
     'problems.apps.ProblemsConfig',
+    'typesinege.apps.TypesinegeConfig',
 ]
 
 MIDDLEWARE = [
