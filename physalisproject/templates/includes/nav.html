@@ -1,7 +1,9 @@
 <nav>
     <a href="/admin/">Admin</a>&nbsp;
     <a href="{% url 'typesinege:list'%}">Все задачи</a>&nbsp;
+    {% if 'problems' in request.path %}
     <a class="nav-right" href="/admin/problems/problem/{{problem.id}}/change">Править</a>
+    {% endif %}
     {% if previous_problem %}
       <a href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">≪</a>
     {% endif %}

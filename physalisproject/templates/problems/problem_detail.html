@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   <div class="card">
-    <h3 class="card-title">Задача с id {{problem.id}}</h3>
+    <h3 class="card-title">Задача #{{problem.id}}</h3>
     <p><b>Условие: </b></p>{{problem.text|linebreaks}}
     {% for image in text_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
