@@ -9,7 +9,7 @@
       <input type="submit" />
     </form>
     {% for problem in filter.qs %}
-      <p><a href="{{problem.get_absolute_url}}">#{{problem.id}}</a></p>
+    <p><a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a> {{problem.text}}</p>
     {% empty %}
       <p>Ничего не нашлось {{":("}}</p>
       <p>Попробуйте другой фильтр.</p>
