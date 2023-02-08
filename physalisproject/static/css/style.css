@@ -9,26 +9,31 @@ body {
     font-family: Tahoma, Arial;
     text-align: justify;
   }
-  a {
-    text-decoration: none;
-    color: #3377cc;
-  }
-  nav {
-    margin: 5ex 0 4ex 0;
-  }
-  nav a {
-    line-height: 2em;
-    font-size: 115%;
-    -webkit-hyphens: none;
-    -moz-hyphens: none;
-    -ms-hyphens: none;
-    hyphens: none;
-  }
-  .nav-right {
-    float: right;
-  }
-  .nav-center {
-    text-align: center;
-    margin:0 0 0 15ex;
-  }
-  
+.id-number {
+ border: 2px solid #3377cc;
+ border-radius: 3px;
+ padding: 1px 2px 0px 2px;
+}
+a {
+  text-decoration: none;
+  color: #3377cc;
+}
+nav {
+  margin: 5ex 0 4ex 0;
+}
+nav a {
+  line-height: 2em;
+  font-size: 115%;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+.nav-right {
+  float: right;
+}
+.nav-center {
+  text-align: center;
+  margin:0 0 0 15ex;
+}
+

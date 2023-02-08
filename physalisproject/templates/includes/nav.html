@@ -1,12 +1,12 @@
 <nav>
-    <a href="/admin/">Admin</a>
-    <a href="{% url 'typesinege:list'%}">Типы</a>
+    <a href="/admin/">Admin</a>&nbsp;
+    <a href="{% url 'typesinege:list'%}">Все задачи</a>&nbsp;
     <a class="nav-right" href="/admin/problems/problem/{{problem.id}}/change">Править</a>
     {% if previous_problem %}
-      <a href="/problems/{{problem.id|add:"-1"}}">#{{problem.id|add:"-1"}}</a>
+      <a href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">≪</a>
     {% endif %}
     {% if next_problem %}
-      <a href="/problems/{{problem.id|add:"+1"}}">#{{problem.id|add:"+1"}}</a>
+      <a href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">≫</a>
     {% endif %}
     
 </nav>
