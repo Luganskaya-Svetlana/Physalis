@@ -36,4 +36,12 @@ nav a {
   text-align: center;
   margin:0 0 0 15ex;
 }
+input[name="complexity_min"],
+input[name="complexity_max"] {
+  width: 3ex;
+  text-align: center;
+}
+input[name="complexity_max"] {
+  margin-left:3pt;
+}
 
