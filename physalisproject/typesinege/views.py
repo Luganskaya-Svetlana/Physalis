@@ -15,7 +15,7 @@ class TypesView(ListView):
 
 class ProblemsView(ListView):
     model = Problem
-    template_name = 'typesinege/problems.html'
+    template_name = 'problems/problems_list.html'
     context_object_name = 'problems'
 
     def get_queryset(self):
