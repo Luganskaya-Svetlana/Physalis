@@ -26,6 +26,8 @@ class ProblemAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if not change:  # если объект создается, а не меняется
             obj.author = request.user  # сохраняем автора
+        if obj.subcategory:
+            obj.category = obj.subcategory.category
         super().save_model(
             request=request,
             obj=obj,
