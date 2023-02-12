@@ -1,5 +1,7 @@
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from problems.models import Image, Problem
+from problems.filters import ProblemFilter
 
 
 class ProblemView(DetailView):
@@ -23,4 +25,20 @@ class ProblemView(DetailView):
                                            .all()
                                            .filter(id=int(problem_pk) - 1)
                                            .exists())
+        return data
+
+
+class ProblemsView(ListView):
+    model = Problem
+    template_name = 'problems/problems_list.html'
+    context_object_name = 'problems'
+
+    def get_queryset(self):
+        return Problem.objects.filter().order_by('id')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['filter'] = ProblemFilter(self.request.GET,
+                                       queryset=self.get_queryset())
+        data['title'] = 'Все задачи'
         return data
