@@ -77,6 +77,12 @@ class Category(CategoryBaseModel):
 
 class Subcategory(CategoryBaseModel):
     '''Модель подкатегорий (подразделов)'''
+    category = models.ForeignKey(Category,
+                                 verbose_name='категория',
+                                 on_delete=models.CASCADE,
+                                 default=None,
+                                 null=True,
+                                 blank=False)
 
     class Meta:
         verbose_name = 'подраздел'
