@@ -11,7 +11,7 @@
     {% for image in solution_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
     {% endfor %}
-    {% if problem.answer%}<p><b>Ответ: </b></p>{{problem.answer|markdown|safe}}{% endif %}
+    {% if problem.answer%}<p><b>Ответ: </b></p>{{problem.answer}}{% endif %}
     {% for image in answer_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
     {% endfor %}
