@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load markdown_extras %}
 
 {% load static %}
 
@@ -9,7 +10,10 @@
       <input type="submit" />
     </form>
     {% for problem in filter.qs %}
-    <p><a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a> {{problem.text}}</p>
+    <div class="rel">
+      <p class="id-in-list"><a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a></p>
+      {{problem.text|markdown|safe}}
+    </div><hr>
     {% empty %}
       <p>Ничего не нашлось {{":("}}</p>
       <p>Попробуйте другой фильтр.</p>
