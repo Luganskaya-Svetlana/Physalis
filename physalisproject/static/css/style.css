@@ -10,9 +10,15 @@ body {
     text-align: justify;
   }
 .id-number {
- border: 2px solid #3377cc;
- border-radius: 3px;
- padding: 1px 2px 0px 2px;
+  border: 2px solid #3377cc;
+  border-radius: 3px;
+  padding: 1px 2px 0px 2px;
+}
+.tag {
+  border: 2px solid #3377cc;
+  border-radius: 3px;
+  padding: 2px 5px;
+  color: #3377cc;
 }
 a {
   text-decoration: none;
@@ -44,4 +50,10 @@ input[name="complexity_max"] {
 input[name="complexity_max"] {
   margin-left:3pt;
 }
-
+table {
+  border-collapse: collapse;
+}
+table.change tr, td {
+  border: 1px solid black;
+  padding: 1ex;
+}
