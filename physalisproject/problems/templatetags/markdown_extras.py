@@ -5,6 +5,7 @@ import markdown as md
 
 register = template.Library()
 
+
 @register.filter()
 @stringfilter
 def markdown(value):
