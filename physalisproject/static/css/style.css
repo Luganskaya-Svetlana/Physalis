@@ -13,7 +13,7 @@ body {
 .id-number {
   border: 2px solid #3377cc;
   border-radius: 3px;
-  padding: 1px 2px 0px 2px;
+  padding: 0px 2px 0px 2px;
 }
 .rel { position: relative; }
 .id-in-list {
@@ -77,5 +77,20 @@ ol {
 }
 
 .row { display: flex; gap:3em; }
+.col1 { flex: 10%; }
+.col2 { flex: 20%; }
+.col4 { flex: 40%; }
+.col5 { flex: 50%; }
+.col6 { flex: 60%; }
 .col7 { flex: 70%; }
-.col3 { flex: 30%; }
+.col8 { flex: 80%; }
+.col9 { flex: 90%; }
+
+img.center {
+  margin-left: 25%;
+}
+
+img.right {
+  float:right;
+  padding-left:1em;
+}
