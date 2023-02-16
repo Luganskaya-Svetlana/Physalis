@@ -1,3 +1,4 @@
+html { overflow-y: scroll; }
 body {
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
@@ -79,6 +80,7 @@ ol {
 .row { display: flex; gap:3em; }
 .col1 { flex: 10%; }
 .col2 { flex: 20%; }
+.col3 { flex: 30%; }
 .col4 { flex: 40%; }
 .col5 { flex: 50%; }
 .col6 { flex: 60%; }
@@ -86,11 +88,17 @@ ol {
 .col8 { flex: 80%; }
 .col9 { flex: 90%; }
 
-img.center {
-  margin-left: 25%;
+.center {
+  display: flex;
+  justify-content: center;
 }
 
 img.right {
   float:right;
   padding-left:1em;
+}
+.tmp {
+  border: 2px solid #3377cc;
+  border-radius: 3px;
+  padding: 0px 2px 3px 2px;
 }

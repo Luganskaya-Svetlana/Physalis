@@ -1,4 +1,5 @@
 <nav>
+    <strong><a href="/admin/problems/problem/add/" title="Добавить задачу">+</a></strong>&nbsp;
     <a href="/admin/">Admin</a>&nbsp;
     <a href="{% url 'typesinege:list'%}">Задачи по типам</a>&nbsp;
     <a href="{% url 'problems:list'%}">Все задачи</a>&nbsp;
@@ -6,10 +7,10 @@
     <a class="nav-right" href="/admin/problems/problem/{{problem.id}}/change">Править</a>
     {% endif %}
     {% if previous_problem %}
-      <a href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">≪</a>
+      <strong class="tmp"><a href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">←</a></strong>&nbsp;
     {% endif %}
     {% if next_problem %}
-      <a href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">≫</a>
+      <strong class="tmp"><a href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">→</a></strong>
     {% endif %}
     
 </nav>
