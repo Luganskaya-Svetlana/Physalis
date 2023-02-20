@@ -8,8 +8,10 @@ def replace_by_dic(el, dic):
     return el
 
 abbr = {
-'table_ab': 'Ответ: <table class="change"> <tr> <td>А</td> <td>Б</td> </tr> <tr> <td>&nbsp;</td> <td></td> </tr> </table>',
-'table_abv': 'Ответ: <table class="change"> <tr> <td>А</td> <td>Б</td> <td>В</td> </tr> <tr> <td>&nbsp;</td> <td></td> <td></td> </tr> </table>'
+'table_ab': 'Ответ: <table class="change"> <tr> <td>А</td> <td>Б</td>\
+        </tr> <tr> <td>&nbsp;</td> <td></td> </tr> </table>',
+'table_abv': 'Ответ: <table class="change"> <tr> <td>А</td> <td>Б</td>\
+        <td>В</td> </tr> <tr> <td>&nbsp;</td> <td></td> <td></td> </tr> </table>'
 }
 
 
