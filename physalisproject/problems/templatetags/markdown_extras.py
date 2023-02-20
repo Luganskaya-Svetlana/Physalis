@@ -1,6 +1,8 @@
 from django import template
 from django.template.defaultfilters import stringfilter
+
 import markdown as md
+
 
 def replace_by_dic(el, dic):
     for i, j in dic.items():
@@ -21,4 +23,5 @@ register = template.Library()
 @register.filter()
 @stringfilter
 def markdown(value):
-    return md.markdown(replace_by_dic(value, abbr), extensions=['markdown.extensions.fenced_code'])
+    return md.markdown(replace_by_dic(value, abbr),\
+            extensions=['markdown.extensions.fenced_code'])
