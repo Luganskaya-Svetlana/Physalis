@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
+
 {% block content %}
   <div class="card">
     <h3 class="card-title">Задача #{{problem.id}}</h3>
@@ -11,7 +12,7 @@
     {% for image in solution_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
     {% endfor %}
-    {% if problem.answer%}<p><b>Ответ: </b></p>{{problem.answer}}{% endif %}
+    {% if problem.answer%}<p><b>Ответ: </b></p>{{problem.answer|markdown|safe}}{% endif %}
     {% for image in answer_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
     {% endfor %}

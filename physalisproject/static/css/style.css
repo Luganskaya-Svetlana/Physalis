@@ -96,6 +96,7 @@ ol {
 img.right {
   float:right;
   padding-left:1em;
+  min-width: 100px;
 }
 .tmp {
   border: 2px solid #3377cc;
