@@ -11,10 +11,11 @@ def replace_by_dic(el, dic):
 
 
 abbr = {
-'table_ab': 'Ответ:<tableclass="change"><tr><td>А</td><td>Б</td></tr>\
-             <tr><td>&nbsp;</td><td></td></tr></table>',
-'table_abv': 'Ответ:<tableclass="change"><tr><td>А</td><td>Б</td><td>В</td>\
-              </tr><tr><td>&nbsp;</td><td></td><td></td></tr></table>'
+    'table_ab': 'Ответ:<tableclass="change"><tr><td>А</td><td>Б</td></tr>\
+                 <tr><td>&nbsp;</td><td></td></tr></table>',
+    'table_abv': 'Ответ:<tableclass="change"><tr><td>А</td><td>Б</td>\
+                  <td>В</td></tr><tr><td>&nbsp;</td><td></td><td></td></tr>\
+                  </table>'
 }
 
 
@@ -25,4 +26,4 @@ register = template.Library()
 @stringfilter
 def markdown(value):
     return md.markdown(replace_by_dic(value, abbr),
-        extensions=['markdown.extensions.fenced_code'])
+                       extensions=['markdown.extensions.fenced_code'])
