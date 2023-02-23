@@ -8,12 +8,22 @@
         <script>
             window.MathJax = {
                 tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
+                  inlineMath: [['$', '$'], ['\\(', '\\)']],
+                  macros: {
+                        bold: ["{\\bf #1}", 1],
+                        arctg: ["{\\text{arctg}\\; #1}", 1],
+                        eds: "\\mathcal{E}",
+                        la: "\\lambda",
+                        a: "\\alpha",
+                        f: "\\varphi",
+                        sina: "{\\sin{\\alpha}}",
+                        cosf: "{\\cos{\\varphi}}"
+                      }
                 }
             };
         </script>
         <script type="text/javascript" id="MathJax-script" async
-            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+            src="{% static 'js/tex-mml-chtml.js'%}">
         </script>
         <link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css">
     </head>

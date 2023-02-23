@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
-
+{% load abbr %}
 {% load static %}
 
 {% block content %}
     <h2>{{title}}</h2>
-    <form method="get">
+    <form method="get" class="no-print">
       {{ filter.form.as_p }}
       <input type="submit" />
     </form>
     {% for problem in filter.qs %}
     <div class="rel">
-      <p class="id-in-list"><a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a></p>
-      {{problem.text|markdown|safe}}
+      <p class="id-in-list">
+        <a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a>
+        <span class="compl">Сложность {{problem.complexity}}/10</span>
+        <span class="compl" style="float:right">{% if not problem.solution %}Без решения{% endif %}</span>
+      </p>
+      {{problem.text|markdown|abbr|safe}}
     </div><hr>
     {% empty %}
       <p>Ничего не нашлось {{":("}}</p>
