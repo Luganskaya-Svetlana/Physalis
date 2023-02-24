@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 
 DEBUG = os.getenv('DEBUG', default='False') == 'True'
 
-#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
 ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', '82.148.29.71']
 
 INSTALLED_APPS = [
