@@ -11,7 +11,7 @@ def replace_by_dic(el, dic):
 abbr_dic = {
     'table_ab': 'Ответ:<table class="change"><tr><td>А</td><td>Б</td></tr>\
                  <tr><td>&nbsp;</td><td></td></tr></table>',
-    'table_abv': 'Ответ:<table class="change"><tr><td>А</td><td>Б</td>\
+    'table_av': 'Ответ:<table class="change"><tr><td>А</td><td>Б</td>\
                   <td>В</td></tr><tr><td>&nbsp;</td><td></td><td></td></tr>\
                   </table>'
 }
