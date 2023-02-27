@@ -9,7 +9,15 @@ body {
   max-width: 100%;
   font-family: Tahoma, Arial;
   text-align: justify;
+  font-size: 12pt;
 }
+
+/*
+*.problem, .solution {
+*  font-family: Times, 'Times New Roman', serif;
+*  font-size: 115%;
+*}
+*/
 
 .id-number {
   border: 2px solid #3377cc;
