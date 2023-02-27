@@ -5,11 +5,11 @@
 {% block content %}
   <div class="card">
     <h3 class="card-title">Задача #{{problem.id}}</h3>
-    <p><b>Условие: </b></p>{{problem.text|markdown|abbr|safe}}
+    <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
     {% for image in text_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
     {% endfor %}
-    {% if problem.solution%}<p><b>Решение: </b></p>{{problem.solution|markdown|safe}}{% endif %}
+    {% if problem.solution%}<p><b>Решение: </b></p><div class="solution">{{problem.solution|markdown|safe}}</div>{% endif %}
     {% for image in solution_images %}
       <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
     {% endfor %}
