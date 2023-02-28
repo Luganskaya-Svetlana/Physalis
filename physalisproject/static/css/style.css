@@ -53,6 +53,7 @@ body {
   border: 2px solid #3377cc;
   border-radius: 3px;
   padding: 2px 5px;
+  line-height: 3.8ex;
   color: #3377cc;
 }
 a {
