@@ -2,11 +2,9 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Count
-from django.templatetags.static import static
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 from django_cleanup.signals import cleanup_pre_delete
-from sorl.thumbnail import delete, get_thumbnail
+from sorl.thumbnail import delete
 
 
 class Tag(models.Model):
@@ -205,27 +203,12 @@ class Problem(models.Model):
 
 
 class Image(models.Model):
-    RELATIONS = [
-        (1, 'условию'),
-        (2, 'решению'),
-        (3, 'ответу')
-    ]
     path_to_image = models.ImageField('изображение',
-                                      upload_to='media/%Y/%m',
+                                      upload_to='',
                                       default='')
     problem = models.ForeignKey(Problem,
                                 verbose_name='задача',
                                 on_delete=models.CASCADE)
-    relation = models.PositiveSmallIntegerField('относится к',
-                                                choices=RELATIONS)
-
-    width = models.PositiveSmallIntegerField('размер в px',
-                                             default=600)
-
-    @property
-    def get_img(self):
-        return get_thumbnail(self.path_to_image, '300x300', crop='center',
-                             quality=51)
 
     def sorl_delete(**kwargs):
         delete(kwargs['file'])
@@ -236,21 +219,6 @@ class Image(models.Model):
         verbose_name = 'изображение'
         verbose_name_plural = 'изображения'
         default_related_name = 'image'
-
-    def image_tmb(self):
-        if self.path_to_image.url[-3:] == 'svg':
-            url = static('img/tmb_for_svg.png')
-            return mark_safe(
-                f'<img src="{url}">'
-            )
-        if self.path_to_image:
-            return mark_safe(
-                f'<img src="{self.get_img.url}">'
-            )
-        return 'Нет изображения'
-
-    image_tmb.short_description = 'изображение'
-    image_tmb.allow_tags = True
 
     def __str__(self):
         return (f'одно из изображений для {self.problem}')

@@ -6,17 +6,8 @@
   <div class="card">
     <h2 class="card-title">Задача #{{problem.id}}</h2>
     <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
-    {% for image in text_images %}
-      <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
-    {% endfor %}
     {% if problem.solution%}<h3>Решение</h3><div class="solution">{{problem.solution|markdown|safe}}</div>{% endif %}
-    {% for image in solution_images %}
-      <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
-    {% endfor %}
     {% if problem.answer%}<h3>Ответ </h3>{{problem.answer|markdown|safe}}{% endif %}
-    {% for image in answer_images %}
-      <img class="mx-auto d-block" src="{{image.path_to_image.url}}" width="{{image.width}}">
-    {% endfor %}
     {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
     {% if problem.source%}<p><b>Источник: </b>{{problem.source}}{% endif %}</p>
     {% if problem.category%}<p><b>Раздел: </b>{{problem.category}}{% endif %}</p>
