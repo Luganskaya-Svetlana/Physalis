@@ -8,8 +8,7 @@ from .models import (Category, Image, PartOfEGE, Problem, Source, Subcategory,
 class ImageInline(admin.TabularInline):
     form = ImageForm
     model = Image
-    readonly_fields = ('image_tmb',)
-    fields = ('path_to_image', 'relation', 'width', 'image_tmb',)
+    fields = ('path_to_image',)
 
 
 @admin.register(Problem)

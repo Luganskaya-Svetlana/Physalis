@@ -1,7 +1,7 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from problems.models import Image, Problem
 from problems.filters import ProblemFilter
+from problems.models import Problem
 
 
 class ProblemView(DetailView):
@@ -12,10 +12,6 @@ class ProblemView(DetailView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         problem_pk = self.kwargs['pk']
-        images = Image.objects.filter(problem_id=problem_pk)
-        data['text_images'] = images.filter(relation=1)
-        data['solution_images'] = images.filter(relation=2)
-        data['answer_images'] = images.filter(relation=3)
         # для временной навигации:
         data['next_problem'] = (Problem.objects
                                        .all()
