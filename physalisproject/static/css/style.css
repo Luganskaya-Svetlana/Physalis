@@ -121,10 +121,15 @@ img.right {
 .ml-20 {
   margin-left: 20px;
 }
-.tmp {
-  border: 2px solid #3377cc;
+nav a.lnk_btn {
+  display: inline-block;
+  /*border: 2px solid #3377cc;*/
   border-radius: 3px;
-  padding: 0px 2px 3px 2px;
+  background-color: #3377ccaa;
+  font-weight:900;
+  color: white;
+  line-height:inherit;
+  padding: 2px 10px 3px;
 }
 
 
