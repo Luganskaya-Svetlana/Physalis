@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
 {% load abbr %}
+{% load save_parameters %}
 {% load static %}
 
 {% block content %}
@@ -9,7 +10,7 @@
       {{ filter.form.as_p }}
       <input type="submit" />
     </form>
-    {% for problem in filter.qs %}
+    {% for problem in page_obj %}
     <div class="rel">
       <p class="id-in-list">
         <a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a>
@@ -23,4 +24,21 @@
       <p>Попробуйте другой фильтр.</p>
     {% endfor %}
 
+  {% if is_paginated %}
+    {% if page_obj.has_previous %}
+      <a href="?{% param_save page=1 %}">Первая</a>
+      {% if page_obj.previous_page_number != 1 %}
+        <a href="?{% param_save page=page_obj.previous_page_number %}">«</a>
+      {% endif %}
+    {% endif %}
+
+    Страница {{ page_obj.number }} из {{ paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+      {% if page_obj.next_page_number != paginator.num_pages %}
+        <a href="?{% param_save page=page_obj.next_page_number %}">»</a>
+      {% endif %}
+      <a href="?{% param_save page=paginator.num_pages %}">Последняя</a>
+    {% endif %}
+  {% endif %}
 {% endblock %}
