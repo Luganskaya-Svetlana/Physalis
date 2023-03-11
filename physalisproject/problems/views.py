@@ -28,9 +28,13 @@ class ProblemsView(ListView):
     model = Problem
     template_name = 'problems/problems_list.html'
     context_object_name = 'problems'
+    filter = ProblemFilter
+    paginate_by = 50
 
     def get_queryset(self):
-        return Problem.objects.filter().order_by('id')
+        queryset = super().get_queryset()
+        self.filterset = self.filter(self.request.GET, queryset=queryset)
+        return self.filterset.qs.order_by('id')
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)

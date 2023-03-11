@@ -17,11 +17,15 @@ class ProblemsView(ListView):
     model = Problem
     template_name = 'problems/problems_list.html'
     context_object_name = 'problems'
+    filter = ProblemTypeFilter
+    paginate_by = 50
 
     def get_queryset(self):
         number = self.kwargs['number']
         self.type = get_object_or_404(TypeInEGE, number=number)
-        return Problem.objects.filter(type_ege=self.type).order_by('id')
+        queryset = Problem.objects.filter(type_ege=self.type).order_by('id')
+        self.filterset = self.filter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
