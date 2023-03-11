@@ -24,21 +24,11 @@
       <p>Попробуйте другой фильтр.</p>
     {% endfor %}
 
-  {% if is_paginated %}
-    {% if page_obj.has_previous %}
-      <a href="?{% param_save page=1 %}">Первая</a>
-      {% if page_obj.previous_page_number != 1 %}
-        <a href="?{% param_save page=page_obj.previous_page_number %}">«</a>
-      {% endif %}
-    {% endif %}
-
-    Страница {{ page_obj.number }} из {{ paginator.num_pages }}
-
-    {% if page_obj.has_next %}
-      {% if page_obj.next_page_number != paginator.num_pages %}
-        <a href="?{% param_save page=page_obj.next_page_number %}">»</a>
-      {% endif %}
-      <a href="?{% param_save page=paginator.num_pages %}">Последняя</a>
-    {% endif %}
-  {% endif %}
+  {% for page_number in page_obj.paginator.page_range %}
+    <a
+      href="?{% param_save page=page_number %}"
+      class="{% if page_number == page_obj.number %}current{% endif %}">
+      {{page_number}}
+    </a>
+  {% endfor %}
 {% endblock %}
