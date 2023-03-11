@@ -10,6 +10,7 @@ body {
   font-family: Tahoma, Arial;
   text-align: justify;
   font-size: 12pt;
+  margin-bottom:10ex;
 }
 
 /*
@@ -132,6 +133,20 @@ nav a.lnk_btn {
   padding: 2px 10px 3px;
 }
 
+.page {
+  display: inline-block;
+  border-radius: 3px;
+  font-weight:900;
+  line-height:inherit;
+  padding: 2px 10px 3px;
+  color: #3377ccaa;
+  background-color: white;
+}
+.page.current {
+  background-color: #3377ccaa;
+  color: white;
+}
+
 
 @media screen and (max-width: 880px) {
   nav, main { padding:0 9px; }
@@ -141,3 +156,5 @@ nav a.lnk_btn {
       display: none !important;
   }
 }
+
+
