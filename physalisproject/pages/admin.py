@@ -7,15 +7,20 @@ admin.site.unregister(FlatPage)
 
 @admin.register(FlatPage)
 class FlatPageAdmin(admin.ModelAdmin):
-    fields = ('url', 'title', 'content', 'template_name',)
+    fieldsets = (
+        (None, {'fields': ('url', 'title', 'content', 'template_name',)}),
+        (('Сайты'), {
+            'classes': ('collapse',),
+            'fields': (
+                'sites',
+            ),
+        }),
+    )
     view_on_site = False
 
-    def save_model(self, request, obj, form, change):
-        if not obj.sites:
-            obj.sites = Site.objects.get_current()
-        super().save_model(
-            request=request,
-            obj=obj,
-            form=form,
-            change=change
-        )
+    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+        if db_field.name == 'sites':
+            kwargs['initial'] = [Site.objects.get_current()]
+        return super(FlatPageAdmin, self).formfield_for_foreignkey(db_field,
+                                                                   request,
+                                                                   **kwargs)
