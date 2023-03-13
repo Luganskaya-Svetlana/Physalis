@@ -146,6 +146,9 @@ nav a.lnk_btn {
   background-color: #3377ccaa;
   color: white;
 }
+.current_nav {
+  border-bottom: solid 2px;
+}
 .white {color:white;}
 .types-list {
 	font-size:105%;
