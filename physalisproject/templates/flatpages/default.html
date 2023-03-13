@@ -1,9 +1,16 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-<head>
-<title>{{ flatpage.title }}</title>
-</head>
-<body>
-{{ flatpage.content }}
-</body>
+<html lang="ru">
+  <head>
+    <title>{{ flatpage.title }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css">
+  </head>
+  <body>
+    <header>
+      {% include "includes/nav.html" %}
+    </header>
+    {{ flatpage.content }}
+  </body>
 </html>
