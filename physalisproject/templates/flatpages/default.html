@@ -12,6 +12,8 @@
     <header>
       {% include "includes/nav.html" %}
     </header>
-    {{ flatpage.content|markdown|safe }}
+    <main>
+      {{ flatpage.content|markdown|safe }}
+    </main>
   </body>
 </html>
