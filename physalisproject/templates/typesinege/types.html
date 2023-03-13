@@ -9,7 +9,7 @@
         {% for type in types %}
           {% if type.number == 24 %}</div><div class='col5'><h2>Вторая часть</h2>{% endif %}
             <div><a href="{{ type.get_absolute_url }}">
-                {% if type.number < 10 %}<span class='white'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.]</a></div>
+                {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.]</a></div>
         {% endfor %}
       </div>
     </div>
