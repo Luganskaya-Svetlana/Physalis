@@ -2,9 +2,10 @@
     <a class="lnk_btn" href="/admin/problems/problem/add/" title="Добавить задачу">+</a>&nbsp;
     <a href="/admin/">Admin</a>&nbsp;
     <a href="/">Главная</a>&nbsp;
+    <a href="/articles/">Статьи</a>&nbsp;
     <a href="{% url 'typesinege:list'%}">Задачи по типам</a>&nbsp;
     <a href="{% url 'problems:list'%}">Все задачи</a>&nbsp;
-    {% if 'problems' in request.path %}
+    {% if 'problems/' in request.path and request.path != '/problems/' %}
       <a class="nav-right" href="/admin/problems/problem/{{problem.id}}/change">Править</a>
     {% endif %}
     {% if previous_problem %}
