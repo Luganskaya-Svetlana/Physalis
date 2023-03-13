@@ -4,10 +4,14 @@
 
 {% block content %}
     <h1>Задачи по типам</h1>
-    <ul>
+    <div class='row types-list'>
+      <div class='col5'><h2>Первая часть</h2>
         {% for type in types %}
-            <li><a href="{{ type.get_absolute_url }}">{{ type.number }} ({{type.problems_count}} шт.)</a></li>
+          {% if type.number == 24 %}</div><div class='col5'><h2>Вторая часть</h2>{% endif %}
+            <div><a href="{{ type.get_absolute_url }}">
+                {% if type.number < 10 %}<span class='white'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.]</a></div>
         {% endfor %}
-    </ul>
+      </div>
+    </div>
 
 {% endblock %}

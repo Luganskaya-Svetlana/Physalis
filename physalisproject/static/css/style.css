@@ -146,6 +146,14 @@ nav a.lnk_btn {
   background-color: #3377ccaa;
   color: white;
 }
+.white {color:white;}
+.types-list {
+	font-size:105%;
+}
+.types-item {
+	font-size:105%;
+  font-weight:900;
+}
 
 
 @media screen and (max-width: 880px) {
