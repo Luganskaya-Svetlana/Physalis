@@ -112,6 +112,7 @@ ol {
 .col7 { flex: 70%; }
 .col8 { flex: 80%; }
 .col9 { flex: 90%; }
+.mw100 { min-width: 100px; }
 .mw200 { min-width: 200px; }
 .mw300 { min-width: 300px; }
 .mw400 { min-width: 400px; }
