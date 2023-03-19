@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django_cleanup.signals import cleanup_pre_delete
 from sorl.thumbnail import delete
+from .managers import ProblemManager
 
 
 class Tag(models.Model):
@@ -139,6 +140,7 @@ class TypeInEGE(models.Model):
 
 class Problem(models.Model):
     '''Модель задач'''
+    objects = ProblemManager()
     text = models.TextField('условие',
                             max_length=6000,
                             help_text='Максимум 6 тыс. символов '
