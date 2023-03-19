@@ -13,9 +13,13 @@ body {
   margin-bottom:10ex;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  text-align: left;
-}
+h1, h2, h3, h4, h5, h6 { text-align: left; }
+h1 { font-size:21pt; }
+h2 { font-size:17pt; }
+h3 { font-size:15pt; }
+h4 { font-size:14pt; }
+h5 { font-size:13pt; }
+h6 { font-size:12pt; }
 
 /*
 *.problem, .solution {
@@ -100,6 +104,8 @@ ol {
 .col7 { flex: 70%; }
 .col8 { flex: 80%; }
 .col9 { flex: 90%; }
+
+.pl50  {padding-left:50px!important; }
 .mw100 { min-width: 100px; }
 .mw200 { min-width: 200px; }
 .mw300 { min-width: 300px; }
@@ -111,7 +117,7 @@ ol {
   justify-content: center;
 }
 
-img.right {
+.right {
   float:right;
   padding-left:1em;
 }
@@ -158,6 +164,11 @@ nav a.lnk_btn {
 @media screen and (max-width: 880px) {
   nav, main { padding:0 9px; }
 }
+
+@media screen and (max-width: 480px) {
+  .pl50  {padding-left:1em!important; }
+}
+
 @media print {    
   .no-print, .no-print * {
       display: none !important;
