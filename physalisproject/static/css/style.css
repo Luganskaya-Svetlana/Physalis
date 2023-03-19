@@ -32,18 +32,6 @@ h1, h2, h3, h4, h5, h6 {
 .rel { position: relative; }
 
 
-/*
-*.id-in-list {
-*  position: absolute;
-*  right: 733px;
-*  top:-1.8ex;
-*  align:right;
-*}
-*@media screen and (max-width: 880px) {
-*  .id-in-list { position:static; margin-bottom:-0.8ex; }
-*}
-*/
-
 .id-in-list {
   margin-bottom:-10px;
 }
@@ -126,7 +114,6 @@ ol {
 img.right {
   float:right;
   padding-left:1em;
-  min-width: 100px;
 }
 .ml-20 {
   margin-left: 20px;
