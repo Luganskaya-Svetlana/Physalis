@@ -57,8 +57,8 @@ In settings.py there are default values of SECRET_KEY, DEBUG and ALLOWED_HOSTS, 
 ## Features
 - [x] Add problems to the database from the admin panel (obligatory parameters: text, number;optional parameters: solution, answer category, tag, difficulty).
 - [x] Add plots to problems, solutions, answers
-- [ ] Add 4 types of test problems (number with measurement units; 2 or 3 out of 5; changing of 2 values (table); graphic/text to text/formulae match).
-- [ ] Filter problems by topic, difficulty, category etc.
+- [x] Add 4 types of test problems (number with measurement units; 2 or 3 out of 5; changing of 2 values (table); graphic/text to text/formulae match).
+- [x] Filter problems by topic, difficulty, category etc.
 - [x] Client-side mathjax rendering
 - [ ] Server-side mathjax rendering
 - [ ] Use custom latex preamble to shorten latex formulae typing
