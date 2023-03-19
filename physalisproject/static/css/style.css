@@ -28,6 +28,10 @@ h6 { font-size:12pt; }
 *}
 */
 
+.problem {
+  overflow: auto;
+}
+
 .id-number {
   border: 2px solid #3377cc;
   border-radius: 3px;
@@ -35,15 +39,23 @@ h6 { font-size:12pt; }
 }
 .rel { position: relative; }
 
-
 .id-in-list {
   margin-bottom:-10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 15pt;
 }
-
 .compl {
+  padding-left:2ex;
   font-size: 11pt;
   font-family: Arial;
 }
+.no-solution {
+  margin-left:auto;
+  order:2;
+}
+
 
 
 .tag {
@@ -88,8 +100,12 @@ table {
 }
 table.change tr, td {
   border: 1px solid black;
-  padding: 1ex;
+  padding: 4pt;
 }
+.ofa {
+  overflow:auto;
+}
+
 ol {
   padding-left: 1.5em;
 }
@@ -105,12 +121,26 @@ ol {
 .col8 { flex: 80%; }
 .col9 { flex: 90%; }
 
-.pl50  {padding-left:50px!important; }
+.pl50  { padding-left:50px!important; }
+.mt-5  { margin-top:-5px; }
+.mb10  { margin-bottom:10px; }
 .mw100 { min-width: 100px; }
+.mw150 { min-width: 150px; }
 .mw200 { min-width: 200px; }
+.mw250 { min-width: 250px; }
 .mw300 { min-width: 300px; }
 .mw400 { min-width: 400px; }
 .mw500 { min-width: 500px; }
+.ml-40 { margin-left: -40px; }
+.ml20 { margin-left: 20px; }
+.mt-10 { margin-top: -10px; }
+.mt5 { margin-top: 5px; }
+.mt10 { margin-top: 10px; }
+.mb-5 { margin-top: -5px; }
+
+.center-table {
+  margin:auto;
+}
 
 .center {
   display: flex;
@@ -120,9 +150,6 @@ ol {
 .right {
   float:right;
   padding-left:1em;
-}
-.ml-20 {
-  margin-left: 20px;
 }
 nav a.lnk_btn {
   display: inline-block;
