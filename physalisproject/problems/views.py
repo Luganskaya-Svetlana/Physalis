@@ -9,6 +9,9 @@ class ProblemView(DetailView):
     template_name = 'problems/problem_detail.html'
     context_object_name = 'problem'
 
+    def get_queryset(self):
+        return Problem.objects.detail()
+
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         problem_pk = self.kwargs['pk']
@@ -32,7 +35,7 @@ class ProblemsView(ListView):
     paginate_by = 40
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = Problem.objects.list()
         self.filterset = self.filter(self.request.GET, queryset=queryset)
         return self.filterset.qs.order_by('id')
 

@@ -27,7 +27,7 @@
       <p class="id-in-list">
         <a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a>
         <span class="compl">Сложность {{problem.complexity}}/10</span>&nbsp;
-        <span class="compl">Тип {{problem.type_ege}}</span>
+        <span class="compl">Тип {{problem.type_ege.number}}</span>
         <span class="compl" style="float:right">{% if not problem.solution %}Без решения{% endif %}</span>
       </p>
       <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
