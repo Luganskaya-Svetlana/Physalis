@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'problems.apps.ProblemsConfig',
     'typesinege.apps.TypesinegeConfig',
     'pages.apps.PagesConfig',
+    'variants.apps.VariantsConfig',
 ]
 
 MIDDLEWARE = [
