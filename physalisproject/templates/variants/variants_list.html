@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+{% load static %}
+
+{% block content %}
+  <h2>{{title}}</h2>
+
+  {% for variant in variants %}
+    <div class="rel">
+      <div class="id-in-list">
+        <a href="{{variant.get_absolute_url}}"><b class='id-number'>#{{variant.id}}</b></a>
+        <span class="compl">Сложность: {{variant.complexity}}</span>&nbsp;
+        <span class="compl no-solution">{% if not variant.is_full %}Неполный{% endif %}</span>
+      </div>
+    <div>{{variant.text|markdown|safe}}</div>
+    </div><hr>
+{% empty %}
+  <p>Ничего не нашлось {{":("}}</p>
+  <p>Попробуйте другой фильтр.</p>
+{% endfor %}
+
+{% endblock %}
