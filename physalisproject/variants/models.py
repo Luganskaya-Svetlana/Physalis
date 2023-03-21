@@ -1,8 +1,11 @@
 from django.db import models
 from problems.models import Problem
+from variants.managers import VariantManager
 
 
 class Variant(models.Model):
+    objects = VariantManager()
+
     COMLEXITIES = ('Попроще', 'Нормально', 'Посложнее', 'Дичь')
     CHOICES = [(elem, elem) for elem in COMLEXITIES]
     problems = models.ManyToManyField(Problem,
