@@ -38,6 +38,9 @@ h6 { font-size:12pt; }
   padding: 0px 2px 0px 2px;
 }
 .rel { position: relative; }
+form + .rel {
+  margin-top:2.5ex;
+}
 
 .id-in-list {
   margin-bottom:-10px;
