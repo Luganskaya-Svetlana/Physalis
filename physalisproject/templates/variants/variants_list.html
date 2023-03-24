@@ -5,6 +5,11 @@
 {% block content %}
   <h2>{{title}}</h2>
 
+  <form method="get" class="no-print">
+    {{ filter.form.as_p }}
+    <input type="submit" />
+  </form>
+
   {% for variant in variants %}
     <div class="rel">
       <div class="id-in-list">
