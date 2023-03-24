@@ -3,11 +3,13 @@ from problems.models import Problem
 from variants.managers import VariantManager
 
 
+COMLEXITIES = ('Попроще', 'Нормально', 'Посложнее', 'Дичь')
+CHOICES = [(elem, elem) for elem in COMLEXITIES]
+
+
 class Variant(models.Model):
     objects = VariantManager()
 
-    COMLEXITIES = ('Попроще', 'Нормально', 'Посложнее', 'Дичь')
-    CHOICES = [(elem, elem) for elem in COMLEXITIES]
     problems = models.ManyToManyField(Problem,
                                       verbose_name='задачи')
     text = models.TextField('комментарии', blank=True, null=True)
