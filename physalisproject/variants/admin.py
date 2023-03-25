@@ -11,12 +11,19 @@ class VariantForm(forms.ModelForm):
         fields = ('problems', 'text', 'complexity', 'is_full', 'show_answers')
 
     def clean(self):
+        '''Проверка на то, является ли вариант полным,
+        и вычисление его сложности
+        '''
+
         NUMBER_OF_PROBLEMS = 30  # количество задач в полном варианте
 
         cleaned_data = super().clean()
+        comlexity = 0
+        problems = cleaned_data.get('problems')
+        problems_count = len(problems)
+
         if cleaned_data.get('is_full'):  # если выбрана опция "полный вариант"
-            problems = cleaned_data.get('problems')
-            if len(problems) == NUMBER_OF_PROBLEMS:
+            if problems_count == NUMBER_OF_PROBLEMS:
                 num = 1
                 problems = problems.order_by('type_ege__number')
                 for problem in problems:
@@ -26,10 +33,15 @@ class VariantForm(forms.ModelForm):
                                               f' {problem.id} (тип '
                                               f'{problem.type_ege.number})')
                     num += 1
+                    comlexity += problem.complexity
             else:
                 raise ValidationError('Это не полный вариант. '
                                       'Число задач меньше, чем'
                                       f' {NUMBER_OF_PROBLEMS}')
+        else:  # если опция "полный вариант" не выбрана
+            for problem in problems:
+                comlexity += problem.complexity
+        cleaned_data['complexity'] = round(comlexity / problems_count, 1)
         return cleaned_data
 
 
@@ -37,7 +49,19 @@ class VariantForm(forms.ModelForm):
 class VariantAdmin(admin.ModelAdmin):
     '''Настройки админки для вариантов'''
     form = VariantForm
-    fields = ('problems', 'text', 'complexity', 'is_full', 'show_answers')
+    readonly_fields = ('date',)
+    fieldsets = (
+        (None, {'fields': ('problems', 'text', 'is_full', 'show_answers',)}),
+        (('Автозаполняемые поля'), {
+            'classes': ('collapse',),
+            'fields': (
+                'date',
+                'complexity'
+            ),
+        }),
+    )
+    # fields = ('problems', 'text', 'is_full', 'show_answers', 'date',
+    #           'complexity')
     # поля, отображаемые в форме
     list_display = ('id', 'text', 'is_full')
     # поля, отображаемые на странице со всеми вариантами

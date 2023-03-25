@@ -3,19 +3,16 @@ from problems.models import Problem
 from variants.managers import VariantManager
 
 
-COMLEXITIES = ('Попроще', 'Нормально', 'Посложнее', 'Дичь')
-CHOICES = [(elem, elem) for elem in COMLEXITIES]
-
-
 class Variant(models.Model):
     objects = VariantManager()
 
     problems = models.ManyToManyField(Problem,
                                       verbose_name='задачи')
     text = models.TextField('комментарии', blank=True, null=True)
-    complexity = models.CharField('сложность', choices=CHOICES, max_length=100)
+    complexity = models.FloatField('сложность', blank=True, default=0)
     is_full = models.BooleanField('полный вариант', default=True)
     show_answers = models.BooleanField('показать решения', default=True)
+    date = models.DateField('дата добавления', auto_now_add=True)
 
     class Meta:
         verbose_name = 'вариант'
