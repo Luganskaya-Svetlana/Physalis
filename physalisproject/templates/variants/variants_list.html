@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
+{% load save_parameters %}
 {% load static %}
 
 {% block content %}
@@ -9,6 +10,11 @@
     {{ filter.form.as_p }}
     <input type="submit" />
   </form>
+
+  <h6>Сортировать по</h6>
+  <p><a href="?{% param_save order_by="complexity" %}">Сложности</a></p>
+  <p><a href="?{% param_save order_by="date" %}">Дате добавления</a></p>
+
 
   {% for variant in variants %}
     <div class="rel">
