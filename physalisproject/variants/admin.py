@@ -20,28 +20,31 @@ class VariantForm(forms.ModelForm):
         cleaned_data = super().clean()
         comlexity = 0
         problems = cleaned_data.get('problems')
-        problems_count = len(problems)
 
-        if cleaned_data.get('is_full'):  # если выбрана опция "полный вариант"
-            if problems_count == NUMBER_OF_PROBLEMS:
-                num = 1
-                problems = problems.order_by('type_ege__number')
+        if problems:  # если указаны существующие задачи
+            problems_count = len(problems)
+            if cleaned_data.get('is_full'):
+                # если выбрана опция "полный вариант"
+                if problems_count == NUMBER_OF_PROBLEMS:
+                    num = 1
+                    problems = problems.order_by('type_ege__number')
+                    for problem in problems:
+                        if problem.type_ege.number != num:
+                            raise ValidationError('Это не полный вариант.'
+                                                  ' Первая неверная задача:'
+                                                  f' {problem.id} (тип '
+                                                  f'{problem.type_ege.number})'
+                                                  )
+                        num += 1
+                        comlexity += problem.complexity
+                else:
+                    raise ValidationError('Это не полный вариант. '
+                                          'Число задач меньше, чем'
+                                          f' {NUMBER_OF_PROBLEMS}')
+            else:  # если опция "полный вариант" не выбрана
                 for problem in problems:
-                    if problem.type_ege.number != num:
-                        raise ValidationError('Это не полный вариант.'
-                                              ' Первая неверная задача:'
-                                              f' {problem.id} (тип '
-                                              f'{problem.type_ege.number})')
-                    num += 1
                     comlexity += problem.complexity
-            else:
-                raise ValidationError('Это не полный вариант. '
-                                      'Число задач меньше, чем'
-                                      f' {NUMBER_OF_PROBLEMS}')
-        else:  # если опция "полный вариант" не выбрана
-            for problem in problems:
-                comlexity += problem.complexity
-        cleaned_data['complexity'] = round(comlexity / problems_count, 1)
+            cleaned_data['complexity'] = round(comlexity / problems_count, 1)
         return cleaned_data
 
 
@@ -60,8 +63,6 @@ class VariantAdmin(admin.ModelAdmin):
             ),
         }),
     )
-    # fields = ('problems', 'text', 'is_full', 'show_answers', 'date',
-    #           'complexity')
     # поля, отображаемые в форме
     list_display = ('id', 'text', 'is_full')
     # поля, отображаемые на странице со всеми вариантами
