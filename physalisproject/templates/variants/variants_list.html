@@ -12,8 +12,10 @@
   </form>
 
   <h6>Сортировать по</h6>
-  <p><a href="?{% param_save order_by="complexity" %}">Сложности</a></p>
-  <p><a href="?{% param_save order_by="date" %}">Дате добавления</a></p>
+  <p><a href="?{% param_save order_by="complexity" %}">Сложности (легкие сверху)</a></p>
+  <p><a href="?{% param_save order_by="-complexity" %}">Сложности (сложные сверху)</a></p>
+  <p><a href="?{% param_save order_by="date" %}">Дате добавления (старые сверху)</a></p>
+  <p><a href="?{% param_save order_by="-date" %}">Дате добавления (новые сверху)</a></p>
 
 
   {% for variant in variants %}

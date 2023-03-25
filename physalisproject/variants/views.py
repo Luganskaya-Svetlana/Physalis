@@ -11,9 +11,11 @@ class VariantsView(ListView):
 
     def get_queryset(self):
         queryset = Variant.objects.list()
-        params = self.request.GET
-        if 'order_by' in params.keys() and params['order_by'] in ('complexity',
-                                                                  'date'):
+        pars = self.request.GET
+        if 'order_by' in pars.keys() and pars['order_by'] in ('complexity',
+                                                              'date',
+                                                              '-complexity',
+                                                              '-date'):
             order_by = self.request.GET['order_by']
         else:
             order_by = 'id'
