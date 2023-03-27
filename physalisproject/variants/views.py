@@ -1,3 +1,4 @@
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from variants.filters import VariantFilter
 from variants.models import Variant
@@ -28,3 +29,12 @@ class VariantsView(ListView):
                                        queryset=self.get_queryset())
         data['title'] = 'Варианты'
         return data
+
+
+class VariantView(DetailView):
+    model = Variant
+    template_name = 'variants/variant_detail.html'
+    context_object_name = 'variant'
+
+    def get_queryset(self):
+        return Variant.objects.detail()
