@@ -22,15 +22,18 @@ h5 { font-size:13pt; }
 h6 { font-size:12pt; }
 
 /*
-*.problem, .solution {
-*  font-family: Times, 'Times New Roman', serif;
-*  font-size: 115%;
+*.problem, .solution, .answer {
+*  font-family: 'Times New Roman', 'Times', serif;
+*  font-size: 120%;
 *}
 */
 
+
 .problem {
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden; 
 }
+
 
 .id-number {
   border: 2px solid #3377cc;
@@ -41,8 +44,18 @@ h6 { font-size:12pt; }
 form + .rel {
   margin-top:2.5ex;
 }
+div.rel:has(div.var-id-in-list) {
+  min-height:3ex;
+}
 
 .id-in-list {
+  margin-bottom:-10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 15pt;
+}
+.var-id-in-list {
   margin-bottom:-10px;
   display: flex;
   flex-wrap: wrap;
@@ -178,6 +191,21 @@ nav a.lnk_btn {
   background-color: #3377ccaa;
   color: white;
 }
+
+.var-sort {
+  display: inline-block;
+  border-radius: 3px;
+  font-weight:900;
+  line-height:inherit;
+  padding: 2px 10px 3px;
+  color: #3377ccaa;
+  background-color: white;
+}
+.var-sort.current {
+  background-color: #3377ccaa;
+  color: white;
+}
+
 .current_nav {
   border-bottom: solid 2px;
 }
