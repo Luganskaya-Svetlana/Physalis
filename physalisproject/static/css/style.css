@@ -31,7 +31,10 @@ h6 { font-size:12pt; }
 
 .problem {
   overflow-y: auto;
-  overflow-x: hidden; 
+  overflow-y: hidden; 
+}
+h1.card-title + .problem p {
+  margin-top:0px;
 }
 
 
@@ -138,8 +141,6 @@ ol {
 .col9 { flex: 90%; }
 
 .pl50  { padding-left:50px!important; }
-.mt-5  { margin-top:-5px; }
-.mb10  { margin-bottom:10px; }
 .mw100 { min-width: 100px; }
 .mw150 { min-width: 150px; }
 .mw200 { min-width: 200px; }
@@ -149,10 +150,14 @@ ol {
 .mw500 { min-width: 500px; }
 .ml-40 { margin-left: -40px; }
 .ml20 { margin-left: 20px; }
+
+.mt-5  { margin-top:-5px; }
 .mt-10 { margin-top: -10px; }
 .mt5 { margin-top: 5px; }
 .mt10 { margin-top: 10px; }
 .mb-5 { margin-top: -5px; }
+.mb10  { margin-bottom:10px; }
+.mb20  { margin-bottom:20px; }
 
 .center-table {
   margin:auto;

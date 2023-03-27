@@ -32,7 +32,7 @@ class ProblemsView(ListView):
     template_name = 'problems/problems_list.html'
     context_object_name = 'problems'
     filter = ProblemFilter
-    paginate_by = 50
+    paginate_by = 40
 
     def get_queryset(self):
         queryset = Problem.objects.list()
