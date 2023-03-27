@@ -15,8 +15,8 @@
   <div class="center mb10 mt-5"> 
     <a class='var-sort{% if "=complexity" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="complexity" %}">Легкие</a>
     <a class='var-sort{% if "=-complexity" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="-complexity" %}">Сложные</a>
-    <a class='var-sort{% if "=date" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="date" %}">Старые</a>
-    <a class='var-sort{% if "=-date" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="-date" %}">Новые</a>
+    <a class='var-sort{% if "=id" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="id" %}">Старые</a>
+    <a class='var-sort{% if "=-id" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="-id" %}">Новые</a>
   </div>
 
   {% for variant in variants %}
