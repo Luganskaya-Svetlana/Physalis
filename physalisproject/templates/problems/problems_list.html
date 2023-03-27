@@ -31,7 +31,7 @@
         <span class="compl no-solution">{% if not problem.solution %}Без решения{% endif %}</span>
       </div>
       <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
-    </div><hr>
+    </div><hr class=mb20>
     {% empty %}
       <p>Ничего не нашлось {{":("}}</p>
       <p>Попробуйте другой фильтр.</p>
