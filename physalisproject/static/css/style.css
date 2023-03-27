@@ -33,9 +33,6 @@ h6 { font-size:12pt; }
   overflow-y: auto;
   overflow-y: hidden; 
 }
-h1.card-title + .problem p {
-  margin-top:0px;
-}
 
 
 .id-number {
