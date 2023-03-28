@@ -1,6 +1,8 @@
 <nav class="no-print">
-  <a class="lnk_btn" href="/admin/problems/problem/add/" title="Добавить задачу">+</a>&nbsp;
-  <a href="/admin/">Admin</a>&nbsp;
+  {% if request.user.is_staff %}
+    <a class="lnk_btn" href="/admin/problems/problem/add/" title="Добавить задачу">+</a>&nbsp;
+    <a href="/admin/">Admin</a>&nbsp;
+  {% endif %}
   <a href="/"{% if request.path == '/' %}class='current_nav'{% endif %}>Главная</a>&nbsp;
   <a href="/articles/"{% if '/articles' in request.path %}class='current_nav'{% endif %}>Статьи</a>&nbsp;
   <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %}class='current_nav'{% endif %}>Типы</a>&nbsp;
