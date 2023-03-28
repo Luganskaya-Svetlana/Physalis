@@ -25,8 +25,7 @@ class VariantsView(ListView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data['filter'] = VariantFilter(self.request.GET,
-                                       queryset=self.get_queryset())
+        data['filter'] = VariantFilter(self.request.GET)
         data['title'] = 'Варианты'
         return data
 
