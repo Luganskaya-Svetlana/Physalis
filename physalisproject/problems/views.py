@@ -41,7 +41,6 @@ class ProblemsView(ListView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data['filter'] = ProblemFilter(self.request.GET,
-                                       queryset=self.get_queryset())
+        data['filter'] = ProblemFilter(self.request.GET)
         data['title'] = 'Все задачи'
         return data
