@@ -30,8 +30,11 @@ h6 { font-size:12pt; }
 
 
 .problem {
-  overflow-y: auto;
-  overflow-y: hidden; 
+  overflow-y: auto; /* causes large margin-top for p */
+  overflow-x: hidden;
+}
+h1.card-title{
+  margin-bottom:0;
 }
 
 
@@ -117,6 +120,8 @@ table {
 table.change tr, td {
   border: 1px solid black;
   padding: 4pt;
+  vertical-align: top;
+  text-align: left;
 }
 .ofa {
   overflow:auto;
