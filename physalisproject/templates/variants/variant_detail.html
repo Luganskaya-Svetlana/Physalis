@@ -5,12 +5,12 @@
 {% load static %}
 
 {% block content %}
-  <h2>Вариант {{ variant.id }}</h2>
+  <h2>Вариант #{{ variant.id }}</h2>
   <p>Сложность: {{ variant.complexity }}/10</p>
   {{ variant.text |markdown|safe }}
 
-  {% for problem in variant.problems.all %}
-    № {{ forloop.counter }} (тип {{problem.type_ege.number}})
+  {% for problem in variant.get_problems %}
+    #{{ forloop.counter }} (тип {{problem.type_ege.number}})
     <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
   {% endfor %}
 
