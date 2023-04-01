@@ -21,11 +21,9 @@ class Variant(models.Model):
         default_related_name = 'variants'
 
     def get_problems(self):
-        return [
-            pv.problem for pv in self.problems.through.objects
-                                     .filter(variant_id=self.id)
-                                     .order_by('problem__type_ege__number')
-        ]
+        return (self.problems
+                    .order_by('type_ege__number')
+                    .only('text', 'type_ege__number'))
 
     def __str__(self):
         return f'вариант с id {self.id}'
