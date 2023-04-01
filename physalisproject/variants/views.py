@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from variants.filters import VariantFilter
@@ -37,3 +38,20 @@ class VariantView(DetailView):
 
     def get_queryset(self):
         return Variant.objects.detail()
+
+
+class VariantAnswerView(DetailView):
+    model = Variant
+    template_name = 'variants/variant_answer.html'
+    context_object_name = 'variant'
+
+    def get_queryset(self):
+        return Variant.objects.answers()
+
+    def get_object(self, queryset=None):
+        variant = super().get_object(queryset)
+        slug = self.kwargs.get(self.slug_url_kwarg)
+        if variant.answer_slug == slug:
+            return variant
+        else:
+            raise Http404

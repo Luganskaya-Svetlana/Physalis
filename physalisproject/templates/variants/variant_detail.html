@@ -13,5 +13,5 @@
     #{{ forloop.counter }} (тип {{problem.type_ege.number}})
     <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
   {% endfor %}
-
+  {% if variant.show_answers %}<a href={{variant.get_answers_url}}>Перейти к ответам{% endif %}
 {% endblock %}

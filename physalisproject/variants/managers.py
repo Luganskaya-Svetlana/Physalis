@@ -11,13 +11,11 @@ class VariantManager(models.Manager):
     def detail(self):
         return (
             self.get_queryset()
-                .only('id', 'complexity', 'text')
+                .only('id', 'complexity', 'text', 'show_answers')
         )
 
     def answers(self):
         return (
             self.get_queryset()
-                .prefetch_related('problems')
-                .only('id', 'problems__solution', 'problems__answer',
-                      'problems__type_ege__number')
+                .only('id')
         )
