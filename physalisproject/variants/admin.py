@@ -1,3 +1,6 @@
+from random import choice
+from string import ascii_lowercase as letters
+
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
@@ -45,6 +48,14 @@ class VariantForm(forms.ModelForm):
                 for problem in problems:
                     comlexity += problem.complexity
             cleaned_data['complexity'] = round(comlexity / problems_count, 1)
+
+            if not cleaned_data.get('answer_slug'):
+                # если slug не указан, генерируем самостоятельно
+                answer_slug = ''
+                for _ in range(4):
+                    answer_slug += choice(letters)
+                cleaned_data['answer_slug'] = answer_slug
+
         return cleaned_data
 
 
@@ -59,7 +70,8 @@ class VariantAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
             'fields': (
                 'date',
-                'complexity'
+                'complexity',
+                'answer_slug'
             ),
         }),
     )
