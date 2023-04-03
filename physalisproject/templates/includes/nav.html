@@ -1,20 +1,30 @@
 <nav class="no-print">
-  {% if request.user.is_staff %}
-    <a class="lnk_btn" href="/admin/problems/problem/add/" title="Добавить задачу">+</a>&nbsp;
-    <a href="/admin/">Admin</a>&nbsp;
-  {% endif %}
-  <a href="/"{% if request.path == '/' %}class='current_nav'{% endif %}>Главная</a>&nbsp;
-  <a href="/articles/"{% if '/articles' in request.path %}class='current_nav'{% endif %}>Статьи</a>&nbsp;
-  <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %}class='current_nav'{% endif %}>Типы</a>&nbsp;
-  <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %}class='current_nav'{% endif %}>Задачи</a>&nbsp;
-  <a href="{% url 'variants:list'%}"{% if '/variants/' in request.path %}class='current_nav'{% endif %}>Варианты</a>&nbsp;
-  {% if '/problems/' in request.path and request.path != '/problems/' %}
-    <a class="nav-right" href="/admin/problems/problem/{{problem.id}}/change">Править</a>
-  {% endif %}
-  {% if previous_problem %}
-    <a class="lnk_btn" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">«</a>&nbsp;
-  {% endif %}
-  {% if next_problem %}
-  <a class="lnk_btn" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">»</a>
-  {% endif %}
+
+  <div>
+    {% if request.user.is_staff %}
+      <a class="lnk_btn" href="/admin/problems/problem/add/" title="Добавить задачу">+</a>&nbsp;
+      <a href="/admin/">Admin</a>&nbsp;
+    {% endif %}
+
+    <a href="/"{% if request.path == '/' %}class='current_nav'{% endif %}>Главная</a>&nbsp;
+    <a href="/articles/"{% if '/articles' in request.path %}class='current_nav'{% endif %}>Статьи</a>&nbsp;
+    <a href="/blanks/"{% if '/blanks/' in request.path %}class='current_nav'{% endif %}>Бланки</a>&nbsp;
+    <a href="/about/"{% if '/about/' in request.path %}class='current_nav'{% endif %}>О</a>&nbsp;
+  </div>
+
+  <div class="nav-right">
+    <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %}class='current_nav'{% endif %}>Типы</a>&nbsp;
+    <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %}class='current_nav'{% endif %}>Задачи</a>&nbsp;
+    <a href="{% url 'variants:list'%}"{% if '/variants/' in request.path %}class='current_nav'{% endif %}>Варианты</a>&nbsp;
+    {% if '/problems/' in request.path and request.path != '/problems/' %}
+      <a href="/admin/problems/problem/{{problem.id}}/change">Править</a>
+    {% endif %}
+    {% if previous_problem %}
+      <a class="lnk_btn" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">«</a>&nbsp;
+    {% endif %}
+    {% if next_problem %}
+    <a class="lnk_btn" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">»</a>
+    {% endif %}
+  </div>
+
 </nav>
