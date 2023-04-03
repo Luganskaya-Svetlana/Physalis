@@ -90,6 +90,12 @@ a {
 }
 nav {
   margin: 5ex 0 4ex 0;
+  display: flex;
+  justify-content: space-between;
+}
+.nav-left { 
+}
+.nav-right { 
 }
 nav a {
   line-height: 2em;
@@ -99,13 +105,7 @@ nav a {
   -ms-hyphens: none;
   hyphens: none;
 }
-.nav-right {
-  float: right;
-}
-.nav-center {
-  text-align: center;
-  margin:0 0 0 15ex;
-}
+
 input[name="complexity_min"],
 input[name="complexity_max"] {
   width: 3ex;
