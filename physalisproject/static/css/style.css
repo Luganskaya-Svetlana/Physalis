@@ -43,6 +43,24 @@ h1.card-title{
   border-radius: 3px;
   padding: 0px 2px 0px 2px;
 }
+.id-in-var {
+  display: inline-flex;
+  justify-content: center;
+  min-width:1.9em;
+  border: 2px solid black;
+  border-radius: 0px;
+  padding: 0px 2px 0px 2px;
+  font-weight:900;
+}
+.instruction {
+  border: 2px solid black;
+  border-radius: 0px;
+  padding: 5px;
+  margin-top:1ex;
+  margin-bottom:2ex;
+  font-weight:900;
+  font-style:italic;
+}
 .rel { position: relative; }
 form + .rel {
   margin-top:2.5ex;
