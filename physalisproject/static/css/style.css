@@ -21,22 +21,17 @@ h4 { font-size:14pt; }
 h5 { font-size:13pt; }
 h6 { font-size:12pt; }
 
-/*
-*.problem, .solution, .answer {
-*  font-family: 'Times New Roman', 'Times', serif;
-*  font-size: 120%;
-*}
-*/
-
-
 .problem {
-  overflow-y: auto; /* causes large margin-top for p */
+  overflow-y: auto;   /* causes large margin-top for p */
   overflow-x: hidden;
 }
 .card-title{
   margin-bottom:0;
 }
 
+.bold {
+  font-weight:900;
+}
 
 .id-number {
   border: 2px solid #3377cc;
@@ -52,6 +47,9 @@ h6 { font-size:12pt; }
   padding: 0px 2px 0px 2px;
   font-weight:900;
   margin-right:1ex;
+}
+.id-in-var + .problem > p {
+  margin-top:0.8ex;
 }
 .instruction {
   border: 2px solid black;
@@ -94,6 +92,10 @@ div.rel:has(div.var-id-in-list) {
   order:2;
 }
 
+.ans {
+  text-decoration: underline;
+  white-space: pre;
+}
 
 
 .tag {
@@ -180,7 +182,9 @@ ol {
 .mt5 { margin-top: 5px; }
 .mt10 { margin-top: 10px; }
 .mb-5 { margin-top: -5px; }
+.mb5   { margin-bottom:5px; }
 .mb10  { margin-bottom:10px; }
+.mb15  { margin-bottom:15px; }
 .mb20  { margin-bottom:20px; }
 
 .center-table {
@@ -260,7 +264,8 @@ h1>a.lnk_btn {
   .pl50  {padding-left:1em!important; }
 }
 
-@media print {    
+@media print {
+  div { break-inside: avoid; }
   .no-print, .no-print * {
       display: none !important;
   }

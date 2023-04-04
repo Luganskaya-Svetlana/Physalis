@@ -16,15 +16,17 @@
     {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|markdown|safe}}</div>{% endif %}
     {% if problem.answer%}<h2>Ответ </h2><div class="answer">{{problem.answer|markdown|safe}}</div>{% endif %}
     {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
-    {% if problem.source%}<p><b>Источник: </b>{{problem.source}}{% endif %}</p>
-    {% if problem.category%}<p><b>Раздел: </b>{{problem.category}}{% endif %}</p>
-    {% if problem.subcategory%}<p><b>Подраздел: </b>{{problem.subcategory}}{% endif %}</p>
+    {% if problem.source%}<p><b>Источник: </b>{{problem.source}}</p>{% endif %}
+    {% if problem.category%}<p><b>Раздел: </b>{{problem.category}}</p>{% endif %}
+    {% if problem.subcategory%}<p><b>Подраздел: </b>{{problem.subcategory}}</p>{% endif %}
     <p><b>Номер в ЕГЭ: </b>{{problem.type_ege}}</p>
-    {% if problem.tags.all %}<b>Тэги:</b>
-    {% for tag in problem.tags.all %}
-      <span class='tag'>{{ tag.name }}</span>
-    {% endfor %}{% endif %}
-    <p><b>Автор: </b>{{problem.author.username}}</p>
+    {% if problem.tags.all %}
+      <b>Тэги:</b>
+      {% for tag in problem.tags.all %}
+        <span class='tag'>{{ tag.name }}</span>
+      {% endfor %}
+    {% endif %}
+    <p><b>Добавил: </b>{{problem.author.username}}</p>
     <p><b>Дата добавления: </b>{{problem.date}}</p>
   </div>
 {% endblock %}

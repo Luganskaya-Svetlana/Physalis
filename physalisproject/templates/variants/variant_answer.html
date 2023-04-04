@@ -7,6 +7,19 @@
 {% block content %}
   <h2>Ответы на вариант <a href='/variants/{{variant.id}}'>#{{variant.id}}</a></h2>
 
+  <table class=center-table>
+    <tr>
+      <td class=bold>№</td>
+      <td class=bold>Ответ</td>
+    </tr>
+    {% for problem in variant.get_answers %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{% if problem.answer%}{{problem.answer}}{% else %}См. решение {% endif %}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
   {% for problem in variant.get_answers %}
   <div class="card">
     <span class='id-in-var'>{{ forloop.counter }}</span>

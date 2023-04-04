@@ -1,14 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang=ru>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% if problem.id %}#{{problem.id}} — {% endif %}Физалис</title>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <title>{% if problem.id %}#{{problem.id}} — {% endif %}{% if variant.id %}Вариант #{{variant.id}}—{% endif %}Физалис</title>
     <script>
       window.MathJax = {
         tex: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          inlineMath: [['$', '$']],
           macros: {
             eds: "\\mathcal{E}",
             la: "\\lambda",
@@ -16,6 +16,7 @@
             tg: "\\text{tg}",
             ctg: "\\text{ctg}",
             arctg: ["\\text{arctg}\\; #1", 1],
+            ans: "\\text{Ответ:} \\underline{\\hspace{3cm}}",
             a: "\\alpha",
             b: "\\beta",
             f: "\\varphi",
@@ -40,8 +41,9 @@
         }
       };
     </script>
-    <script type="text/javascript" id="MathJax-script" async src="{% static 'js/tex-mml-chtml.js'%}"></script>
-    <link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css">
+    <script async src={% static 'js/tex-mml-chtml.js'%}></script>
+    <link rel=stylesheet href={% static 'css/style.css'%}>
+
   </head>
   <body>
     <header>
