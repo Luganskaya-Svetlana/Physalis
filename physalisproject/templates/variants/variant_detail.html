@@ -15,10 +15,10 @@
   {% endif %}
 
   {% for problem in variant.get_problems %}
-    <div>
-      <span class='id-in-var'>{{ forloop.counter }}</span>  {% if not variant.is_full %}(тип {{problem.type_ege.number}}){% endif %}
-      <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
-    </div>
+      <div class="problem">
+        <span class='id-in-var'>{{ forloop.counter }}</span>  {% if not variant.is_full %}(тип {{problem.type_ege.number}}){% endif %}
+        {{problem.text|markdown|abbr|safe}}
+      </div>
     {% if variant.is_full and forloop.counter == 22 %} 
       <div class=instruction> В бланк ответов №&nbsp;1 перенесите только числа, не разделяя их пробелом или другим знаком. </div>
     {% endif %}
@@ -30,7 +30,6 @@
     {% if variant.is_full and forloop.counter == 24 %} 
       <div class=instruction>Полное правильное решение каждой из задач 25-30 должно содержать законы и формулы, применение которых необходимо и достаточно для решения задачи, а также математические преобразования, расчёты, с численным ответом и при необходимости рисунок, поясняющий решение.</div>
     {% endif %}
-    <hr class=mb15>
   {% endfor %}
   {% if variant.is_full %} 
     <div class=instruction>Проверьте, чтобы каждый ответ был записан рядом с номером соответствующего задания.</div>
