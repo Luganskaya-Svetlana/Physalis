@@ -12,15 +12,6 @@
     <a href="/about/"{% if '/about/' in request.path %}class='current_nav'{% endif %}>О</a>
   </div>
 
-  <div>
-    {% if previous_problem %}
-      <a class="lnk_btn" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">«</a>
-    {% endif %}
-    {% if next_problem %}
-      <a class="lnk_btn" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">»</a>
-    {% endif %}
-  </div>
-
   <div class="nav-right">
     <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %}class='current_nav'{% endif %}>Типы</a>
     <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %}class='current_nav'{% endif %}>Задачи</a>
