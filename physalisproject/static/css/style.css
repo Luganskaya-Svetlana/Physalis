@@ -33,7 +33,7 @@ h6 { font-size:12pt; }
   overflow-y: auto; /* causes large margin-top for p */
   overflow-x: hidden;
 }
-h1.card-title{
+.card-title{
   margin-bottom:0;
 }
 
@@ -51,6 +51,7 @@ h1.card-title{
   border-radius: 0px;
   padding: 0px 2px 0px 2px;
   font-weight:900;
+  margin-right:1ex;
 }
 .instruction {
   border: 2px solid black;
@@ -195,15 +196,19 @@ ol {
   float:right;
   padding-left:1em;
 }
-nav a.lnk_btn {
-  display: inline-block;
-  /*border: 2px solid #3377cc;*/
+a.lnk_btn {
   border-radius: 3px;
   background-color: #3377ccaa;
   font-weight:900;
   color: white;
   line-height:inherit;
   padding: 2px 10px 3px;
+}
+h1>a.lnk_btn {
+  margin-left:1ex;
+  font-size:80%;
+  padding: 0px 10px 1px;
+  background-color: #3377cc88;
 }
 
 .page {

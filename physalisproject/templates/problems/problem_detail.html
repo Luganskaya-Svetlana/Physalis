@@ -4,7 +4,14 @@
 
 {% block content %}
   <div class="card">
-    <h1 class="card-title">Задача #{{problem.id}}</h1>
+    <h1 class="card-title">Задача #{{problem.id}}
+      {% if previous_problem %}
+        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">«</a>
+      {% endif %}
+      {% if next_problem %}
+        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">»</a>
+      {% endif %}
+    </h1>
     <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
     {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|markdown|safe}}</div>{% endif %}
     {% if problem.answer%}<h2>Ответ </h2><div class="answer">{{problem.answer|markdown|safe}}</div>{% endif %}
