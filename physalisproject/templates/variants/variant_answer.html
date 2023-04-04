@@ -10,6 +10,7 @@
   {% for problem in variant.get_answers %}
   <div class="card">
     <h3 class="card-title">Задача #{{forloop.counter}}</h3>
+    <div class="problem">{{problem.text|markdown|safe}}</div>
     {% if problem.solution%}<h4>Решение</h4><div class="solution">{{problem.solution|markdown|safe}}</div>{% endif %}
     {% if problem.answer%}<h4>Ответ </h4><div class="answer">{{problem.answer|markdown|safe}}</div>{% endif %}
     Максимальный балл: {{problem.type_ege.max_score}}
