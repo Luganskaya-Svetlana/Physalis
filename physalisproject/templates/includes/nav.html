@@ -6,16 +6,16 @@
       <a href="/admin/">Admin</a>
     {% endif %}
 
-    <a href="/"{% if request.path == '/' %}class='current_nav'{% endif %}>Главная</a>
-    <a href="/articles/"{% if '/articles' in request.path %}class='current_nav'{% endif %}>Статьи</a>
-    <a href="/blanks/"{% if '/blanks/' in request.path %}class='current_nav'{% endif %}>Материалы</a>
-    <a href="/about/"{% if '/about/' in request.path %}class='current_nav'{% endif %}>О</a>
+    <a href="/"{% if request.path == '/' %} class='current_nav'{% endif %}>Главная</a>
+    <a href="/articles/"{% if '/articles' in request.path %} class='current_nav'{% endif %}>Статьи</a>
+    <a href="/blanks/"{% if '/blanks/' in request.path %} class='current_nav'{% endif %}>Материалы</a>
+    <a href="/about/"{% if '/about/' in request.path %} class='current_nav'{% endif %}>О</a>
   </div>
 
   <div class="nav-right">
-    <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %}class='current_nav'{% endif %}>Типы</a>
-    <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %}class='current_nav'{% endif %}>Задачи</a>
-    <a href="{% url 'variants:list'%}"{% if '/variants/' in request.path %}class='current_nav'{% endif %}>Варианты</a>
+    <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %} class='current_nav'{% endif %}>Типы</a>
+    <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %} class='current_nav'{% endif %}>Задачи</a>
+    <a href="{% url 'variants:list'%}"{% if '/variants/' in request.path %} class='current_nav'{% endif %}>Варианты</a>
     {% if '/problems/' in request.path and request.path != '/problems/' and request.user.is_staff %}
       <a href="/admin/problems/problem/{{problem.id}}/change">Править</a>
     {% endif %}
