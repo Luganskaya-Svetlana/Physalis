@@ -10,7 +10,7 @@ body {
   font-family: Tahoma, Arial;
   text-align: justify;
   font-size: 12pt;
-  margin-bottom:10ex;
+  margin-bottom:12ex;
 }
 
 h1, h2, h3, h4, h5, h6 { text-align: left; }
@@ -92,10 +92,13 @@ nav {
   margin: 5ex 0 4ex 0;
   display: flex;
   justify-content: space-between;
+  word-spacing: 6pt;
 }
 .nav-left { 
+  text-align:left;
 }
 .nav-right { 
+  text-align:right;
 }
 nav a {
   line-height: 2em;
