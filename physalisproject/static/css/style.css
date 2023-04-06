@@ -94,7 +94,7 @@ div.rel:has(div.var-id-in-list) {
 }
 
 .ans {
-  border-bottom: 1.3pt solid black;
+  border-bottom: 1pt solid black;
   white-space: pre;
 }
 
