@@ -94,7 +94,7 @@ div.rel:has(div.var-id-in-list) {
 }
 
 .ans {
-  text-decoration: underline;
+  border-bottom: 1.3pt solid black;
   white-space: pre;
 }
 
@@ -116,11 +116,14 @@ nav {
   justify-content: space-between;
   word-spacing: 6pt;
 }
-.nav-left { 
+.nav-left, .ta-left { 
   text-align:left;
 }
-.nav-right { 
+.nav-right, .ta-right { 
   text-align:right;
+}
+.ta-center {
+  text-align: center;
 }
 nav a {
   line-height: 2em;
@@ -148,6 +151,10 @@ table.change tr, td {
   vertical-align: top;
   text-align: left;
 }
+.ans-table  tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
 .ofa {
   overflow:auto;
 }

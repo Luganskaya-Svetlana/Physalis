@@ -28,6 +28,7 @@
         <a href="{{problem.get_absolute_url}}"><b class='id-number'>#{{problem.id}}</b></a>
         <span class="compl">Сложность {{problem.complexity}}/10</span>&nbsp;
         <span class="compl">Тип {{problem.type_ege.number}}</span>
+        {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
         <span class="compl no-solution">{% if not problem.solution %}Без решения{% endif %}</span>
       </div>
       <div class="problem">{{problem.text|markdown|abbr|safe}}</div>

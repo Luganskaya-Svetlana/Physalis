@@ -1,21 +1,19 @@
 {% extends "base.html" %}
-
 {% load static %}
-
 {% block content %}
 
     <h1>Задачи по типам</h1>
 
     <div class='row types-list'>
-      <div class='col5'><h2>Первая часть</h2>
-        {% for type in types %}
-          {% if type.number == 24 %}</div><div class='col5'><h2>Вторая часть</h2>{% endif %}
-            <div>
-              <a href="{{ type.get_absolute_url }}">
-                {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.]
-              </a>
-            </div>
-        {% endfor %}
+      <div style='display:none;'>
+      {% for type in types %}
+      {% ifchanged type.part_ege %}
+      </div>
+      <div class='col5'>
+        <h2>{{type.part_ege}}</h2>
+      {% endifchanged %}
+        <div> <a href="{{ type.get_absolute_url }}"> {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.] </a> </div>
+      {% endfor %}
       </div>
     </div>
 

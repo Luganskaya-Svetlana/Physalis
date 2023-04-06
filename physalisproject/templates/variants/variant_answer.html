@@ -6,16 +6,20 @@
 
 {% block content %}
   <h2>Ответы на вариант <a href='/variants/{{variant.id}}'>#{{variant.id}}</a></h2>
-
-  <table class=center-table>
-    <tr>
-      <td class=bold>№</td>
-      <td class=bold>Ответ</td>
-    </tr>
+  <table class='center-table ans-table'>
     {% for problem in variant.get_answers %}
+      {% ifchanged problem.type_ege.part_ege %}
+        <tr> <td colspan=3 class='ta-center bold'>{{ problem.type_ege.part_ege }}</td> </tr>
+        <tr>
+          <td class=bold>№</td>
+          <td class=bold>Ответ</td>
+          <td class=bold>Максимальный балл</td>
+        </tr>
+      {% endifchanged %}
       <tr>
-        <td>{{forloop.counter}}</td>
-        <td>{% if problem.answer%}{{problem.answer}}{% else %}См. решение {% endif %}</td>
+        <td class=ta-right>{{forloop.counter}}</td>
+        <td>{% if problem.answer %}{{problem.answer}}{% else %}См. решение {% endif %}</td>
+        <td>{{problem.type_ege.max_score}}</td>
       </tr>
     {% endfor %}
   </table>
@@ -25,7 +29,8 @@
     <span class='id-in-var'>{{ forloop.counter }}</span>
     <span class="compl">Задача <a href='/problems/{{problem.id}}'>#{{problem.id}}</a></span>
     {% if problem.complexity%}<span class="compl">Сложность {{problem.complexity}}/10</span>{% endif %}
-    <div class="problem">{{problem.text|markdown|safe}}</div>
+    {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
+    <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
     {% if problem.solution%}<h4>Решение</h4><div class="solution">{{problem.solution|markdown|safe}}</div>{% endif %}
     {% if problem.answer%}<h4>Ответ </h4><div class="answer">{{problem.answer|markdown|safe}}</div>{% endif %}
     Максимальный балл: {{problem.type_ege.max_score}}
