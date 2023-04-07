@@ -195,11 +195,15 @@ ol {
 .mb15  { margin-bottom:15px; }
 .mb20  { margin-bottom:20px; }
 
+.center {
+  margin: 0px auto;
+  text-align: center;
+}
 .center-table {
   margin: 1em auto;
 }
 
-.center {
+.center-flex {
   display: flex;
   justify-content: center;
 }

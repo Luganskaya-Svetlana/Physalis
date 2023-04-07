@@ -26,7 +26,9 @@
         <span class='tag'>{{ tag.name }}</span>
       {% endfor %}
     {% endif %}
+    {% comment %}
     <p><b>Добавил: </b>{{problem.author.username}}</p>
     <p><b>Дата добавления: </b>{{problem.date}}</p>
+    {% endcomment %}
   </div>
 {% endblock %}
