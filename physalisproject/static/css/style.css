@@ -21,6 +21,13 @@ h4 { font-size:14pt; }
 h5 { font-size:13pt; }
 h6 { font-size:12pt; }
 
+/*
+*p:has(.MathJax) {
+*  overflow-x: auto;
+*  overflow-y: hidden; 
+*}
+*/
+
 .problem {
   overflow-y: auto;   /* causes large margin-top for p */
   overflow-x: hidden;
@@ -74,7 +81,7 @@ div.rel:has(div.var-id-in-list) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  line-height: 15pt;
+  line-height: 17pt;
 }
 .var-id-in-list {
   margin-bottom:-10px;
@@ -87,6 +94,7 @@ div.rel:has(div.var-id-in-list) {
   padding-left:2ex;
   font-size: 11pt;
   font-family: Arial;
+  color: #333333;
 }
 .no-solution {
   margin-left:auto;
@@ -94,7 +102,7 @@ div.rel:has(div.var-id-in-list) {
 }
 
 .ans {
-  border-bottom: 1pt solid black;
+  border-bottom: 1.3px solid black;
   white-space: pre;
 }
 

@@ -19,14 +19,14 @@ def ziamath(string):
 
 # def ziamath(value):
 #     return zm.zmath.Math.fromlatextext(value).svg()
-# 
+#
 # def zi(match):
 #     group = match.group(1)
 #     return zm.Math.fromlatex(group).svg()
-# 
+#
 # def ziamath(value):
 #     return re.sub('\$(.*?)\$', zi, value, flags=re.M)
-# 
+#
 # Работает с одиночными долларами
 # def ziamath(string):
 #     groups = string.split('$')
