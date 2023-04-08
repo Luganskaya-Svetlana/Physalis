@@ -16,7 +16,6 @@ class FlatPageAdmin(admin.ModelAdmin):
             ),
         }),
     )
-    view_on_site = False
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name == 'sites':
