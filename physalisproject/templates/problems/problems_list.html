@@ -6,6 +6,8 @@
 
 {% block content %}
     <h2>{{title}}</h2>
+
+    {% comment %} Для страниц с задачами по типам {% endcomment %}
     {% if previous_type %}
       <a class="lnk_btn no-print" href="/types/{{type_num|add:"-1"}}" title="Тип {{type_num|add:"-1"}}">«</a>
     {% endif %}
