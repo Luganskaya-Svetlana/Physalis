@@ -26,9 +26,14 @@
         <span class='tag'>{{ tag.name }}</span>
       {% endfor %}
     {% endif %}
-    {% comment %}
-    <p><b>Добавил: </b>{{problem.author.username}}</p>
-    <p><b>Дата добавления: </b>{{problem.date}}</p>
-    {% endcomment %}
+
+    {% if request.user.is_staff and problem.variants.all %}
+    <b>Варианты:</b>
+    {% for variant in problem.variants.all %}
+      <div class="var-id">
+        <a href="{{variant.get_absolute_url}}"><b class='id-number'>#{{variant.id}}</b></a>
+      </div>
+    {% endfor %}
+  {% endif %}
   </div>
 {% endblock %}
