@@ -7,13 +7,13 @@ class ProblemManager(models.Manager):
             self.get_queryset()
                 .select_related('type_ege')
                 .only('id', 'complexity', 'text', 'type_ege__number',
-                      'solution')
+                      'solution', 'source',)
         )
 
     def detail(self):
         return (
             self.get_queryset()
             .prefetch_related('tags')
-            .select_related('author', 'source', 'category', 'subcategory',
+            .select_related('source', 'category', 'subcategory',
                             'type_ege')
         )
