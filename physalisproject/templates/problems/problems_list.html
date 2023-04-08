@@ -6,10 +6,18 @@
 
 {% block content %}
     <h2>{{title}}</h2>
+    {% if previous_type %}
+      <a class="lnk_btn no-print" href="/types/{{type_num|add:"-1"}}" title="Тип {{type_num|add:"-1"}}">«</a>
+    {% endif %}
+    {% if next_type %}
+      <a class="lnk_btn no-print" href="/types/{{type_num|add:"+1"}}" title="Тип {{type_num|add:"+1"}}">»</a>
+    {% endif %}
+
     <form method="get" class="no-print">
       {{ filter.form.as_p }}
       <input type="submit" />
     </form>
+
     {% if page_obj.paginator.num_pages != 1 %}
       <div class="center-flex"> <h3>Выберите страницу</h3> </div>
       <div class="center-flex mb10 mt-5"> 
@@ -22,6 +30,8 @@
         {% endfor %}
       </div>
     {% endif %}
+
+
     {% for problem in page_obj %}
     <div class="rel">
       <div class="id-in-list">
