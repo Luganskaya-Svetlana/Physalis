@@ -14,7 +14,7 @@ class ProblemFilter(django_filters.FilterSet):
 
     class Meta:
         model = Problem
-        fields = ['id', 'text', 'author', 'category', 'subcategory', 'source',
+        fields = ['id', 'text', 'category', 'subcategory', 'source',
                   'part_ege']
 
 
@@ -23,4 +23,4 @@ class ProblemTypeFilter(django_filters.FilterSet):
 
     class Meta:
         model = Problem
-        fields = ['author', 'category', 'subcategory', 'source']
+        fields = ['category', 'subcategory', 'source']
