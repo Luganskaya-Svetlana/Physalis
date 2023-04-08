@@ -29,7 +29,17 @@ class ProblemsView(ListView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
+        num = self.kwargs['number']
         data['filter'] = ProblemTypeFilter(self.request.GET,
                                            queryset=self.get_queryset())
-        data['title'] = f'Тип {self.kwargs["number"]}'
+        data['title'] = f'Тип {num}'
+        data['next_type'] = (TypeInEGE.objects
+                                      .all()
+                                      .filter(number=int(num) + 1)
+                                      .exists())
+        data['previous_type'] = (TypeInEGE.objects
+                                          .all()
+                                          .filter(number=int(num) - 1)
+                                          .exists())
+        data['type_num'] = num
         return data
