@@ -16,11 +16,15 @@ class ProblemAdmin(admin.ModelAdmin):
     '''Настройки админки для задач'''
     fields = ('text', 'solution', 'answer', 'complexity', 'source', 'category',
               'subcategory', 'tags', 'type_ege')  # поля, отображаемые в форме
-    list_display = ('id', 'type_ege', 'author', 'date')
+    list_display = ('id', 'type_ege', 'author', 'date', 'get_variants')
     # поля, отображаемые на странице со всеми задачами
     search_fields = ('id', 'text')  # поля, по которым осущ. поиск в админке
     filter_horizontal = ('tags',)
     inlines = (ImageInline,)
+
+    @admin.display(description='варианты')
+    def get_variants(self, obj):
+        return ', '.join([str(var.id) for var in obj.variants.all()])
 
     def save_model(self, request, obj, form, change):
         if not change:  # если объект создается, а не меняется
