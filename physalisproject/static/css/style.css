@@ -166,6 +166,9 @@ table.change tr, td {
 .ans-table  tr:nth-child(even) {
   background-color: #f2f2f2;
 }
+.ans-table td {
+  vertical-align: middle;
+}
 
 .ofa {
   overflow:auto;
@@ -188,7 +191,8 @@ ol {
 
 .fs130 { font-size: 130%; }
 
-.pl50  { padding-left:50px!important; }
+.pl15  { padding-left: 15px; }
+.pl50  { padding-left: 50px; }
 .mw100 { min-width: 100px; }
 .mw150 { min-width: 150px; }
 .mw200 { min-width: 200px; }

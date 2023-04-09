@@ -18,8 +18,8 @@
           </tr>
         {% endifchanged %}
         <tr>
-          <td class=ta-right>{{forloop.counter}}</td>
-          <td>{% if problem.answer %}{{problem.answer}}{% else %}См. решение {% endif %}</td>
+          <td class='ta-right bold'><a href=#{{forloop.counter}}>{{forloop.counter}}</a></td>
+          <td class=pl15>{% if problem.answer %}{{problem.answer}}{% else %}См. решение {% endif %}</td>
           <td>{{problem.type_ege.max_score}}</td>
         </tr>
       {% endfor %}
@@ -27,14 +27,14 @@
   </div>
 
   {% for problem in variant.get_answers %}
-  <div class="card">
-    <span class='id-in-var'>{{ forloop.counter }}</span>
-    <span class="compl">Задача <a href='/problems/{{problem.id}}'>#{{problem.id}}</a></span>
-    {% if problem.complexity%}<span class="compl">Сложность {{problem.complexity}}/10</span>{% endif %}
-    {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
-    <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
-    {% if problem.solution%}<h4>Решение</h4><div class="solution">{{problem.solution|markdown|safe}}</div>{% endif %}
-    {% if problem.answer%}<h4>Ответ </h4><div class="answer">{{problem.answer|markdown|safe}}</div>{% endif %}
+  <div class=card id={{forloop.counter}}>
+    <span class=id-in-var>{{ forloop.counter }}</span>
+    <span class=compl>Задача <a href='/problems/{{problem.id}}'>#{{problem.id}}</a></span>
+    {% if problem.complexity%}<span class=compl>Сложность {{problem.complexity}}/10</span>{% endif %}
+    {% if problem.source %}<span class=compl>Источник: {{problem.source}}</span>{% endif %}
+    <div class=problem>{{problem.text|markdown|abbr|safe}}</div>
+    {% if problem.solution%}<h4>Решение</h4><div class=solution>{{problem.solution|markdown|safe}}</div>{% endif %}
+    {% if problem.answer%}<h4>Ответ </h4><div class=answer>{{problem.answer|markdown|safe}}</div>{% endif %}
     Максимальный балл: {{problem.type_ege.max_score}}
   <div><hr>
   {% endfor %}
