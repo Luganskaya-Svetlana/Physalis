@@ -113,6 +113,10 @@ div.rel:has(div.var-id-in-list) {
   padding: 2px 5px;
   line-height: 3.8ex;
   color: #3377cc;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
 }
 a {
   text-decoration: none;

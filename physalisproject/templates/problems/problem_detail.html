@@ -21,10 +21,12 @@
     {% if problem.subcategory%}<p><b>Подраздел: </b>{{problem.subcategory}}</p>{% endif %}
     <p><b>Номер в ЕГЭ: </b>{{problem.type_ege}}</p>
     {% if problem.tags.all %}
-      <b>Тэги:</b>
+    <div class='ta-left'>
+      <span class=bold>Тэги:</span>
       {% for tag in problem.tags.all %}
         <span class='tag'>{{ tag.name }}</span>
       {% endfor %}
     {% endif %}
+    </div>
   </div>
 {% endblock %}
