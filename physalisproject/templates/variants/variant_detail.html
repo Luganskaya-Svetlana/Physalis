@@ -5,12 +5,14 @@
 {% load static %}
 
 {% block content %}
+  <div class=no-print>
+    {{ variant.text|markdown|safe }}
+    <p>Сложность: {{ variant.complexity }}/10</p>
+  </div>
   <h1>Вариант #{{ variant.id }}</h1>
-  <p>Сложность: {{ variant.complexity }}/10</p>
-  {{ variant.text|markdown|safe }}
 
-  <h2 class=center-flex>Часть 1</h2>
   {% if variant.is_full %} 
+  <h2 class=center-flex>Часть 1</h2>
     <div class=instruction> Ответами к заданиям 1-23 являются число или последовательность цифр. Ответ запишите в поле ответа в тексте работы, а затем перенесите в БЛАНК ОТВЕТОВ №&nbsp;1 справа от номера соответствующего задания, начиная с первой клеточки. Каждый символ пишите в отдельной клеточке в соответствии с приведёнными в бланке образцами. Единицы измерения физических величин писать не нужно. </div>
   {% endif %}
 
@@ -35,7 +37,7 @@
     <div class=instruction>Проверьте, чтобы каждый ответ был записан рядом с номером соответствующего задания.</div>
   {% endif %}
   {% if variant.show_answers %}
-  <div class='center-flex mt10'>
+  <div class='center-flex mt30 fs130'>
     <a class='page no-print' href={{variant.get_answers_url}}>Перейти к ответам</a>
   </div>
   {% endif %}
