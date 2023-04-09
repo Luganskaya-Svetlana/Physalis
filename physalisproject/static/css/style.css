@@ -289,10 +289,14 @@ h1>a.lnk_btn {
 }
 
 @media print {
-  div { break-inside: avoid; }
+  div {
+    break-inside: avoid;
+    overflow: hidden;
+  }
+  .print-new-page {
+    page-break-before: always;
+  }
   .no-print, .no-print * {
       display: none !important;
   }
 }
-
-
