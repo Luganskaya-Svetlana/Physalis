@@ -10,7 +10,9 @@
     <table class='center-table ans-table'>
       {% for problem in variant.get_answers %}
         {% ifchanged problem.type_ege.part_ege %}
+        {% if variant.is_full %}
           <tr> <td colspan=3 class='ta-center bold'>{{ problem.type_ege.part_ege }}</td> </tr>
+        {% endif %}
           <tr>
             <td class=bold>№</td>
             <td class=bold>Ответ</td>
