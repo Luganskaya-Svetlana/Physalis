@@ -25,28 +25,51 @@ class VariantForm(forms.ModelForm):
         problems = cleaned_data.get('problems')
 
         if problems:  # если указаны существующие задачи
-            problems_count = len(problems)
             if cleaned_data.get('is_full'):
-                # если выбрана опция "полный вариант"
-                if problems_count == NUMBER_OF_PROBLEMS:
-                    num = 1
-                    problems = problems.order_by('type_ege__number')
-                    for problem in problems:
-                        if problem.type_ege.number != num:
-                            raise ValidationError('Это не полный вариант.'
-                                                  ' Первая неверная задача:'
-                                                  f' {problem.id} (тип '
-                                                  f'{problem.type_ege.number})'
-                                                  )
-                        num += 1
-                        comlexity += problem.complexity
-                else:
+                # проверяем, действительно ли вариант полный
+                types = [problem.type_ege.number for problem in problems
+                         .order_by('type_ege__number')]
+                i = 1
+                to_add = []
+                to_remove = []
+                while i != NUMBER_OF_PROBLEMS + 1:
+                    if types:
+                        current_type = types.pop(0)
+                        if i > current_type:
+                            if str(current_type) not in to_remove:
+                                to_remove.append(str(current_type))
+                        elif i < current_type:
+                            while i != current_type:
+                                to_add.append(str(i))
+                                i += 1
+                            i += 1
+                        elif i == current_type:
+                            i += 1
+                    else:
+                        to_add.append(str(i))
+                        i += 1
+                if types:
+                    for current_type in types:
+                        if str(current_type) not in to_remove:
+                            to_remove.append(str(current_type))
+                if to_add and to_remove:
                     raise ValidationError('Это не полный вариант. '
-                                          'Число задач меньше, чем'
-                                          f' {NUMBER_OF_PROBLEMS}')
-            else:  # если опция "полный вариант" не выбрана
-                for problem in problems:
-                    comlexity += problem.complexity
+                                          'Слишком много задач с типами '
+                                          f'{", ".join(to_remove)}. '
+                                          'Нет задач с типами '
+                                          f'{", ".join(to_add)}.')
+                elif to_add:
+                    raise ValidationError('Это не полный вариант. '
+                                          'Нет задач с типами '
+                                          f'{", ".join(to_add)}.')
+                elif to_remove:
+                    raise ValidationError('Это не полный вариант. '
+                                          'Слишком много задач с типами '
+                                          f'{", ".join(to_remove)}.')
+            # расчет сложности варианта
+            problems_count = len(problems)
+            for problem in problems:
+                comlexity += problem.complexity
             cleaned_data['complexity'] = round(comlexity / problems_count, 1)
 
             if not cleaned_data.get('answer_slug'):
