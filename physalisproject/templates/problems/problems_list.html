@@ -42,7 +42,7 @@
       {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
       <span class="compl no-solution">{% if not problem.solution %}Без решения{% endif %}</span>
     </div>
-    <div class="problem">{{problem.text|markdown|abbr|safe}}</div>
+    <div class="problem">{{problem.text|abbr|markdown|safe}}</div>
   </div><hr class=mb20>
   {% empty %}
     <p>Ничего не нашлось {{":("}}</p>
