@@ -5,50 +5,9 @@
     <meta charset=utf-8>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if problem.id %}#{{problem.id}} — {% endif %}{% if variant.id %}Вариант #{{variant.id}}—{% endif %}Физалис</title>
-    <script>
-      window.MathJax = {
-        tex: {
-          processEscapes: true,
-          inlineMath: [['$', '$']],
-          macros: {
-            eds: "\\mathcal{E}",
-            la: "\\lambda",
-            Ftr: "F_\\textsf{тр}",
-            tg: "\\text{tg}",
-            ctg: "\\text{ctg}",
-            arctg: ["\\text{arctg}\\; #1", 1],
-            ans: "\\text{Ответ:} \\underline{\\hspace{3cm}}",
-            a: "\\alpha",
-            b: "\\beta",
-            f: "\\varphi",
-            tga: "\\tg{\\alpha}",
-            ctga: "\\ctg{\\alpha}",
-            tgb: "\\tg{\\beta}",
-            tgf: "\\tg{\\varphi}",
-            sina: "\\sin{\\alpha}",
-            cosa: "\\cos{\\alpha}",
-            sinb: "\\sin{\\beta}",
-            cosb: "\\cos{\\beta}",
-            sinf: "\\sin{\\varphi}",
-            cosf: "\\cos{\\varphi}",
-            dx: "\\Delta x",
-            dE: "\\Delta E",
-            dU: "\\Delta U",
-            dT: "\\Delta T",
-            dt: "\\Delta t",
-            deg: "^\\circ",
-            N: "\\;\\textsf{Н}",
-            kg: "\\;\\textsf{кг}",
-            me: "\\;\\textsf{м}",
-            sec: "\\;\\textsf{с}",
-            degc: "\\,{}^\\circ\\text{C}"
-          }
-        }
-      };
-    </script>
-    <script async src={% static 'js/tex-mml-chtml.js'%}></script>
     <link rel=stylesheet href={% static 'css/style.css'%}>
-
+    {% include "includes/mj.html" %}
+    <script async src={% static 'js/tex-mml-chtml.js'%}></script>
   </head>
   <body>
     <header>
