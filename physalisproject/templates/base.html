@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if problem.id %}#{{problem.id}} — {% endif %}{% if variant.id %}Вариант #{{variant.id}}—{% endif %}Физалис</title>
     <link rel=stylesheet href={% static 'css/style.css'%}>
+    {% comment %}
     {% include "includes/mj.html" %}
     <script async src={% static 'js/tex-mml-chtml.js'%}></script>
+    {% endcomment %}
   </head>
   <body>
     <header>

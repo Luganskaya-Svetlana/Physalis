@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
+{% load ziamath_filter %}
 {% load abbr %}
 
 {% block content %}
@@ -12,9 +13,9 @@
         <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">»</a>
       {% endif %}
     </h1>
-    <div class="problem">{{problem.text|abbr|markdown|safe}}</div>
-    {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|abbr|markdown|safe}}</div>{% endif %}
-    {% if problem.answer%}<h2>Ответ </h2><div class="answer">{{problem.answer|markdown|safe}}</div>{% endif %}
+    <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
+    {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|abbr|ziamath_filter|markdown|safe}}</div>{% endif %}
+    {% if problem.answer%}<h2>Ответ </h2><div class="answer">{{problem.answer|ziamath_filter|markdown|safe}}</div>{% endif %}
     {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
     {% if problem.source%}<p><b>Источник: </b>{{problem.source}}</p>{% endif %}
     {% if problem.category%}<p><b>Раздел: </b>{{problem.category}}</p>{% endif %}

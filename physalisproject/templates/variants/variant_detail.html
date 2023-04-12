@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
+{% load ziamath_filter %}
 {% load save_parameters %}
 {% load abbr %}
 {% load static %}
@@ -19,7 +20,7 @@
   {% for problem in variant.get_problems %}
       <div class="problem">
         <span class='id-in-var'>{{ forloop.counter }}</span>  {% if not variant.is_full %}(тип {{problem.type_ege.number}}){% endif %}
-        {{problem.text|markdown|abbr|safe}}
+        {{problem.text|abbr|ziamath_filter|markdown|safe}}
       </div>
     {% if variant.is_full and forloop.counter == 22 %}
       <div class=instruction> В бланк ответов №&nbsp;1 перенесите только числа, не разделяя их пробелом или другим знаком. </div>
