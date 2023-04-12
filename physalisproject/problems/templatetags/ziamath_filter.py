@@ -3,18 +3,65 @@ import ziamath as zm
 import re
 import xml.etree.ElementTree as ET
 
+#zm.config.precision = 10
 
 
 register = template.Library()
 
+shortcuts = {
+    r'([^{]*[A-Z])(?=$|[\s\]])': r'\1\\hspace{0.085em}', # обрезаются почти все большие буквы, добавить пробел
+    r"'": r"\\prime",
+    r'\\cdot': r'\\;\\cdot\\;',
+    r'([a-zA-Z])\\dfrac': r'\1\\;\\dfrac',
+    r'(?<=\w|\})\\sin(?=\^|\\|{)': r'\\,\\sin',
+    r'(?<=\w|\})\\cos(?=\^|\\|{)': r'\\,\\cos',
+    r'\\a(?![a-zA-Z])': r'\\alpha',
+    r'\\b(?![a-zA-Z])': r'\\beta',
+    r'\\f(?![a-zA-Z])': r'\\varphi',
+    r'\\la(?![a-zA-Z])': r'\\lambda',
+    r'\\tg(?![a-zA-Z])': r'\\,\\text{tg}\,',
+    r'\\ctg(?![a-zA-Z])': r'\\,\\text{ctg}\,',
+    r'\\arctg(?![a-zA-Z])': r'\\text{arctg}~',
+    r'\\mc(?![a-zA-Z])': r'\\;м^3',
+    r'\\kg(?![a-zA-Z])': r'\\;кг',
+    r'\\kgms(?![a-zA-Z])': r'\\;кг\\;\\cdot\\;м/с',
+    r'\\kgmc(?![a-zA-Z])': r'\\;кг / м^3',
+    r'\\s(?![a-zA-Z])': r'\\;с',
+    r'\\m(?![a-zA-Z])': r'\\;м',
+    r'\\A(?![a-zA-Z])': r'\\;А',
+    r'\\Om(?![a-zA-Z])': r'\\;Ом',
+    r'\\g(?![a-zA-Z])': r'\\;г',
+    r'\\Hz(?![a-zA-Z])': r'\\;Гц',
+    r'\\Wt(?![a-zA-Z])': r'\\;Вт',
+    r'\\kWt(?![a-zA-Z])': r'\\;кВт',
+    r'\\cm(?![a-zA-Z])': r'\\;см',
+    r'\\mm(?![a-zA-Z])': r'\\;мм',
+    r'\\nm(?![a-zA-Z])': r'\\;нм',
+    r'\\Vo(?![a-zA-Z])': r'\\;В',
+    r'\\Vm(?![a-zA-Z])': r'\\;В/м',
+    r'\\Pa(?![a-zA-Z])': r'\\;Па',
+    r'\\kPa(?![a-zA-Z])': r'\\;кПа',
+    r'\\ms(?![a-zA-Z])': r'\\;м/с',
+    r'\\mss(?![a-zA-Z])': r'\\;м/с^2',
+    r'\\cms(?![a-zA-Z])': r'\\;см/с',
+    r'\\cmsq(?![a-zA-Z])': r'\\;см^2',
+    r'\\Cl(?![a-zA-Z])': r'\\;Кл',
+    r'\\Tl(?![a-zA-Z])': r'\\;Тл',
+    r'\\Ftr(?![a-zA-Z])': r'F_{тр}',
+    r'\\N(?![a-zA-Z])': r'\\;Н',
+    r'\\Nm(?![a-zA-Z])': r'\\;Н/м',
+    r'\\J(?![a-zA-Z])': r'\\;Дж',
+    r'\\kJ(?![a-zA-Z])': r'\\;кДж',
+    r'\\eds(?![a-zA-Z])': r'\\mathcal{E}',
+    r'\\deg(?![a-zA-Z])': r'^\\circ',
+    r'\\dU(?![a-zA-Z])': r'\\Delta U',
+    r'\\dt(?![a-zA-Z])': r'\\Delta t',
+    r'\\dx(?![a-zA-Z])': r'\\Delta x',
+    r'\\dl(?![a-zA-Z])': r'\\Delta \\ell',
+    r'\\degc(?![a-zA-Z])': r'~^\\circ\\text{C}',
+}
+
 def replace_shortcuts(formula):
-    shortcuts = {
-        r'\\a(?![a-zA-Z])': r'\\alpha',
-        r'\\b(?![a-zA-Z])': r'\\beta',
-        r'\\f(?![a-zA-Z])': r'\\varphi',
-        r'\\eds(?![a-zA-Z])': r'\\mathcal{E}',
-        r'\\degc(?![a-zA-Z])': r'\\,{}^{\\circ}\\text{C}',
-    }
 
     for shortcut, full_name in shortcuts.items():
         formula = re.sub(shortcut, full_name, formula)
@@ -23,24 +70,38 @@ def replace_shortcuts(formula):
 
 def render_formula(match):
     formula = match.group(1)
-    formula = replace_shortcuts(formula)  # Заменяем сокращения на полные имена
-    #svg = ziamath.to_svg(formula)
-    svg = zm.Math.fromlatex(formula, size=20).svg()
+    formula = replace_shortcuts(formula)
+    #math_obj = zm.Math.fromlatex(formula, size=20, font='/Users/slisakov/Physalis/venv/lib/python3.9/site-packages/ziamath/fonts/XITSMath-Regular.otf') # bad \left(
+    #math_obj = zm.Math.fromlatex(formula, size=20, font='/Users/slisakov/Physalis/venv/lib/python3.9/site-packages/ziamath/fonts/LibertinusMath-Regular.otf') # don't like v
+    math_obj = zm.Math.fromlatex(formula, size=18.5)
+    svg = math_obj.svg()
 
-    ET.register_namespace('', '')
-
+    # Удаляем атрибут xmlns:ns0 из тега SVG
     root = ET.fromstring(svg)
+    if 'xmlns:ns0' in root.attrib:
+        del root.attrib['xmlns:ns0']
+
+    # Получаем размеры и смещение формулы
+    width, height = math_obj.getsize()
+    y_offset = math_obj.getyofst()
+    dy = -0.65
+
+    # Добавляем атрибут style для вертикального выравнивания
     style = root.attrib.get('style', '')
-    root.attrib['style'] = f'{style}; vertical-align: middle; fontsize:80%; max-height:100%;'
-    # Ограничиваем высоту SVG
-    height = float(root.attrib.get('height', '0'))
-    max_height = 200  # Задаем максимальную высоту (можете выбрать другое значение)
-    if height > max_height:
-        root.attrib['height'] = str(max_height)
-        root.attrib['preserveAspectRatio'] = 'xMinYMin meet'
+    root.attrib['style'] = f'{style}; vertical-align: {y_offset+dy}px;'
+
+    ## Ограничиваем высоту SVG
+    #max_height = 200  # Задаем максимальную высоту
+    #if height > max_height:
+        #root.attrib['height'] = str(max_height)
+        #root.attrib['preserveAspectRatio'] = 'xMinYMin meet'
 
     svg = ET.tostring(root, encoding='unicode')
+
+    # Удаляем префикс ns0: из тегов SVG
     svg = svg.replace('ns0:', '')
+    svg = svg.replace('<svg', '<svg class="math-svg"')
+    
 
     return svg
 

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
+{% load ziamath_filter %}
 {% load abbr %}
 {% load save_parameters %}
 {% load static %}
@@ -42,7 +43,7 @@
       {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
       <span class="compl no-solution">{% if not problem.solution %}Без решения{% endif %}</span>
     </div>
-    <div class="problem">{{problem.text|abbr|markdown|safe}}</div>
+    <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
   </div><hr class=mb20>
   {% empty %}
     <p>Ничего не нашлось {{":("}}</p>
