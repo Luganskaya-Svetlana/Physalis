@@ -26,7 +26,7 @@ h6 { font-size:12pt; }
 .math-svg line,
 .math-svg rect {
   stroke: black;
-  stroke-width: 0.22;
+  stroke-width: 0.15;
 }
 
 /*
