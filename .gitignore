@@ -1,5 +1,3 @@
-physalisproject/locustenv/
-physalisproject/locustfile.py
 .idea/
 .vscode/
 __pycache__/
