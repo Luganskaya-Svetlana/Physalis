@@ -4,8 +4,10 @@
 {% load save_parameters %}
 {% load abbr %}
 {% load static %}
+{% load cache %}
 
 {% block content %}
+  {% cache 600 variant_detail variant.id %}
   <h2>Ответы на вариант <a href='/variants/{{variant.id}}'>#{{variant.id}}</a></h2>
   <div class=ofa>
     <table class='center-table ans-table'>
@@ -41,5 +43,5 @@
     Максимальный балл: {{problem.type_ege.max_score}}
   <div><hr>
   {% endfor %}
-
+  {% endcache %}
 {% endblock %}
