@@ -4,10 +4,8 @@
 {% load save_parameters %}
 {% load abbr %}
 {% load static %}
-{% load cache %}
 
 {% block content %}
-  {% cache 600 variant_detail variant.id %}
   <h1>Вариант #{{ variant.id }}</h1>
   <div class=no-print>
     {{ variant.text|markdown|safe }}
@@ -44,5 +42,4 @@
     <a class='page bordered no-print' href={{variant.get_answers_url}}>Перейти к ответам</a>
   </div>
   {% endif %}
-  {% endcache %}
 {% endblock %}

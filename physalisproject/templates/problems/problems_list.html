@@ -36,7 +36,6 @@
     </div>
   {% endif %}
 
-  {% cache 3600 problems_list_cache page_obj.number %} {# Кэширование списка задач на 1 час (3600 секунд) #}
   {% for problem in page_obj %}
   <div class="rel">
     <div class="id-in-list">
@@ -52,8 +51,6 @@
     <p>Ничего не нашлось {{":("}}</p>
     <p>Попробуйте другой фильтр.</p>
   {% endfor %}
-  {% endcache %}
-
 
   {% if page_obj.paginator.num_pages != 1 %}
     <div class="center-flex"> <h3>Выберите страницу</h3> </div>
