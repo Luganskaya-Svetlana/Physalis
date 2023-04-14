@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from variants.filters import VariantFilter
@@ -30,6 +31,12 @@ class VariantsView(ListView):
         data['title'] = 'Варианты'
         return data
 
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super().as_view(**initkwargs)
+        view = cache_page(5 * 60)(view) # cache for N seconds
+        return view
+
 
 class VariantView(DetailView):
     model = Variant
@@ -38,6 +45,12 @@ class VariantView(DetailView):
 
     def get_queryset(self):
         return Variant.objects.detail()
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super().as_view(**initkwargs)
+        view = cache_page(5 * 60)(view) # cache for N seconds
+        return view
 
 
 class VariantAnswerView(DetailView):
@@ -55,3 +68,9 @@ class VariantAnswerView(DetailView):
             return variant
         else:
             raise Http404
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super().as_view(**initkwargs)
+        view = cache_page(60 * 60)(view)
+        return view
