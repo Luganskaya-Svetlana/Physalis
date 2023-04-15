@@ -1,9 +1,12 @@
-from django import template
-import ziamath as zm
+# flake8: noqa
+
 import re
 import xml.etree.ElementTree as ET
 
-#zm.config.precision = 10
+import ziamath as zm
+from django import template
+
+# zm.config.precision = 10
 
 
 register = template.Library()
@@ -61,6 +64,7 @@ shortcuts = {
     r'\\degc(?![a-zA-Z])': r'~^\\circ\\text{C}',
 }
 
+
 def replace_shortcuts(formula):
 
     for shortcut, full_name in shortcuts.items():
@@ -68,11 +72,13 @@ def replace_shortcuts(formula):
 
     return formula
 
+
 def render_formula(match):
     formula = match.group(1)
     formula = replace_shortcuts(formula)
-    #math_obj = zm.Math.fromlatex(formula, size=20, font='/Users/slisakov/Physalis/venv/lib/python3.9/site-packages/ziamath/fonts/XITSMath-Regular.otf') # bad \left(
-    #math_obj = zm.Math.fromlatex(formula, size=20, font='/Users/slisakov/Physalis/venv/lib/python3.9/site-packages/ziamath/fonts/LibertinusMath-Regular.otf') # don't like v
+    # math_obj = zm.Math.fromlatex(formula, size=20,
+    # font='/Users/slisakov/Physalis/venv/lib/python3.9/site-packages/ziamath/fonts/XITSMath-Regular.otf') # bad \left(
+    # math_obj = zm.Math.fromlatex(formula, size=20, font='/Users/slisakov/Physalis/venv/lib/python3.9/site-packages/ziamath/fonts/LibertinusMath-Regular.otf') # don't like v
     math_obj = zm.Math.fromlatex(formula, size=18.5)
     svg = math_obj.svg()
 
@@ -90,20 +96,20 @@ def render_formula(match):
     style = root.attrib.get('style', '')
     root.attrib['style'] = f'{style}; vertical-align: {y_offset+dy}px;'
 
-    ## Ограничиваем высоту SVG
-    #max_height = 200  # Задаем максимальную высоту
-    #if height > max_height:
-        #root.attrib['height'] = str(max_height)
-        #root.attrib['preserveAspectRatio'] = 'xMinYMin meet'
+    # Ограничиваем высоту SVG
+    # max_height = 200  # Задаем максимальную высоту
+    # if height > max_height:
+    #   root.attrib['height'] = str(max_height)
+    #   root.attrib['preserveAspectRatio'] = 'xMinYMin meet'
 
     svg = ET.tostring(root, encoding='unicode')
 
     # Удаляем префикс ns0: из тегов SVG
     svg = svg.replace('ns0:', '')
     svg = svg.replace('<svg', '<svg class="math-svg"')
-    
 
     return svg
+
 
 @register.filter()
 def ziamath_filter(text):
