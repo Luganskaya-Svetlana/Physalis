@@ -33,6 +33,7 @@
   <div class=card id={{forloop.counter}}>
     <span class=id-in-var>{{ forloop.counter }}</span>
     <span class=compl>Задача <a href='/problems/{{problem.id}}'>#{{problem.id}}</a></span>
+    <span class=compl> {% if not variant.is_full %}(тип {{problem.type_ege.number}}){% endif %}</span>
     {% if problem.complexity%}<span class=compl>Сложность {{problem.complexity}}/10</span>{% endif %}
     {% if problem.source %}<span class=compl>Источник: {{problem.source}}</span>{% endif %}
     <div class=problem>{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>

@@ -84,7 +84,7 @@ def render_formula(match):
     # Получаем размеры и смещение формулы
     width, height = math_obj.getsize()
     y_offset = math_obj.getyofst()
-    dy = -0.65
+    dy = -0.74
 
     # Добавляем атрибут style для вертикального выравнивания
     style = root.attrib.get('style', '')

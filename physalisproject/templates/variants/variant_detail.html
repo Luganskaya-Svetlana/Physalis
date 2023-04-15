@@ -9,7 +9,9 @@
   <h1>Вариант #{{ variant.id }}</h1>
   <div class=no-print>
     {{ variant.text|markdown|safe }}
-    <p>Сложность: {{ variant.complexity }}/10</p>
+    <p>Сложность: {{ variant.complexity }}/10 </p>
+    <p><a href=/media/files/const.pdf>Справочные данные</a></p>
+    {% if variant.pdf_file %} <p><a href="{{ variant.pdf_file.url }}">Скачать PDF</a></p> {% endif %}
   </div>
 
   {% if variant.is_full %}

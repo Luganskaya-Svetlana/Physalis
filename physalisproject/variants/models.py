@@ -5,6 +5,11 @@ from variants.managers import VariantManager
 
 from .validators import validate_answer_slug
 
+#from django.core.files.base import ContentFile
+#from io import BytesIO
+#from django.template.loader import get_template
+#from xhtml2pdf import pisa
+
 
 class Variant(models.Model):
     objects = VariantManager()
@@ -45,3 +50,22 @@ class Variant(models.Model):
     def get_answers_url(self):
         return reverse('variants:answers', kwargs={'pk': self.pk,
                                                    'slug': self.answer_slug})
+
+    #def generate_pdf(self):
+        #template = get_template('variants/variant_detail.html')
+        #context = {'variant': self}
+        #html_content = template.render(context)
+        #pdf_buffer = BytesIO()
+        #pisa.CreatePDF(html_content, dest=pdf_buffer)
+        #pdf_content = pdf_buffer.getvalue()
+        #pdf_buffer.close()
+        #return pdf_content
+#
+    #def save(self, *args, **kwargs):
+        #super().save(*args, **kwargs)
+        #pdf_content = self.generate_pdf()
+        #pdf_filename = f'variant_{self.pk}.pdf'
+        #self.pdf_file.save(pdf_filename, ContentFile(pdf_content))
+        #super().save(update_fields=['pdf_file'])
+#
+    #pdf_file = models.FileField('PDF файл варианта', upload_to='variants_pdf/', null=True, blank=True)
