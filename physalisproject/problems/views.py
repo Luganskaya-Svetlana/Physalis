@@ -35,7 +35,6 @@ class ProblemsView(ListView):
     filter = ProblemFilter
     paginate_by = 40
 
-
     def get_queryset(self):
         queryset = Problem.objects.list()
         self.filterset = self.filter(self.request.GET, queryset=queryset)
@@ -46,5 +45,6 @@ class ProblemsView(ListView):
         data['filter'] = ProblemFilter(self.request.GET)
         data['title'] = 'Все задачи'
         return data
+
 
 problems_view = cache_page(5 * 60)(ProblemsView.as_view())
