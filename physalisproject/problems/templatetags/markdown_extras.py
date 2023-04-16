@@ -11,4 +11,6 @@ register = template.Library()
 @stringfilter
 def markdown(value):
     return md.markdown(value, extensions=['markdown.extensions.fenced_code',
+                                          'tables',
+                                          'toc',
                                           'footnotes'])
