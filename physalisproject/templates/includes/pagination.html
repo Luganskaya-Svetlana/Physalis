@@ -1,0 +1,14 @@
+{% load save_parameters %}
+
+{% if page_obj.paginator.num_pages != 1 %}
+<div class="center-flex"> <h3>Выберите страницу</h3> </div>
+<div class="center-flex mb10 mt-5"> 
+  {% for page_number in page_obj.paginator.page_range %}
+    <a
+      href="?{% param_save page=page_number %}"
+      class="page {% if page_number == page_obj.number %}current{% endif %}">
+      {{page_number}}
+    </a>
+  {% endfor %}
+</div>
+{% endif %}
