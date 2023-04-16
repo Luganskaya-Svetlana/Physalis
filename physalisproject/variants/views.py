@@ -10,6 +10,7 @@ class VariantsView(ListView):
     model = Variant
     template_name = 'variants/variants_list.html'
     context_object_name = 'variants'
+    paginate_by = 30
     filter = VariantFilter
 
     def get_queryset(self):

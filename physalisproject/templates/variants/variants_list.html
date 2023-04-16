@@ -19,7 +19,9 @@
     <a class='var-sort{% if "=-id" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="-id" %}">Новые</a>
   </div>
 
-  {% for variant in variants %}
+  {% include "includes/pagination.html" %}
+
+  {% for variant in page_obj %}
   {% if variant.id < 4 %}
     <div class="rel">
       <div class="var-id-in-list">
@@ -34,5 +36,7 @@
     <p>Ничего не нашлось {{":("}}</p>
     <p>Попробуйте другой фильтр.</p>
   {% endfor %}
+
+  {% include "includes/pagination.html" %}
 
 {% endblock %}
