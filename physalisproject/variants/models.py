@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from problems.models import Problem
+from sortedm2m.fields import SortedManyToManyField
 from variants.managers import VariantManager
 
 from .validators import validate_answer_slug
@@ -14,8 +15,8 @@ from .validators import validate_answer_slug
 class Variant(models.Model):
     objects = VariantManager()
 
-    problems = models.ManyToManyField(Problem,
-                                      verbose_name='задачи')
+    problems = SortedManyToManyField(Problem,
+                                     verbose_name='задачи')
     text = models.TextField('комментарии', blank=True, null=True)
     complexity = models.FloatField('сложность', blank=True, default=0)
     is_full = models.BooleanField('полный вариант', default=True)
@@ -31,15 +32,20 @@ class Variant(models.Model):
         verbose_name_plural = 'варианты'
         default_related_name = 'variants'
 
-    def get_problems(self):
-        return (self.problems
-                    .order_by('type_ege__number')
-                    .only('text', 'type_ege__number'))
+    def get_problems(self):  # задачи для страницы варианта
+        problems = (self.problems
+                        .only('text', 'type_ege__number'))
+        if self.is_full:
+            problems = problems.order_by('type_ege__number')
+        return problems
 
-    def get_answers(self):
-        return (self.problems
-                    .order_by('type_ege__number')
-                    .only('solution', 'answer', 'type_ege__max_score'))
+    def get_answers(self):  # задачи для страницы с ответами
+        problems = (self.problems
+                        .only('solution', 'answer', 'type_ege__max_score',
+                              'complexity', 'source', 'id'))
+        if self.is_full:
+            problems = problems.order_by('type_ege__number')
+        return problems
 
     def __str__(self):
         return f'вариант с id {self.id}'
