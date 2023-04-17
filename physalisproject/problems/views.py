@@ -46,5 +46,8 @@ class ProblemsView(ListView):
         data['title'] = 'Все задачи'
         return data
 
-
-problems_view = cache_page(5 * 60)(ProblemsView.as_view())
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super().as_view(**initkwargs)
+        view = cache_page(5 * 60)(view)
+        return view
