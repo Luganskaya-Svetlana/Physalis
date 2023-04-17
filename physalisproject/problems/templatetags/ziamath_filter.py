@@ -1,11 +1,9 @@
-# flake8: noqa
-
 import re
 import xml.etree.ElementTree as ET
 import ziamath as zm
 from django import template
 
-zm.config.precision = 1
+zm.config.precision = 2
 zm.config.svg2 = False
 
 register = template.Library()
