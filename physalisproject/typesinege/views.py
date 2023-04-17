@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.views.decorators.cache import cache_page
 from django.views.generic.list import ListView
 from problems.filters import ProblemTypeFilter
 from problems.models import Problem, TypeInEGE
@@ -11,6 +12,12 @@ class TypesView(ListView):
 
     def get_queryset(self):
         return super().get_queryset().order_by('number')
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super().as_view(**initkwargs)
+        view = cache_page(60)(view)
+        return view
 
 
 class ProblemsView(ListView):
@@ -43,3 +50,9 @@ class ProblemsView(ListView):
                                           .exists())
         data['type_num'] = num
         return data
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super().as_view(**initkwargs)
+        view = cache_page(60)(view)
+        return view
