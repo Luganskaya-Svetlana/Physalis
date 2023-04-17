@@ -14,7 +14,7 @@ shortcuts = {
     #r'([^{]*[A-Z])(?=$|[\s\]])': r'\1\\hspace{0.085em}',
     #r'(?<=\w|\})\\sin(?=\^|\\|{)': r'\\,\\sin',
     #r'(?<=\w|\})\\cos(?=\^|\\|{)': r'\\,\\cos',
-    r"'": r"\\prime",
+    r"'": r"\\prime ",
     r'\\cdot': r'\\;\\cdot\\;',
     r'([a-zA-Z])\\dfrac': r'\1\\;\\dfrac',
     r'\\a(?![a-zA-Z])': r'\\alpha',
