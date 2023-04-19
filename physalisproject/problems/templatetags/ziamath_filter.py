@@ -9,11 +9,11 @@ zm.config.svg2 = False
 register = template.Library()
 
 shortcuts = {
-    #r'([^{]*[A-Z])(?=$|[\s\]])': r'\1\\hspace{0.085em}',
-    #r'(?<=\w|\})\\sin(?=\^|\\|{)': r'\\,\\sin',
-    #r'(?<=\w|\})\\cos(?=\^|\\|{)': r'\\,\\cos',
-    #r'([a-zA-Z])\\dfrac': r'\1\\;\\dfrac',
-    #r'\\cdot': r'\\;\\cdot\\;',
+    # r'([^{]*[A-Z])(?=$|[\s\]])': r'\1\\hspace{0.085em}',
+    # r'(?<=\w|\})\\sin(?=\^|\\|{)': r'\\,\\sin',
+    # r'(?<=\w|\})\\cos(?=\^|\\|{)': r'\\,\\cos',
+    # r'([a-zA-Z])\\dfrac': r'\1\\;\\dfrac',
+    # r'\\cdot': r'\\;\\cdot\\;',
     r"'": r"\\prime ",
     r'\\a(?![a-zA-Z])': r'\\alpha',
     r'\\b(?![a-zA-Z])': r'\\beta',
@@ -45,6 +45,7 @@ shortcuts = {
     r'\\mss(?![a-zA-Z])': r'\\;м/с^2',
     r'\\cms(?![a-zA-Z])': r'\\;см/с',
     r'\\cmsq(?![a-zA-Z])': r'\\;см^2',
+    r'\\msq(?![a-zA-Z])': r'\\;м^2',
     r'\\Cl(?![a-zA-Z])': r'\\;Кл',
     r'\\Tl(?![a-zA-Z])': r'\\;Тл',
     r'\\Ftr(?![a-zA-Z])': r'F_{тр}',
@@ -54,11 +55,11 @@ shortcuts = {
     r'\\kJ(?![a-zA-Z])': r'\\;кДж',
     r'\\eds(?![a-zA-Z])': r'\\mathcal{E}',
     r'\\deg(?![a-zA-Z])': r'^\\circ',
+    r'\\degc(?![a-zA-Z])': r'~^\\circ\\text{C}',
     r'\\dU(?![a-zA-Z])': r'\\Delta U',
     r'\\dt(?![a-zA-Z])': r'\\Delta t',
     r'\\dx(?![a-zA-Z])': r'\\Delta x',
     r'\\dl(?![a-zA-Z])': r'\\Delta \\ell',
-    r'\\degc(?![a-zA-Z])': r'~^\\circ\\text{C}',
 }
 
 
@@ -90,8 +91,8 @@ def render_formula(match):
     style = root.attrib.get('style', '')
     root.attrib['style'] = f'{style}; vertical-align: {y_offset+dy}px;'
 
-    svg = ET.tostring(root, encoding='unicode').replace('ns0:', 
-            '').replace('<svg', '<svg class="math-svg"')
+    svg = ET.tostring(root, encoding='unicode').replace('ns0:', '')\
+        .replace('<svg', '<svg class="math-svg"')
 
     return svg
 
