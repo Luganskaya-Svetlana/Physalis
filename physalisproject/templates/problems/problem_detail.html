@@ -27,13 +27,13 @@
       {% for tag in problem.tags.all %}
         <span class='tag'>{{ tag.name }}</span>
       {% endfor %}
+    </div>
     {% endif %}
     {% if request.user.is_staff and problem.variants.all %}
-      <b>Варианты:</b>
+    <p><b>Варианты:</b></p>
       {% for variant in problem.variants.all %}
-        <p><a href="{{variant.get_absolute_url}}">#{{variant.id}}</a></p>
-    {% endfor %}
-  {% endif %}
-    </div>
+        <a href="{{variant.get_absolute_url}}">#{{variant.id}}</a>
+      {% endfor %}
+    {% endif %}
   </div>
 {% endblock %}

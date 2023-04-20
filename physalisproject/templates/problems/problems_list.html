@@ -32,7 +32,14 @@
       <span class="compl">Сложность {{problem.complexity}}/10</span>&nbsp;
       <span class="compl">Тип {{problem.type_ege.number}}</span>
       {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
-      <span class="compl no-solution">{% if not problem.solution %}Без решения{% endif %}</span>
+        {% if request.user.is_staff and problem.variants.all %}
+          <span class="compl no-solution">
+            {% for variant in problem.variants.all %}
+              <a href="{{variant.get_absolute_url}}">#{{variant.id}}</a>
+            {% endfor %}
+          </span>
+        {% endif %}
+      {% if not problem.solution %}<span class="compl no-solution">Без решения</span>{% endif %}
     </div>
     <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
   </div><hr class=mb20>
