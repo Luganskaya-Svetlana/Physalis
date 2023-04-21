@@ -27,8 +27,8 @@ class VariantForm(forms.ModelForm):
         if problems:  # если указаны существующие задачи
             if cleaned_data.get('is_full'):
                 # проверяем, действительно ли вариант полный
-                types = [problem.type_ege.number for problem in problems
-                         .order_by('type_ege__number')]
+                types = sorted([problem.type_ege.number
+                                for problem in problems])
                 i = 1
                 to_add = []
                 to_remove = []
