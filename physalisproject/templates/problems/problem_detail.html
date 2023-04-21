@@ -30,10 +30,12 @@
     </div>
     {% endif %}
     {% if request.user.is_staff and problem.variants.all %}
-    <p><b>Варианты:</b></p>
+    <p>
+      <b>Варианты:</b>
       {% for variant in problem.variants.all %}
         <a href="{{variant.get_absolute_url}}">#{{variant.id}}</a>
       {% endfor %}
+    </p>
     {% endif %}
   </div>
 {% endblock %}
