@@ -239,8 +239,9 @@ ol {
 }
 
 .right {
-  float:right;
-  padding-left:1em;
+  float: right;
+  padding-left: 1em;
+  margin-top: 5px;
 }
 a.lnk_btn {
   border-radius: 3px;
