@@ -22,7 +22,7 @@
   {% include "includes/pagination.html" %}
 
   {% for variant in page_obj %}
-  {% if variant.id < 5 %}
+  {% if variant.id <= 5 %}
     <div class="rel">
       <div class="var-id-in-list">
         <a href="{{variant.get_absolute_url}}"><b class='id-number'>#{{variant.id}}</b></a>
