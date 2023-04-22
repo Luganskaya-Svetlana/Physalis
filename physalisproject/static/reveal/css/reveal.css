@@ -1335,7 +1335,8 @@ p.fs120 strong { font-size:131% }
 .reveal #intro:before,
 .reveal #implementation:before,
 .reveal #result:before,
-.reveal #deploy:before
+.reveal #deploy:before,
+.reveal #difficulty:before
   {
   position:absolute;
   left:-170px;
@@ -1366,4 +1367,10 @@ p.fs120 strong { font-size:131% }
   content: 'Deploy        ';
   color:#f0d42a;
   text-shadow: 1px 1px 3px #7c5304;
+  }
+
+.reveal #difficulty:before {
+  content: 'Трудности';
+  color:#da80f8;
+  text-shadow: 1px 1px 3px rgb(194, 154, 207);
   }
