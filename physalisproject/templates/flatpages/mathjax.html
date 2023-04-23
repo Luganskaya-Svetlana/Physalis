@@ -1,0 +1,40 @@
+{% load static %}
+{% load markdown_extras %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <title>{{ flatpage.title }}</title>
+    <script>
+        window.MathJax = {
+            tex: {
+              inlineMath: [['$', '$'], ['\\(', '\\)']],
+              macros: {
+                    bold: ["{\\bf #1}", 1],
+                    arctg: ["{\\text{arctg}\\; #1}", 1],
+                    eds: "\\mathcal{E}",
+                    la: "\\lambda",
+                    a: "\\alpha",
+                    b: "\\beta",
+                    f: "\\varphi",
+                    tg: "\\,\\text{tg}",
+                    tga: "{\\tg{\\alpha}}",
+                    sina: "{\\sin{\\alpha}}",
+                    cosf: "{\\cos{\\varphi}}"
+                  }
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="{% static 'js/tex-mml-chtml.js'%}"> </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css">
+  </head>
+  <body>
+    <header>
+      {% include "includes/nav.html" %}
+    </header>
+    <main>
+      {{ flatpage.content|markdown|safe }}
+    </main>
+  </body>
+</html>

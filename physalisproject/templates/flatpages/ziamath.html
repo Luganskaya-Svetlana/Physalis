@@ -1,0 +1,20 @@
+{% load static %}
+{% load markdown_extras %}
+{% load ziamath_filter %}
+<!DOCTYPE html>
+<html lang=ru>
+  <head>
+    <title>{{ flatpage.title }}</title>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <link rel=stylesheet href={% static 'css/style.css'%}>
+  </head>
+  <body>
+    <header>
+      {% include "includes/nav.html" %}
+    </header>
+    <main>
+      {{ flatpage.content|ziamath_filter|markdown|safe }}
+    </main>
+  </body>
+</html>
