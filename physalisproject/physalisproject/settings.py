@@ -9,9 +9,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 
-DEBUG = os.getenv('DEBUG', default='False') == 'True'
+# DEBUG = os.getenv('DEBUG', default='False') == 'True'
+DEBUG = False
 
-# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
 ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', '82.148.29.71',
                  'phys.pro', 'www.phys.pro']
 
@@ -92,9 +92,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CACHES = {
     'default': {
-        # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, '.cache'),
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        # 'LOCATION': os.path.join(BASE_DIR, '.cache'),
     }
 }
 
@@ -110,10 +110,11 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
-MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
