@@ -164,11 +164,35 @@ table.change tr, td {
   vertical-align: top;
   text-align: left;
 }
-.ans-table  tr:nth-child(even) {
+.ans-table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 .ans-table td {
   vertical-align: middle;
+}
+
+
+.points-table tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+.points-table td {
+  vertical-align: middle;
+  text-align: center;
+}
+.points-table th {
+  background-color: #ffffff;
+  text-align: center;
+}
+.points-table td:nth-child(2),
+.points-table td:nth-child(5),
+.points-table td:nth-child(8)
+{
+  font-weight: bold;
+}
+.spacer {
+  width: 20px;
+  border:none;
+  background-color: #ffffff;
 }
 
 .ofa {
