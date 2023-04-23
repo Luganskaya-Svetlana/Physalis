@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import ziamath as zm
 from django import template
 
-zm.config.precision = 2
+# zm.config.precision = 3
 zm.config.svg2 = False
 
 register = template.Library()
@@ -14,14 +14,14 @@ shortcuts = {
     # r'(?<=\w|\})\\cos(?=\^|\\|{)': r'\\,\\cos',
     # r'([a-zA-Z])\\dfrac': r'\1\\;\\dfrac',
     # r'\\cdot': r'\\;\\cdot\\;',
-    r"'": r"\\prime ",
+    # r"'": r"\\prime ",
+    # r'\\tg(?![a-zA-Z])': r'\\,\\text{tg}\,',
+    # r'\\ctg(?![a-zA-Z])': r'\\,\\text{ctg}\,',
+    # r'\\arctg(?![a-zA-Z])': r'\\text{arctg}~',
     r'\\a(?![a-zA-Z])': r'\\alpha',
     r'\\b(?![a-zA-Z])': r'\\beta',
     r'\\f(?![a-zA-Z])': r'\\varphi',
     r'\\la(?![a-zA-Z])': r'\\lambda',
-    r'\\tg(?![a-zA-Z])': r'\\,\\text{tg}\,',
-    r'\\ctg(?![a-zA-Z])': r'\\,\\text{ctg}\,',
-    r'\\arctg(?![a-zA-Z])': r'\\text{arctg}~',
     r'\\mc(?![a-zA-Z])': r'\\;м^3',
     r'\\kg(?![a-zA-Z])': r'\\;кг',
     r'\\kgms(?![a-zA-Z])': r'\\;кг\\;\\cdot\\;м/с',

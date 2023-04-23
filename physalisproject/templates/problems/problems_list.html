@@ -41,7 +41,7 @@
         {% endif %}
       {% if not problem.solution %}<span class="compl no-solution">Без решения</span>{% endif %}
     </div>
-    <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
+    <div class="problem"> {{problem.text|abbr|ziamath_filter|markdown|safe}} </div>
   </div><hr class=mb20>
   {% empty %}
     <p>Ничего не нашлось {{":("}}</p>
