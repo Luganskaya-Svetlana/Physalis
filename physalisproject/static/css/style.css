@@ -51,6 +51,7 @@ h6 { font-size:12pt; }
   border: 2px solid #3377cc;
   border-radius: 3px;
   padding: 0px 2px 0px 2px;
+  margin-right: 1.9ex;
 }
 .id-in-var {
   display: inline-flex;
@@ -98,7 +99,7 @@ div.rel:has(div.var-id-in-list) {
   line-height: 15pt;
 }
 .compl {
-  padding-left:2ex;
+  margin-right:1.9ex;
   font-size: 11pt;
   font-family: Arial;
   color: #333333;
