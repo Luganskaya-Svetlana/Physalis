@@ -24,7 +24,7 @@ shortcuts = {
     r'\\la(?![a-zA-Z])': r'\\lambda',
     r'\\mc(?![a-zA-Z])': r'\\;м^3',
     r'\\kg(?![a-zA-Z])': r'\\;кг',
-    r'\\kgms(?![a-zA-Z])': r'\\;кг\\;\\cdot\\;м/с',
+    r'\\kgms(?![a-zA-Z])': r'\\;кг\\cdot м/с',
     r'\\kgmc(?![a-zA-Z])': r'\\;кг / м^3',
     r'\\s(?![a-zA-Z])': r'\\;с',
     r'\\m(?![a-zA-Z])': r'\\;м',
