@@ -5,9 +5,11 @@
     <meta charset=utf-8>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if problem.id %}#{{problem.id}} — {% endif %}{% if variant.id %}Вариант #{{variant.id}}—{% endif %}Физалис</title>
-    <meta property="og:site_name" content="Phys.pro">
     <link href="/media/favicon.svg" rel="icon">
     <link rel=stylesheet href={% static 'css/style.css'%}>
+    <meta property="og:site_name" content="Phys.pro">
+    <meta property="og:title" content="{{ flatpage.title }}">
+    <meta property="og:type" content="article">
     {% comment %}
     {% include "includes/mj.html" %}
     <script async src={% static 'js/tex-mml-chtml.js'%}></script>
