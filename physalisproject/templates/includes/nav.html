@@ -17,7 +17,6 @@
     <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %} class='current_nav'{% endif %}>Типы</a>
     <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %} class='current_nav'{% endif %}>Задачи</a>
     <a href="{% url 'variants:list'%}"{% if '/variants/' in request.path %} class='current_nav'{% endif %}>Варианты</a>
-    {% comment %}
     {% if '/problems/' in request.path and request.path != '/problems/' and request.user.is_staff %}
     <a href="/admin/problems/problem/{{problem.id}}/change" class=bold>✎</a>
     {% elif '/variants/' in request.path and request.path != '/variants/' and request.user.is_staff %}
@@ -25,7 +24,6 @@
     {% elif request.path != '/problems/' and request.path != '/variants/' and not '/types/' in request.path and request.user.is_staff %}
     <a href="/admin/flatpages/flatpage/{{flatpage.id}}/change/" class=bold>✎</a>
     {% endif %}
-    {% endcomment %}
   </div>
 
 </nav>
