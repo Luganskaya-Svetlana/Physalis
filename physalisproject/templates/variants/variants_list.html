@@ -28,7 +28,7 @@
         <span class="compl">Сложность: {{variant.complexity}}</span>&nbsp;
         <span class="compl no-solution">{% if not variant.is_full %}Неполный{% endif %}</span>
       </div>
-    <div>{{variant.text|markdown|safe}}</div>
+      <div>{{variant.text|markdown|safe}}</div>
     </div><hr>
     {% empty %}
     <p>Ничего не нашлось {{":("}}</p>

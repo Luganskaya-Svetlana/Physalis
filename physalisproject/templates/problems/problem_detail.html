@@ -25,7 +25,7 @@
     <div class='ta-left'>
       <span class=bold>Тэги:</span>
       {% for tag in problem.tags.all %}
-        <span class='tag'><a href={{tag.get_absolute_url}}>{{ tag.name }}</a></span>
+        <a class='tag' href={{tag.get_absolute_url}}>{{ tag.name }}</a>
       {% endfor %}
     </div>
     {% endif %}

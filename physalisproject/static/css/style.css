@@ -108,6 +108,10 @@ div.rel:has(div.var-id-in-list) {
   margin-left:auto;
   order:2;
 }
+.id-in-list .compl:last-child {
+  margin-right:0;
+}
+
 
 .ans {
   border-bottom: 1.3px solid black;
