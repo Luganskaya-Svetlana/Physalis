@@ -9,8 +9,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 
-# DEBUG = os.getenv('DEBUG', default='False') == 'True'
+# dev
+# DEBUG = True
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+
+# prod
 DEBUG = False
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', '82.148.29.71',
                  'phys.pro', 'www.phys.pro']
@@ -31,6 +36,7 @@ INSTALLED_APPS = [
     'typesinege.apps.TypesinegeConfig',
     'pages.apps.PagesConfig',
     'variants.apps.VariantsConfig',
+    'tags.apps.TagsConfig',
 ]
 
 MIDDLEWARE = [
@@ -110,8 +116,6 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

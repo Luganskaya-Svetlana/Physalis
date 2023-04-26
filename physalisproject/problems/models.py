@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django_cleanup.signals import cleanup_pre_delete
 from sorl.thumbnail import delete
+
 from .managers import ProblemManager
 
 
@@ -27,6 +28,9 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('tags:problems', kwargs={'slug': self.slug})
 
 
 class Source(models.Model):
