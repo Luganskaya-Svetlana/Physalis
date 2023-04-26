@@ -8,5 +8,6 @@ urlpatterns = [
     path('problems/', include('problems.urls', namespace='problems')),
     path('types/', include('typesinege.urls', namespace='typesinege')),
     path('variants/', include('variants.urls', namespace='variants')),
+    path('tags/', include('tags.urls', namespace='tags')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

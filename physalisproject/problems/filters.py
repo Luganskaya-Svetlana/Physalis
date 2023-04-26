@@ -1,6 +1,6 @@
 import django_filters
 
-from .models import Problem, PartOfEGE
+from .models import PartOfEGE, Problem
 
 
 class ProblemFilter(django_filters.FilterSet):
@@ -25,3 +25,13 @@ class ProblemTypeFilter(django_filters.FilterSet):
     class Meta:
         model = Problem
         fields = ['category', 'subcategory', 'source']
+
+
+class ProblemTagFilter(django_filters.FilterSet):
+    complexity = django_filters.RangeFilter(field_name='complexity')
+    type_ege = django_filters.NumberFilter(field_name='type_ege__number',
+                                           label='Номер в ЕГЭ')
+
+    class Meta:
+        model = Problem
+        fields = ['category', 'subcategory', 'source', 'type_ege']

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+    <h1>Задачи по тэгам</h1>
+
+      {% for tag in tags %}
+        <div> <a href="{{ tag.get_absolute_url }}">{{tag.name}}</a> </div>
+      {% endfor %}
+
+{% endblock %}
