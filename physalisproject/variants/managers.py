@@ -6,6 +6,7 @@ class VariantManager(models.Manager):
         return (
             self.get_queryset()
                 .only('id', 'complexity', 'text', 'is_full')
+                .filter(is_published=True)
         )
 
     def detail(self):

@@ -88,7 +88,8 @@ class VariantAdmin(admin.ModelAdmin):
     form = VariantForm
     readonly_fields = ('date',)
     fieldsets = (
-        (None, {'fields': ('problems', 'text', 'is_full', 'show_answers',)}),
+        (None, {'fields': ('problems', 'text', 'is_full', 'show_answers',
+                           'is_published')}),
         (('Автозаполняемые поля'), {
             'classes': ('collapse',),
             'fields': (
