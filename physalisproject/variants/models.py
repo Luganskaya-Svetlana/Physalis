@@ -26,6 +26,8 @@ class Variant(models.Model):
                                    max_length=4, unique=False,
                                    blank=True, default='foxy',
                                    validators=[validate_answer_slug])
+    is_published = models.BooleanField('показывать в списке вариантов',
+                                       default=True)
 
     class Meta:
         verbose_name = 'вариант'
