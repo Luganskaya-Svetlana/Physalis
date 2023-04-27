@@ -100,7 +100,7 @@ class VariantAdmin(admin.ModelAdmin):
         }),
     )
     # поля, отображаемые в форме
-    list_display = ('id', 'text', 'is_full')
+    list_display = ('id', 'text', 'is_full', 'is_published',)
     # поля, отображаемые на странице со всеми вариантами
     search_fields = ('id', 'text')  # поля, по которым осущ. поиск в админке
     raw_id_fields = ('problems',)
