@@ -23,7 +23,7 @@
     <p><b>Номер в ЕГЭ: </b>{{problem.type_ege}}</p>
     {% if problem.tags.all %}
     <div class='ta-left'>
-      <span class=bold>Тэги:</span>
+      <a class=bold href='{% url 'tags:list'%}'>Тэги:</a>
       {% for tag in problem.tags.all %}
         <a class='tag' href={{tag.get_absolute_url}}>{{ tag.name }}</a>
       {% endfor %}
