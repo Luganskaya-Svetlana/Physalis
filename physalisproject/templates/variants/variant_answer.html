@@ -23,7 +23,7 @@
         <tr>
           <td class='ta-right bold'><a href=#{{forloop.counter}}>{{forloop.counter}}</a></td>
           <td class=pl15>{% if problem.answer %}{{problem.answer|ziamath_filter|safe}}{% else %}См. решение {% endif %}</td>
-          <td>{{problem.type_ege.max_score}}</td>
+          <td class=center>{{problem.type_ege.max_score}}</td>
         </tr>
       {% endfor %}
     </table>
