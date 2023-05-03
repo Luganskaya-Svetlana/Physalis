@@ -54,6 +54,22 @@ python3 manage.py runserver
 Confidential information is stored in the .env file.
 In settings.py there are default values of SECRET_KEY, DEBUG and ALLOWED_HOSTS, so you can just run the project. But if you want to change default values, create .env file, copy text from env.example, paste it to .env and make desired changes.
 
+## Developement/production
+For developement, set
+```
+DEBUG = True
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+```
+in `settings.py`.
+
+For production, configure your web-server and set
+```
+DEBUG = False
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+```
+Otherwise static files such as css sheets won't be served properly.
+
+
 ## Features
 - [x] Add problems to the database from the admin panel (obligatory parameters: text, number; optional parameters: solution, answer category, tag, difficulty)
 - [x] Generate two pages (exam sheet and answers) via admin panel by listing ids of selected problems. Different styling for full and incomplete exam according to the structure of Unified State Exam in Russia (ЕГЭ)
@@ -62,9 +78,10 @@ In settings.py there are default values of SECRET_KEY, DEBUG and ALLOWED_HOSTS, 
 - [x] Pagination for 40+ elements in list
 - [x] Client-side MathJax rendering of math (currently not used)
 - [x] Server-side math rendering with [ziamath](https://github.com/cdelker/ziamath)
-- [x] Cache pages containing a lot of math (problems_list, types, variant_detail, variant_answer) to reduce database requests and processing time
 - [x] Use custom latex preamble to shorten latex formulae typing, see [ziamath_filter.py](https://github.com/Luganskaya-Svetlana/Physalis/blob/master/physalisproject/problems/templatetags/ziamath_filter.py)
-- [x] Adjust CSS styles for print: pdf saved with the standard system print dialog looks OK
+- [x] Cache pages containing a lot of math (problems_list, types, variant_detail, variant_answer, tags) to reduce database requests and processing time
+- [x] Adjust CSS styles for print: good-loking pdf saved with the standard system print dialog.
+- [ ] "Drafts" for problems and variants (problem/variant is saved and can be edited and published but is not shown)
 - [ ] Generate pdf automatically when generating exam sheets
 - [ ] Add website logo to the svg file while uploading
 - [ ] Trim the whitespace from the svg file while uploading

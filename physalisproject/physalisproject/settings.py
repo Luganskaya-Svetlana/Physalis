@@ -9,11 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 
-# dev
+# developement
 # DEBUG = True
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
-# prod
+# production
 DEBUG = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
