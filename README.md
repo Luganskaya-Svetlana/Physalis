@@ -1,5 +1,5 @@
 # Physalis
-Django-powered website with modern database of physical problems. 
+Django-powered website https://phys.pro (Russian language) with a unique selection of physics problems, structured in accordance with the Russian Unified State Exam (EGE).
 
 ## Workflow status
 ![workflow](https://github.com/Luganskaya-Svetlana/Physalis/actions/workflows/python-package.yml/badge.svg)
