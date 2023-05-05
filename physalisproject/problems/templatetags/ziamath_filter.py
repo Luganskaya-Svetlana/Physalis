@@ -51,6 +51,7 @@ shortcuts = {
     r'\\Tl(?![a-zA-Z])': r'\\;Тл',
     r'\\Ftr(?![a-zA-Z])': r'F_{тр}',
     r'\\N(?![a-zA-Z])': r'\\;Н',
+    r'\\mkF(?![a-zA-Z])': r'\\;мкФ',
     r'\\Nm(?![a-zA-Z])': r'\\;Н\!/\!м',
     r'\\J(?![a-zA-Z])': r'\\;Дж',
     r'\\kJ(?![a-zA-Z])': r'\\;кДж',
@@ -65,14 +66,51 @@ shortcuts = {
 
 
 def replace_shortcuts(formula):
-
     for shortcut, full_name in shortcuts.items():
         formula = re.sub(shortcut, full_name, formula)
 
     return formula
 
 
-def render_formula(match):
+def handle_abbreviations(match):
+    abbrev = match.group(1)
+    number = match.group(2)
+    punct = match.group(3)
+
+    if "e" in number:
+        base, exponent = number.split("e")
+        base = base.replace(".", "{,}").replace(",", "{,}")
+        if base == "1" or base=="":
+            formula = f"10^{{{exponent}}}"
+        else:
+            formula = f"{base} \\cdot 10^{{{exponent}}}"
+    elif "." in number or "," in number:
+        number = number.replace(".", "{,}")
+        formula = f"{number}"
+    else:
+        formula = f"{number}"
+
+    if abbrev == "\\edsV":
+        formula = f"\\eds={formula}\\Vo"
+    elif abbrev == "\\UV":
+        formula = f"U={formula}\\Vo"
+    elif abbrev == "\\rOm":
+        formula = f"r={formula}\\Om"
+    elif abbrev == "\\ROm":
+        formula = f"R={formula}\\Om"
+    elif abbrev == "\\RzOm":
+        formula = f"R_0={formula}\\Om"
+    elif abbrev == "\\RoOm":
+        formula = f"R_1={formula}\\Om"
+    elif abbrev == "\\RdOm":
+        formula = f"R_2={formula}\\Om"
+    elif abbrev == "\\CmkF":
+        formula = f"C={formula}\\mkF"
+
+    return f"${formula}{punct}$"
+
+
+def render_formula(match, display_style=False):
     formula = match.group(1)
     formula = replace_shortcuts(formula)
     math_obj = zm.Math.fromlatex(formula, size=18.5)
@@ -84,22 +122,29 @@ def render_formula(match):
         del root.attrib['xmlns:ns0']
 
     # Получаем размеры и смещение формулы
-    width, height = math_obj.getsize()
-    y_offset = math_obj.getyofst()
-    dy = -0.74
+    # width, height = math_obj.getsize()
+    y_offset = math_obj.getyofst()-0.75
 
     # Добавляем атрибут style для вертикального выравнивания
     style = root.attrib.get('style', '')
-    root.attrib['style'] = f'{style}; vertical-align: {y_offset+dy}px;'
+    root.attrib['style'] = f'{style}; vertical-align: {y_offset}px;'
 
-    svg = ET.tostring(root, encoding='unicode').replace('ns0:', '')\
-        .replace('<svg', '<svg class="math-svg"')
+    # Если display_style == True, добавляем класс 'display' к SVG
+    if display_style:
+        svg_class = 'math-svg display'
+    else:
+        svg_class = 'math-svg'
+
+    svg = ET.tostring(root, encoding='unicode').replace('ns0:', '') \
+        .replace('<svg', f'<svg class="{svg_class}"')
 
     return svg
 
 
 @register.filter()
 def ziamath_filter(text):
-    text = re.sub(r'\$\$([^$]*?)\$\$', render_formula, text, flags=re.DOTALL)
+    text = re.sub(r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm)\[((?:1)?e\d+|[^[\]]+)\]([.,;]?)', handle_abbreviations, text)
+    text = re.sub(r'\$\$([^$]*?)\$\$', lambda match: render_formula(match, display_style=True), text, flags=re.DOTALL)
     text = re.sub(r'\$([^$]*?)\$', render_formula, text)
     return text
+
