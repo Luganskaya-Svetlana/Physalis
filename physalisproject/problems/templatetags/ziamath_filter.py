@@ -143,8 +143,14 @@ def render_formula(match, display_style=False):
 
 @register.filter()
 def ziamath_filter(text):
-    text = re.sub(r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm)\[((?:1)?e\d+|[^[\]]+)\]([.,;]?)', handle_abbreviations, text)
-    text = re.sub(r'\$\$([^$]*?)\$\$', lambda match: render_formula(match, display_style=True), text, flags=re.DOTALL)
+    text = re.sub(
+        r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm)\[((?:1)?e\d+|[^[\]]+)\]([.,;]?)',
+        handle_abbreviations, text
+    )
+    text = re.sub(
+        r'\$\$([^$]*?)\$\$',
+        lambda match: render_formula(match, display_style=True),
+        text, flags=re.DOTALL
+    )
     text = re.sub(r'\$([^$]*?)\$', render_formula, text)
     return text
-
