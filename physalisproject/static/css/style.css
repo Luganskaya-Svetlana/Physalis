@@ -35,6 +35,12 @@ h6 { font-size:12pt; }
   stroke-width: 0.09;
 }
 
+.math-svg.display {
+  display: block;
+  margin: auto;
+}
+
+
 .problem {
   overflow-y: auto;   /* causes large margin-top for p */
   overflow-x: hidden;
