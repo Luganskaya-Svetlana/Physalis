@@ -140,6 +140,7 @@ def render_formula(match, display_style=False):
 
     return svg
 
+
 @register.filter()
 def ziamath_filter(text):
     pattern = (
@@ -154,4 +155,3 @@ def ziamath_filter(text):
     )
     text = re.sub(r'\$([^$]*?)\$', render_formula, text)
     return text
-

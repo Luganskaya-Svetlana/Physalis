@@ -22,7 +22,7 @@ def table_change_replace(match):
 Запишите в таблицу выбранные цифры для каждой физической величины.
 Цифры в ответе могут повторяться.
 
- 
+
 <table class="change center-table">
 <tr>
 <td> {string_1} </td>
