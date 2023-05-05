@@ -80,7 +80,7 @@ def handle_abbreviations(match):
     if "e" in number:
         base, exponent = number.split("e")
         base = base.replace(".", "{,}").replace(",", "{,}")
-        if base == "1" or base=="":
+        if base == "1" or base == "":
             formula = f"10^{{{exponent}}}"
         else:
             formula = f"{base} \\cdot 10^{{{exponent}}}"
@@ -123,7 +123,7 @@ def render_formula(match, display_style=False):
 
     # Получаем размеры и смещение формулы
     # width, height = math_obj.getsize()
-    y_offset = math_obj.getyofst()-0.75
+    y_offset = math_obj.getyofst() - 0.75
 
     # Добавляем атрибут style для вертикального выравнивания
     style = root.attrib.get('style', '')
@@ -140,13 +140,13 @@ def render_formula(match, display_style=False):
 
     return svg
 
-
 @register.filter()
 def ziamath_filter(text):
-    text = re.sub(
-        r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm)\[((?:1)?e\d+|[^[\]]+)\]([.,;]?)',
-        handle_abbreviations, text
+    pattern = (
+        r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm)'
+        r'\[((?:1)?e\d+|[^[\]]+)\]([.,;]?)'
     )
+    text = re.sub(pattern, handle_abbreviations, text)
     text = re.sub(
         r'\$\$([^$]*?)\$\$',
         lambda match: render_formula(match, display_style=True),
@@ -154,3 +154,4 @@ def ziamath_filter(text):
     )
     text = re.sub(r'\$([^$]*?)\$', render_formula, text)
     return text
+

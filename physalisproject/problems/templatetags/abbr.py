@@ -12,13 +12,15 @@ def replace_by_dic(el, dic):
 def table_change_replace(match):
     string_1 = match.group(1)
     string_2 = match.group(2)
-    return f"""Для каждой величины определите соответствующий характер изменения:
+    return f"""Для каждой величины определите соответствующий характер
+изменения:
 
 1. увеличивается
 2. уменьшается
 3. не изменяется
 
-Запишите в таблицу выбранные цифры для каждой физической величины. Цифры в ответе могут повторяться.
+Запишите в таблицу выбранные цифры для каждой физической величины.
+Цифры в ответе могут повторяться.
 
  
 <table class="change center-table">
@@ -51,6 +53,6 @@ register = template.Library()
 @stringfilter
 def abbr(value):
     value = replace_by_dic(value, abbr_dic)
-    value = re.sub(r'table_change\[(.+?)\]\[(.+?)\]', table_change_replace, value)
+    value = re.sub(r'table_change\[(.+?)\]\[(.+?)\]', table_change_replace,
+                   value)
     return value
-
