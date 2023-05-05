@@ -5,6 +5,8 @@ from django import template
 
 # zm.config.precision = 3
 zm.config.svg2 = False
+zm.config.minsizefraction = .6
+
 
 register = template.Library()
 
@@ -113,7 +115,7 @@ def handle_abbreviations(match):
 def render_formula(match, display_style=False):
     formula = match.group(1)
     formula = replace_shortcuts(formula)
-    math_obj = zm.Math.fromlatex(formula, size=18.5)
+    math_obj = zm.Math.fromlatex(formula, size=18.8)
     svg = math_obj.svg()
 
     # Удаляем атрибут xmlns:ns0 из тега SVG
