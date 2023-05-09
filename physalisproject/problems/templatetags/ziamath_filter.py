@@ -4,8 +4,9 @@ import ziamath as zm
 from django import template
 
 # zm.config.precision = 3
+# zm.config.minsizefraction = .6
 zm.config.svg2 = False
-zm.config.minsizefraction = .6
+zm.config.decimal_separator = ','
 
 
 register = template.Library()
@@ -41,7 +42,8 @@ shortcuts = {
     r'\\mm(?![a-zA-Z])': r'\\;мм',
     r'\\nm(?![a-zA-Z])': r'\\;нм',
     r'\\Vo(?![a-zA-Z])': r'\\;В',
-    r'\\Vm(?![a-zA-Z])': r'\\;В/м',
+    r'\\K(?![a-zA-Z])': r'\\;К',
+    r'\\Vm(?![a-zA-Z])': r'\\;В\!/\!м',
     r'\\Pa(?![a-zA-Z])': r'\\;Па',
     r'\\kPa(?![a-zA-Z])': r'\\;кПа',
     r'\\ms(?![a-zA-Z])': r'\\;м\!/\!с',
@@ -56,6 +58,7 @@ shortcuts = {
     r'\\mkF(?![a-zA-Z])': r'\\;мкФ',
     r'\\Nm(?![a-zA-Z])': r'\\;Н\!/\!м',
     r'\\J(?![a-zA-Z])': r'\\;Дж',
+    r'\\Am(?![a-zA-Z])': r'\\;А',
     r'\\kJ(?![a-zA-Z])': r'\\;кДж',
     r'\\eds(?![a-zA-Z])': r'\\mathcal{E}',
     r'\\deg(?![a-zA-Z])': r'^\\circ',
@@ -108,6 +111,12 @@ def handle_abbreviations(match):
         formula = f"R_2={formula}\\Om"
     elif abbrev == "\\CmkF":
         formula = f"C={formula}\\mkF"
+    elif abbrev == "\\agr":
+        formula = f"\\a={formula}\\deg"
+    elif abbrev == "\\rcm":
+        formula = f"r={formula}\\cm"
+    elif abbrev == "\\Rcm":
+        formula = f"R={formula}\\cm"
 
     return f"${formula}{punct}$"
 
@@ -146,7 +155,7 @@ def render_formula(match, display_style=False):
 @register.filter()
 def ziamath_filter(text):
     pattern = (
-        r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm)'
+        r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm|\\agr|\\rcm|\\Rcm)'
         r'\[((?:1)?e\d+|[^[\]]+)\]([.,;]?)'
     )
     text = re.sub(pattern, handle_abbreviations, text)
