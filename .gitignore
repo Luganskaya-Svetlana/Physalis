@@ -73,7 +73,4 @@ venv.bak/
 .dmypy.json
 dmypy.json
 .pyre/
-physalisproject/static/month/
-physalisproject/static/week/
-physalisproject/static/day/
-physalisproject/static/yesterday/
+physalisproject/django.log

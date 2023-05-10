@@ -52,9 +52,12 @@ python3 manage.py runserver
 
 ## Configure .env
 Confidential information is stored in the .env file.
-In settings.py there are default values of SECRET_KEY, DEBUG and ALLOWED_HOSTS, so you can just run the project. But if you want to change default values, create .env file, copy text from env.example, paste it to .env and make desired changes.
+In settings.py there are default values of SECRET_KEY, DEBUG and ALLOWED_HOSTS,
+so you can just run the project. But if you want to change default values,
+create .env file, copy text from env.example, paste it to .env and make desired
+changes.
 
-## Developement/production
+## Developement and production
 For developement, set
 ```
 DEBUG = True
@@ -83,7 +86,9 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard system print dialog.
 - [ ] "Drafts" for problems and variants (problem/variant is saved and can be edited and published but is not shown)
 - [ ] Generate pdf automatically when generating exam sheets
+- [ ] Case-insensitive inexact search
 - [ ] Add website logo to the svg file while uploading
-- [ ] Trim the whitespace from the svg file while uploading
+- [ ] Trim the whitespace from the svg files while uploading
+- [ ] Convert png to svg while uploading
 - [ ] Use latex to generate PDF out of selected problems or full variant (pdf saved from the standard system print dialog is OK, css styles are adjusted for print)
 - [ ] User-generated exam sheets. E.g., return a page with a full exam of a desired difficulty
