@@ -19,10 +19,13 @@
     <a href="{% url 'variants:list'%}"{% if '/variants/' in request.path %} class='current_nav'{% endif %}>Варианты</a>
     {% if '/problems/' in request.path and request.path != '/problems/' and request.user.is_staff %}
     <a href="/admin/problems/problem/{{problem.id}}/change" class=bold>✎</a>
+    <a class='bold' href="/admin/problems/problem/add/" title="Добавить задачу">+</a>
     {% elif '/variants/' in request.path and request.path != '/variants/' and request.user.is_staff %}
     <a href="/admin/variants/variant/{{variant.id}}/change" class=bold>✎</a>
+    <a class='bold' href="/admin/problems/problem/add/" title="Добавить задачу">+</a>
     {% elif request.path != '/problems/' and request.path != '/variants/' and not '/types/' in request.path and request.user.is_staff %}
     <a href="/admin/flatpages/flatpage/{{flatpage.id}}/change/" class=bold>✎</a>
+    <a class='bold' href="/admin/problems/problem/add/" title="Добавить задачу">+</a>
     {% endif %}
   </div>
 
