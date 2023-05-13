@@ -141,6 +141,7 @@ div.rel:has(div.var-id-in-list) {
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+  white-space: nowrap;
 }
 a {
   text-decoration: none;

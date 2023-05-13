@@ -3,8 +3,8 @@ import xml.etree.ElementTree as ET
 import ziamath as zm
 from django import template
 
-# zm.config.precision = 3
 # zm.config.minsizefraction = .6
+zm.config.precision = 2
 zm.config.svg2 = False
 zm.config.decimal_separator = ','
 
@@ -73,27 +73,26 @@ def render_formula(match, display_style=False):
     formula = replace_shortcuts(formula)
     math_obj = zm.Math.fromlatex(formula, size=18.8)
     svg = math_obj.svg()
-
-    # Удаляем атрибут xmlns:ns0 из тега SVG
     root = ET.fromstring(svg)
-    if 'xmlns:ns0' in root.attrib:
-        del root.attrib['xmlns:ns0']
 
-    # Получаем размеры и смещение формулы
-    # width, height = math_obj.getsize()
+    # Remove xmlns:ns0 from SVG tag
+    # if 'xmlns:ns0' in root.attrib:
+        # del root.attrib['xmlns:ns0']
+
+    # Set y_offset to align svg with text
     y_offset = math_obj.getyofst() - 0.75
 
-    # Добавляем атрибут style для вертикального выравнивания
+    # Add style for vertical alignment
     style = root.attrib.get('style', '')
     root.attrib['style'] = f'{style}; vertical-align: {y_offset}px;'
 
-    # Если display_style == True, добавляем класс 'display' к SVG
+    # Add display style for $$...$$ and don't for $...$
     if display_style:
         svg_class = 'math-svg display'
     else:
         svg_class = 'math-svg'
 
-    svg = ET.tostring(root, encoding='unicode').replace('ns0:', '') \
+    svg = ET.tostring(root, encoding='unicode').replace('ns0:', '')\
         .replace('<svg', f'<svg class="{svg_class}"')
 
     return svg
