@@ -12,15 +12,6 @@ zm.config.decimal_separator = ','
 register = template.Library()
 
 shortcuts = {
-    # r'([^{]*[A-Z])(?=$|[\s\]])': r'\1\\hspace{0.085em}',
-    # r'(?<=\w|\})\\sin(?=\^|\\|{)': r'\\,\\sin',
-    # r'(?<=\w|\})\\cos(?=\^|\\|{)': r'\\,\\cos',
-    # r'([a-zA-Z])\\dfrac': r'\1\\;\\dfrac',
-    # r'\\cdot': r'\\;\\cdot\\;',
-    # r"'": r"\\prime ",
-    # r'\\tg(?![a-zA-Z])': r'\\,\\text{tg}\,',
-    # r'\\ctg(?![a-zA-Z])': r'\\,\\text{ctg}\,',
-    # r'\\arctg(?![a-zA-Z])': r'\\text{arctg}~',
     r'\\a(?![a-zA-Z])': r'\\alpha',
     r'\\b(?![a-zA-Z])': r'\\beta',
     r'\\f(?![a-zA-Z])': r'\\varphi',
@@ -77,50 +68,6 @@ def replace_shortcuts(formula):
     return formula
 
 
-def handle_abbreviations(match):
-    abbrev = match.group(1)
-    number = match.group(2)
-    punct = match.group(3)
-
-    if "e" in number:
-        base, exponent = number.split("e")
-        base = base.replace(".", "{,}").replace(",", "{,}")
-        if base == "1" or base == "":
-            formula = f"10^{{{exponent}}}"
-        else:
-            formula = f"{base} \\cdot 10^{{{exponent}}}"
-    elif "." in number or "," in number:
-        number = number.replace(".", "{,}")
-        formula = f"{number}"
-    else:
-        formula = f"{number}"
-
-    if abbrev == "\\edsV":
-        formula = f"\\eds={formula}\\Vo"
-    elif abbrev == "\\UV":
-        formula = f"U={formula}\\Vo"
-    elif abbrev == "\\rOm":
-        formula = f"r={formula}\\Om"
-    elif abbrev == "\\ROm":
-        formula = f"R={formula}\\Om"
-    elif abbrev == "\\RzOm":
-        formula = f"R_0={formula}\\Om"
-    elif abbrev == "\\RoOm":
-        formula = f"R_1={formula}\\Om"
-    elif abbrev == "\\RdOm":
-        formula = f"R_2={formula}\\Om"
-    elif abbrev == "\\CmkF":
-        formula = f"C={formula}\\mkF"
-    elif abbrev == "\\agr":
-        formula = f"\\a={formula}\\deg"
-    elif abbrev == "\\rcm":
-        formula = f"r={formula}\\cm"
-    elif abbrev == "\\Rcm":
-        formula = f"R={formula}\\cm"
-
-    return f"${formula}{punct}$"
-
-
 def render_formula(match, display_style=False):
     formula = match.group(1)
     formula = replace_shortcuts(formula)
@@ -154,11 +101,6 @@ def render_formula(match, display_style=False):
 
 @register.filter()
 def ziamath_filter(text):
-    pattern = (
-        r'(\\edsV|\\UV|\\rOm|\\RzOm|\\ROm|\\CmkF|\\RoOm|\\agr|\\rcm|\\Rcm)'
-        r'\[((?:1)?e\d+|[^[\]]+)\]([.,;]?)'
-    )
-    text = re.sub(pattern, handle_abbreviations, text)
     text = re.sub(
         r'\$\$([^$]*?)\$\$',
         lambda match: render_formula(match, display_style=True),
