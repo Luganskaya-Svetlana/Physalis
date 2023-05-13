@@ -35,7 +35,7 @@ class VariantsView(ListView):
     @classmethod
     def as_view(cls, **initkwargs):
         view = super().as_view(**initkwargs)
-        view = cache_page(30 * 60)(view)
+        view = cache_page(60 * 60)(view)
         return view
 
 
@@ -50,7 +50,7 @@ class VariantView(DetailView):
     @classmethod
     def as_view(cls, **initkwargs):
         view = super().as_view(**initkwargs)
-        view = cache_page(30 * 60)(view)
+        view = cache_page(60 * 60)(view)
         return view
 
 
@@ -73,5 +73,5 @@ class VariantAnswerView(DetailView):
     @classmethod
     def as_view(cls, **initkwargs):
         view = super().as_view(**initkwargs)
-        view = cache_page(10)(view)
+        view = cache_page(60 * 60)(view)
         return view
