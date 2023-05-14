@@ -77,7 +77,7 @@ def render_formula(match, display_style=False):
 
     # Remove xmlns:ns0 from SVG tag
     # if 'xmlns:ns0' in root.attrib:
-        # del root.attrib['xmlns:ns0']
+    #     del root.attrib['xmlns:ns0']
 
     # Set y_offset to align svg with text
     y_offset = math_obj.getyofst() - 0.75
