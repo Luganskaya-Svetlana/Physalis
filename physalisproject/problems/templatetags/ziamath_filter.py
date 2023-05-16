@@ -54,6 +54,7 @@ shortcuts = {
     r'\\Am(?![a-zA-Z])': r'\\;А',
     r'\\kJ(?![a-zA-Z])': r'\\;кДж',
     r'\\eds(?![a-zA-Z])': r'\\mathcal{E}',
+    r'\\const(?![a-zA-Z])': r'\\text{const}',
     r'\\deg(?![a-zA-Z])': r'^\\circ',
     r'\\degc(?![a-zA-Z])': r'~^\\circ\\text{C}',
     r'\\dU(?![a-zA-Z])': r'\\Delta U',
@@ -64,44 +65,56 @@ shortcuts = {
 
 
 def replace_shortcuts(formula):
-    for shortcut, full_name in shortcuts.items():
-        formula = re.sub(shortcut, full_name, formula)
+    try:
+        for shortcut, full_name in shortcuts.items():
+            formula = re.sub(shortcut, full_name, formula)
 
-    return formula
+        return formula
+
+    except Exception as e:
+        return f'<span style="color: red;">Error shortcut: {str(e)}</span>'
 
 
 def render_formula(match, display_style=False):
-    formula = match.group(1)
-    formula = replace_shortcuts(formula)
-    math_obj = zm.Math.fromlatex(formula, size=18.8)
-    svg = math_obj.svg()
-    root = ET.fromstring(svg)
+    try:
+        formula = match.group(1)
+        formula = replace_shortcuts(formula)
+        math_obj = zm.Math.fromlatex(formula, size=18.8)
+        svg = math_obj.svg()
+        root = ET.fromstring(svg)
 
-    # Set y_offset to align svg with text
-    y_offset = math_obj.getyofst() - 0.75
+        # Set y_offset to align svg with text
+        y_offset = math_obj.getyofst() - 0.75
 
-    # Add style for vertical alignment
-    style = root.attrib.get('style', '')
-    root.attrib['style'] = f'{style}; vertical-align: {y_offset}px;'
+        # Add style for vertical alignment
+        style = root.attrib.get('style', '')
+        root.attrib['style'] = f'{style}; vertical-align: {y_offset}px;'
 
-    # Add display style for $$...$$ and don't for $...$
-    if display_style:
-        svg_class = 'math-svg display'
-    else:
-        svg_class = 'math-svg'
+        # Add display style for $$...$$ and don't for $...$
+        if display_style:
+            svg_class = 'math-svg display'
+        else:
+            svg_class = 'math-svg'
 
-    svg = ET.tostring(root, encoding='unicode')\
-        .replace('<svg', f'<svg class="{svg_class}"')
+        svg = ET.tostring(root, encoding='unicode')\
+            .replace('<svg', f'<svg class="{svg_class}"')
 
-    return svg
+        return svg
+
+    except Exception as e:
+        return f'<span style="color: red;">Error formula: {str(e)}</span>'
 
 
 @register.filter()
 def ziamath_filter(text):
-    text = re.sub(
-        r'\$\$([^$]*?)\$\$',
-        lambda match: render_formula(match, display_style=True),
-        text, flags=re.DOTALL
-    )
-    text = re.sub(r'\$([^$]*?)\$', render_formula, text)
-    return text
+    try:
+        text = re.sub(
+            r'\$\$([^$]*?)\$\$',
+            lambda match: render_formula(match, display_style=True),
+            text, flags=re.DOTALL
+        )
+        text = re.sub(r'\$([^$]*?)\$', render_formula, text)
+        return text
+
+    except Exception as e:
+        return f'<span style="color: red;">Error zm_filter: {str(e)}</span>'

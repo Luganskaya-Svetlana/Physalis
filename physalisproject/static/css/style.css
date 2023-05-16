@@ -47,6 +47,7 @@ h6 { font-size:12pt; }
 }
 .card-title{
   margin-bottom:0;
+  line-height:1.8ex;
 }
 
 .bold {
