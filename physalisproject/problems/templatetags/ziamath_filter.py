@@ -1,7 +1,9 @@
 import re
-import xml.etree.ElementTree as ET
 import ziamath as zm
 from django import template
+import xml.etree.ElementTree as ET
+ET.register_namespace("", "http://www.w3.org/2000/svg")
+
 
 # zm.config.minsizefraction = .6
 zm.config.precision = 2
@@ -75,10 +77,6 @@ def render_formula(match, display_style=False):
     svg = math_obj.svg()
     root = ET.fromstring(svg)
 
-    # Remove xmlns:ns0 from SVG tag
-    # if 'xmlns:ns0' in root.attrib:
-    #     del root.attrib['xmlns:ns0']
-
     # Set y_offset to align svg with text
     y_offset = math_obj.getyofst() - 0.75
 
@@ -92,7 +90,7 @@ def render_formula(match, display_style=False):
     else:
         svg_class = 'math-svg'
 
-    svg = ET.tostring(root, encoding='unicode').replace('ns0:', '')\
+    svg = ET.tostring(root, encoding='unicode')\
         .replace('<svg', f'<svg class="{svg_class}"')
 
     return svg
