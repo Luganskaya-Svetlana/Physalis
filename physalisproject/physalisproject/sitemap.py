@@ -22,6 +22,7 @@ class FlatPageSitemap(Sitemap):
     def items(self):
         return FlatPage.objects.exclude(url='/presentation')
 
+
 class ProblemSitemap(Sitemap):
     def items(self):
         return Problem.objects.all()
