@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.flatpages.models import FlatPage
 from problems.models import Problem
 
+
 class StaticViewSitemap(Sitemap):
     # priority = 0.5
     # changefreq = 'monthly'
