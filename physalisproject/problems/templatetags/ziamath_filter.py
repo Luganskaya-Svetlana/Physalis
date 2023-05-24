@@ -31,6 +31,7 @@ shortcuts = {
     r'\\eV(?![a-zA-Z])': r'\\;эВ',
     r'\\Wt(?![a-zA-Z])': r'\\;Вт',
     r'\\kWt(?![a-zA-Z])': r'\\;кВт',
+    r'\\mol(?![a-zA-Z])': r'\\;моль',
     r'\\cm(?![a-zA-Z])': r'\\;см',
     r'\\mm(?![a-zA-Z])': r'\\;мм',
     r'\\nm(?![a-zA-Z])': r'\\;нм',
@@ -84,7 +85,8 @@ def render_formula(match, display_style=False):
         root = ET.fromstring(svg)
 
         # Set y_offset to align svg with text
-        y_offset = math_obj.getyofst() - 0.75
+        dy = -0.96
+        y_offset = math_obj.getyofst() + dy
 
         # Add style for vertical alignment
         style = root.attrib.get('style', '')
@@ -99,7 +101,10 @@ def render_formula(match, display_style=False):
         svg = ET.tostring(root, encoding='unicode')\
             .replace('<svg', f'<svg class="{svg_class}"')
 
+        # return svg + f'<span class="hidden" data-content="{formula}"></span>'
         return svg
+
+
 
     except Exception as e:
         return f'<span style="color: red;">Error formula: {str(e)}</span>'
