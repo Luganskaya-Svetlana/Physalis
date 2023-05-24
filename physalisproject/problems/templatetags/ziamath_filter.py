@@ -104,8 +104,6 @@ def render_formula(match, display_style=False):
         # return svg + f'<span class="hidden" data-content="{formula}"></span>'
         return svg
 
-
-
     except Exception as e:
         return f'<span style="color: red;">Error formula: {str(e)}</span>'
 
