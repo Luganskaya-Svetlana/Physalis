@@ -357,6 +357,16 @@ h1>a.lnk_btn {
   font-weight:900;
 }
 
+.hidden {
+  display:none;
+}
+.hidden::after {
+  display: block;
+  content: attr(data-content);
+  height: 0;
+  overflow: hidden;
+}
+
 .print-new-page {
   margin-top: 4em;
 }
