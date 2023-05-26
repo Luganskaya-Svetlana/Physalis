@@ -70,6 +70,9 @@ h6 { font-size:12pt; }
   margin-right:1ex;
   margin-top:1ex;
 }
+.id-in-var + p>img {
+  margin-top:1.4ex;
+}
 .id-in-var + p {
   margin-top:1ex;
 }
