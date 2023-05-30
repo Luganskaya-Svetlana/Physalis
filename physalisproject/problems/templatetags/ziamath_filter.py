@@ -14,14 +14,15 @@ zm.config.decimal_separator = ','
 register = template.Library()
 
 shortcuts = {
+    r'\\pi(?![a-zA-Z])': r'\\mathrm{\\pi}',
     r'\\a(?![a-zA-Z])': r'\\alpha',
     r'\\b(?![a-zA-Z])': r'\\beta',
     r'\\f(?![a-zA-Z])': r'\\varphi',
     r'\\la(?![a-zA-Z])': r'\\lambda',
     r'\\mc(?![a-zA-Z])': r'\\;м^3',
     r'\\kg(?![a-zA-Z])': r'\\;кг',
-    r'\\kgms(?![a-zA-Z])': r'\\;кг\\cdot м\!/\!с',
-    r'\\kgmc(?![a-zA-Z])': r'\\;кг\! /\! м^3',
+    r'\\kgms(?![a-zA-Z])': r'\\;кг\\cdot м/с',
+    r'\\kgmc(?![a-zA-Z])': r'\\;кг/ м^3',
     r'\\s(?![a-zA-Z])': r'\\;с',
     r'\\m(?![a-zA-Z])': r'\\;м',
     r'\\A(?![a-zA-Z])': r'\\;А',
@@ -37,12 +38,12 @@ shortcuts = {
     r'\\nm(?![a-zA-Z])': r'\\;нм',
     r'\\Vo(?![a-zA-Z])': r'\\;В',
     r'\\K(?![a-zA-Z])': r'\\;К',
-    r'\\Vm(?![a-zA-Z])': r'\\;В\!/\!м',
+    r'\\Vm(?![a-zA-Z])': r'\\;В/м',
     r'\\Pa(?![a-zA-Z])': r'\\;Па',
     r'\\kPa(?![a-zA-Z])': r'\\;кПа',
-    r'\\ms(?![a-zA-Z])': r'\\;м\!/\!с',
-    r'\\mss(?![a-zA-Z])': r'\\;м\!/\!с^2',
-    r'\\cms(?![a-zA-Z])': r'\\;см\!/\!с',
+    r'\\ms(?![a-zA-Z])': r'\\;м/с',
+    r'\\mss(?![a-zA-Z])': r'\\;м/с^2',
+    r'\\cms(?![a-zA-Z])': r'\\;см/с',
     r'\\cmsq(?![a-zA-Z])': r'\\;см^2',
     r'\\msq(?![a-zA-Z])': r'\\;м^2',
     r'\\Cl(?![a-zA-Z])': r'\\;Кл',
@@ -50,7 +51,7 @@ shortcuts = {
     r'\\Ftr(?![a-zA-Z])': r'F_{тр}',
     r'\\N(?![a-zA-Z])': r'\\;Н',
     r'\\mkF(?![a-zA-Z])': r'\\;мкФ',
-    r'\\Nm(?![a-zA-Z])': r'\\;Н\!/\!м',
+    r'\\Nm(?![a-zA-Z])': r'\\;Н/м',
     r'\\J(?![a-zA-Z])': r'\\;Дж',
     r'\\Am(?![a-zA-Z])': r'\\;А',
     r'\\kJ(?![a-zA-Z])': r'\\;кДж',
@@ -80,7 +81,7 @@ def render_formula(match, display_style=False):
     try:
         formula = match.group(1)
         formula = replace_shortcuts(formula)
-        math_obj = zm.Math.fromlatex(formula, size=18.8)
+        math_obj = zm.Math.fromlatex(formula, size=18.5)
         svg = math_obj.svg()
         root = ET.fromstring(svg)
 
