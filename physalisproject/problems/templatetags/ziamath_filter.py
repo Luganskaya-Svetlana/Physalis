@@ -14,7 +14,7 @@ zm.config.decimal_separator = ','
 register = template.Library()
 
 shortcuts = {
-    r'\\pi(?![a-zA-Z])': r'\\mathrm{\\pi}',
+    r'\\uppi(?![a-zA-Z])': r'\\mathrm{\\pi}',
     r'\\a(?![a-zA-Z])': r'\\alpha',
     r'\\b(?![a-zA-Z])': r'\\beta',
     r'\\f(?![a-zA-Z])': r'\\varphi',
