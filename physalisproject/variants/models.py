@@ -24,7 +24,7 @@ class Variant(models.Model):
     date = models.DateField('дата добавления', auto_now_add=True)
     answer_slug = models.SlugField('slug для получения ответов',
                                    max_length=4, unique=False,
-                                   blank=True, default='foxy',
+                                   blank=True, default='',
                                    validators=[validate_answer_slug])
     is_published = models.BooleanField('показывать в списке вариантов',
                                        default=True)
