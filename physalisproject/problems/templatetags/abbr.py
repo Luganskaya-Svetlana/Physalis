@@ -37,6 +37,7 @@ def table_change_replace(match):
 
 abbr_dic = {
     'ans': 'Ответ: <span class=ans>                           </span>',
+    'anraz': 'Ответ: в <span class=ans>                       </span> раз(а)',
     'anpm': 'Ответ: (<span class=ans>              </span>\
              ± <span class=ans>              </span>)',
     'table_ab': 'Ответ:<table class="change"><tr><td>А</td><td>Б</td></tr>\

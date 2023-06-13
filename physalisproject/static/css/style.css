@@ -7,12 +7,23 @@ body {
   margin: 0px auto;
   width: 723px;
   max-width: 100%;
-  font-family: Tahoma, Arial;
+  font-family: Tahoma, Arial, sans-serif;
   text-align: justify;
   font-size: 12pt;
   line-height: 16pt;
   margin-bottom:12ex;
 }
+
+/*
+*p {
+*  font-size: 121%;
+*  line-height: 110%;
+*  font-family: 'Times New Roman', Times, serif;
+*}
+*li {
+*  font-family: 'Times New Roman', Times, serif;
+*}
+*/
 
 h1, h2, h3, h4, h5, h6 { text-align: left; }
 h1 { font-size:21pt; }
@@ -247,8 +258,20 @@ ol,ul {
 
 .pl15  { padding-left: 15px; }
 .mw100 { min-width: 100px; }
+.mw110 { min-width: 110px; }
+.mw120 { min-width: 120px; }
+.mw130 { min-width: 130px; }
+.mw140 { min-width: 140px; }
 .mw150 { min-width: 150px; }
+.mw160 { min-width: 160px; }
+.mw170 { min-width: 170px; }
+.mw180 { min-width: 180px; }
+.mw190 { min-width: 190px; }
 .mw200 { min-width: 200px; }
+.mw210 { min-width: 210px; }
+.mw220 { min-width: 220px; }
+.mw230 { min-width: 230px; }
+.mw240 { min-width: 240px; }
 .mw250 { min-width: 250px; }
 .mw300 { min-width: 300px; }
 .mw400 { min-width: 400px; }
