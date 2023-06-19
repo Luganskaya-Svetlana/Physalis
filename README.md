@@ -100,6 +100,8 @@ Otherwise static files such as css sheets won't be served properly.
   /types, /tags).
 - [ ] «Drafts» for problems and variants (problem/variant is saved and can be
   edited and published but is not shown)
+- [ ] Let users report typos (show page url)
+- [ ] Inform registered users that typo reports have been processed
 - [ ] Copy problem/variant (useful when need to make similar problem/variant
   with a few changes)
 - [ ] Generate pdf automatically when generating exam sheets
