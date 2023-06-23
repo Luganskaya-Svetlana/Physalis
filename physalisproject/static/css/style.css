@@ -297,9 +297,20 @@ ol,ul {
   margin: 0px auto;
   text-align: center;
 }
+
 .center-table {
   margin: 1em auto;
 }
+.center-table tr td:first-child {
+  text-align: left;
+  font-weight:500;
+}
+.center-table tr td {
+  text-align: center;
+  padding-left:  0.5em;
+  padding-right: 0.5em;
+}
+
 
 .center-flex {
   display: flex;
