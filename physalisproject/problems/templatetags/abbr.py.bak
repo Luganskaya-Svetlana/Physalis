@@ -35,32 +35,6 @@ def table_change_replace(match):
 </table>"""
 
 
-def table_rows(data):
-    data = data[11:]  # remove "table_rows["
-    data = re.sub(r'\s*\]\s*\[\s*', '][', data)  # убираем все пробелы и переносы строк вокруг квадратных скобок
-
-    rows = data.split('][')
-    rows[-1] = rows[-1][:-2]  # remove last ] in last line
-
-    html = '<div class=ofa>\n<table class=center-table>\n'
-
-    for row in rows:
-        if ' # ' in row:
-            head, *tail = row.split(' # ')
-            tail = tail[0].split(' ') if tail else []
-        else:
-            head, *tail = row.split(' ')
-
-        html += '  <tr>\n'
-        html += '    <td>{}</td>\n'.format(head)
-        for el in tail:
-            html += '    <td>{}</td>\n'.format(el)
-        html += '  </tr>\n'
-
-    html += '</table>\n</div>'
-    return html
-
-
 abbr_dic = {
     'ans': 'Ответ: <span class=ans>                           </span>',
     'anraz': 'Ответ: в <span class=ans>                       </span> раз(а)',
@@ -73,8 +47,8 @@ abbr_dic = {
                  </table>'
 }
 
-
 register = template.Library()
+
 
 @register.filter()
 @stringfilter
@@ -82,5 +56,4 @@ def abbr(value):
     value = replace_by_dic(value, abbr_dic)
     value = re.sub(r'table_change\[(.+?)\]\[(.+?)\]', table_change_replace,
                    value)
-    value = re.sub(r'table_rows(.+)', lambda m: table_rows(m.group(0)), value)
     return value
