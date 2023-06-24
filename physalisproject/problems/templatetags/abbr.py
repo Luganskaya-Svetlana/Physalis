@@ -37,11 +37,9 @@ def table_change_replace(match):
 
 def table_rows(data):
     data = data[11:]  # remove "table_rows["
-    data = re.sub(r'\s*\]\s*\[\s*', '][', data)  # убираем все пробелы и переносы строк вокруг квадратных скобок
-
+    data = re.sub(r'\s*\]\s*\[\s*', '][', data)
     rows = data.split('][')
     rows[-1] = rows[-1][:-2]  # remove last ] in last line
-
     html = '<div class=ofa>\n<table class=center-table>\n'
 
     for row in rows:
@@ -75,6 +73,7 @@ abbr_dic = {
 
 
 register = template.Library()
+
 
 @register.filter()
 @stringfilter
