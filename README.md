@@ -78,6 +78,7 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Add problems to the database from the admin panel (obligatory parameters:
   text, number; optional parameters: solution, answer category, tag,
   difficulty)
+- [x] Process text with markdown.
 - [x] Generate two pages (exam sheet and answers) via admin panel by listing
   ids of selected problems. Different styling for full and incomplete exam
   according to the structure of Unified State Exam in Russia (ЕГЭ)

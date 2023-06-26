@@ -17,7 +17,7 @@
     {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|abbr|ziamath_filter|markdown|safe}}</div>{% endif %}
     {% if problem.answer%}<h2>Ответ </h2><div class="answer">{{problem.answer|ziamath_filter|markdown|safe}}</div>{% endif %}
     {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
-    {% if problem.source%}<p><b>Источник: </b>{{problem.source}}</p>{% endif %}
+    {% if problem.source%}<p><b>Источник: </b><a href="/problems/?source={{problem.source.id}}">{{problem.source}}</a></p>{% endif %}
     {% if problem.category%}<p><b>Раздел: </b>{{problem.category}}</p>{% endif %}
     {% if problem.subcategory%}<p><b>Подраздел: </b>{{problem.subcategory}}</p>{% endif %}
     <p><b>Номер в ЕГЭ: </b>{{problem.type_ege}}</p>
