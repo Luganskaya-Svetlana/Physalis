@@ -314,6 +314,7 @@ ol,ul {
 
 .center-flex {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
 }
 
