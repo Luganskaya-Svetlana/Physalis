@@ -75,7 +75,7 @@ Otherwise static files such as css sheets won't be served properly.
 
 
 ## Features
-- [x] Add problems to the database from the admin panel (obligatory parameters:
+- [x] Add problems to the database from the admin panel (mandatory parameters:
   text, number; optional parameters: solution, answer category, tag,
   difficulty)
 - [x] Process text with markdown.
@@ -96,6 +96,15 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Sort types in list when add problem (alphabetically or latest used?)
+- [ ] Show which id is to assign to the problem when add it but haven't published
+- [ ] When adding a problem, add button «add a plot to problem text» to paste
+  `<img class='right mw150' src=/media/(future problem id)t.svg width=30%>`
+- [ ] When adding a problem, add button «add solution» to paste
+  `<img src=/media/(future problem id).svg width=100%>`
+  (or possibly make it default value of the solution field)
+- [ ] Update to the latest version of Django (4.2.3+ instead of 3.2.4).
+- [ ] Update ziamath (including ziafont and latex2mathml, unreleased versions from git?)
 - [ ] If the topic (раздел) is selected, show only appropritate subtopics
   (подразделы) in the list (both in admin panel and for filters on /problems,
   /types, /tags).
@@ -107,7 +116,9 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Add groups for sources (join EGE-2013, EGE-2014, ... etc. in one group
   «EGE» + option to select year).
 - [ ] Let users report typos (show page url)
-- [ ] Inform registered users that typo reports have been processed
+- [ ] Inform registered users when typo reports have been processed
+- [ ] Select id range when searching by id (i.e. 27, 30-36, 44, 88 returns selected
+  problems). May be used as an easy way for users to generate and share variants.
 - [ ] Copy problem/variant (useful when need to make similar problem/variant
   with a few changes)
 - [ ] Generate pdf automatically when generating exam sheets
