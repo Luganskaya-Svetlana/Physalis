@@ -134,4 +134,5 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Store statistics for a user
 - [ ] Pass exam online and get a mark
 - [ ] Generate exam sheet on user request (e.g., full exam with chosen difficulty)
-- [ ] add vim-like behavior to admin panel
+- [ ] Upload several svg images at the same time (instead of one at a time)
+- [ ] Add vim-like behavior to admin panel
