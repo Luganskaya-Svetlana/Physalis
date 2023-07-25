@@ -96,6 +96,8 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Add checkbox "show max points" when adding a set of problems (useful when
+  adding a non-EGE set such as olympiad etc.)
 - [ ] Sort types in list when add problem (alphabetically or latest used?)
 - [ ] Show which id is to assign to the problem when add it but haven't published
 - [ ] When adding a problem, add button «add a plot to problem text» to paste
