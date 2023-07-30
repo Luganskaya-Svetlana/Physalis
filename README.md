@@ -96,6 +96,9 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Calculate exam difficulty as (average_test+average_2_part)/2 to increase
+  significance of the second part
+- [ ] Add `<title>` tags for types
 - [ ] Add checkbox "show max points" when adding a set of problems (useful when
   adding a non-EGE set such as olympiad etc.)
 - [ ] Sort types in list when add problem (alphabetically or latest used?)
@@ -122,7 +125,7 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Select id range when searching by id (i.e. 27, 30-36, 44, 88 returns selected
   problems). May be used as an easy way for users to generate and share variants.
 - [ ] Copy problem/variant (useful when need to make similar problem/variant
-  with a few changes)
+  with a few changes). Perhaps, add a field "copy details from previous id / id=..."
 - [ ] Generate pdf automatically when generating exam sheets
 - [ ] Case-insensitive inexact search
 - [ ] Add website logo to the svg file while uploading
