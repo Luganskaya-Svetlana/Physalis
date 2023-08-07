@@ -127,7 +127,7 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Copy problem/variant (useful when need to make similar problem/variant
   with a few changes). Perhaps, add a field "copy details from previous id / id=..."
 - [ ] Generate pdf automatically when generating exam sheets
-- [ ] Case-insensitive inexact search
+- [ ] Case-insensitive inexact search (possibly need to change to Postgre)
 - [ ] Add website logo to the svg file while uploading
 - [ ] Trim the whitespace from the svg files while uploading
 - [ ] Convert png to svg while uploading
@@ -137,7 +137,8 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] User registration and user-generated content: generate pdf of selected
   problems etc.
 - [ ] Store statistics for a user
-- [ ] Pass exam online and get a mark
+- [ ] Pass exam online and get points (note: answers 124 and 214 are both correct for
+  types 10 etc)
 - [ ] Generate exam sheet on user request (e.g., full exam with chosen difficulty)
 - [ ] Upload several svg images at the same time (instead of one at a time)
 - [ ] Add vim-like behavior to admin panel
