@@ -142,3 +142,11 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Generate exam sheet on user request (e.g., full exam with chosen difficulty)
 - [ ] Upload several svg images at the same time (instead of one at a time)
 - [ ] Add vim-like behavior to admin panel
+- [ ] In admin panel show number of corresponding problems next to
+  category/subcategory/tag
+- [ ] For category change page in admin panel shows connected subcategories
+- [ ] Don't allow to create (sub)category if name and/or slug already
+  exists
+- [ ] In /problems/ order categories in a list as follows:
+  Mechanics → Heat → Electromagnetism → Optics → Quantum mechanics → Methods
+- [ ] Generate Categories + subcategories tree for admin panel and on the site
