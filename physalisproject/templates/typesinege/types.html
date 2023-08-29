@@ -7,12 +7,14 @@
     <div class='row types-list'>
       <div style='display:none;'>
       {% for type in types %}
-      {% ifchanged type.part_ege %}
-      </div>
-      <div class='col5'>
-        <h2>{{type.part_ege}}</h2>
-      {% endifchanged %}
-        <div> <a href="{{ type.get_absolute_url }}"> {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.] </a> </div>
+        {% if type.number <= 30 %}
+        {% ifchanged type.part_ege %}
+        </div>
+        <div class='col5'>
+          <h2>{{type.part_ege}}</h2>
+        {% endifchanged %}
+          <div> <a href="{{ type.get_absolute_url }}"> {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.] </a> </div>
+        {% endif %}
       {% endfor %}
       </div>
     </div>
