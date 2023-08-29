@@ -96,6 +96,8 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Don't allow to create two types with the same number
+- [ ] At /admin/problems/typeinege/ show max_score (and possibly id)
 - [ ] Calculate exam difficulty as (average_test+average_2_part)/2 to increase
   significance of the second part
 - [ ] Add `<title>` tags for types

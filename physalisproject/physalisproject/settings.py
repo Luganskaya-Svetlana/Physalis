@@ -9,11 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 
-# developement
+# Developement
 # DEBUG = True
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
-# production
+# Production
 DEBUG = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -99,7 +99,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # For testing
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         # 'LOCATION': os.path.join(BASE_DIR, '.cache'),
     }
