@@ -39,20 +39,20 @@ def table_rows(data):
     data = data[11:]  # remove "table_rows["
     data = re.sub(r'\s*\]\s*\[\s*', '][', data)
     rows = data.split('][')
-    rows[-1] = rows[-1][:-2]  # remove last ] in last line
+    
+    rows[-1] = re.sub(r'\]\s*$', '', rows[-1]) # rm last [
+    
     html = '<div class=ofa>\n<table class=center-table>\n'
 
     for row in rows:
         if ' # ' in row:
-            head, *tail = row.split(' # ')
-            tail = tail[0].split(' ') if tail else []
+            cells = row.split(' # ')
         else:
-            head, *tail = row.split(' ')
+            cells = row.split(' ')
 
         html += '  <tr>\n'
-        html += '    <td>{}</td>\n'.format(head)
-        for el in tail:
-            html += '    <td>{}</td>\n'.format(el)
+        for cell in cells:
+            html += '    <td>{}</td>\n'.format(cell)
         html += '  </tr>\n'
 
     html += '</table>\n</div>'
@@ -61,6 +61,7 @@ def table_rows(data):
 
 abbr_dic = {
     'ans': 'Ответ: <span class=ans>                           </span>',
+    'antochka': 'Ответ: точка <span class=ans>                           </span>',
     'anraz': 'Ответ: в <span class=ans>                       </span> раз(а)',
     'anpm': 'Ответ: (<span class=ans>              </span>\
              ± <span class=ans>              </span>)',
