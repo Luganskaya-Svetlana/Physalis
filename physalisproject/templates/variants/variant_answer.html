@@ -37,8 +37,8 @@
     {% if problem.complexity%}<span class=compl>Сложность {{problem.complexity}}/10</span>{% endif %}
     {% if problem.source %}<span class=compl>Источник: {{problem.source}}</span>{% endif %}
     <div class=problem>{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
-    {% if problem.solution%}<h4>Решение</h4><div class=solution>{{problem.solution|ziamath_filter|markdown|safe}}</div>{% endif %}
-    {% if problem.answer%}<h4>Ответ </h4><div class=answer>{{problem.answer|ziamath_filter|markdown|safe}}</div>{% endif %}
+    {% if problem.solution%}<h2>Решение</h2><div class=solution>{{problem.solution|ziamath_filter|markdown|safe}}</div>{% endif %}
+    {% if problem.answer%}<h2>Ответ </h2><div class=answer>{{problem.answer|ziamath_filter|markdown|safe}}</div>{% endif %}
     Максимальный балл: {{problem.type_ege.max_score}}
   <div><hr>
   {% endfor %}
