@@ -96,7 +96,17 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Show second pager `choose page` (выберите страницу) in list only when there is
+  more than ~5 elements or so.
+- [ ] Check if the exam sheet is a full variant in `variants/admin.py`:
+  change manual setting `NUMBER_OF_PROBLEMS = 26` to automatic (how?
+  last type from `Second part`, ignoring next part
+  `not in EGE of current year`).
+  Same for descriptions in `templates/variants/variant_detail.html.`
+- [ ] When total amount of types changes (happens nearly yearly), keep the
+  order in old-structured variants unhanged.
 - [ ] Don't allow to create two types with the same number
+- [ ] Add field 'similar problems' in admin panel when adding a problem
 - [ ] At /admin/problems/typeinege/ show max_score (and possibly id)
 - [ ] Calculate exam difficulty as (average_test+average_2_part)/2 to increase
   significance of the second part
@@ -136,6 +146,8 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Use latex to generate PDF out of selected problems or full variant (pdf
   saved from the standard system print dialog is OK, css styles are adjusted
   for print)
+- [ ] .print-new-page (PART 2) start from even page only when print
+  two pages on sheet
 - [ ] User registration and user-generated content: generate pdf of selected
   problems etc.
 - [ ] Store statistics for a user

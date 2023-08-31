@@ -18,7 +18,7 @@ class VariantForm(forms.ModelForm):
         и вычисление его сложности
         '''
 
-        NUMBER_OF_PROBLEMS = 30  # количество задач в полном варианте
+        NUMBER_OF_PROBLEMS = 26  # количество задач в полном варианте
 
         cleaned_data = super().clean()
         comlexity = 0
