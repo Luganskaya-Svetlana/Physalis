@@ -96,6 +96,8 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Pagination: show `1 2 3 ... n-1 n-2 n n+1 n+2 ... last-2 las -1 last`,
+  where n stands for current page number
 - [ ] Show second pager `choose page` (выберите страницу) in list only when there is
   more than ~5 elements or so.
 - [ ] Check if the exam sheet is a full variant in `variants/admin.py`:
@@ -148,6 +150,7 @@ Otherwise static files such as css sheets won't be served properly.
   for print)
 - [ ] .print-new-page (PART 2) start from even page only when print
   two pages on sheet
+- [ ] /variants/ order newest first by default
 - [ ] User registration and user-generated content: generate pdf of selected
   problems etc.
 - [ ] Store statistics for a user

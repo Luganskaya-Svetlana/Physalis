@@ -240,7 +240,7 @@ table.change tr, td {
 
 ol,ul {
   padding-left: 1.5em;
-  text-align: left;
+  /* text-align: left; */
 }
 
 .row { display: flex; gap:3em; }
@@ -301,10 +301,12 @@ ol,ul {
 .center-table {
   margin: 1em auto;
 }
-.center-table tr td:first-child {
-  text-align: left;
-  font-weight:500;
-}
+/*
+*.center-table tr td:first-child {
+*  text-align: left;
+*  font-weight:500;
+*}
+*/
 .center-table tr td {
   text-align: center;
   padding-left:  0.5em;
