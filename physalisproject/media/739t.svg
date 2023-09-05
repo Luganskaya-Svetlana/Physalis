@@ -24,7 +24,7 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="2.4004606"
-     inkscape:cx="91.024198"
+     inkscape:cx="90.815904"
      inkscape:cy="40.617205"
      inkscape:window-width="1440"
      inkscape:window-height="872"
@@ -75,17 +75,11 @@
        style="fill:#808080;stroke:#000000;stroke-width:0.67717;stroke-miterlimit:3.6;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#DartArrow-4)"
        d="M 56.075316,16.65135 19.107839,31.915041"
        id="path9-7" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:'STIX Two Math';-inkscape-font-specification:'STIX Two Math, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:0.139755;stroke-miterlimit:3.6;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0"
-       x="40.50985"
-       y="28.726358"
-       id="text13"><tspan
-         sodipodi:role="line"
-         id="tspan13"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'STIX Two Math';-inkscape-font-specification:'STIX Two Math, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.139755;stroke-dasharray:none;stroke-opacity:0"
-         x="40.50985"
-         y="28.726358">30°</tspan></text>
+    <path
+       style="font-size:4.23333px;font-family:'STIX Two Math';-inkscape-font-specification:'STIX Two Math, Normal';stroke:#000000;stroke-width:0.139755;stroke-miterlimit:3.6;stroke-opacity:0"
+       d="m 40.873916,26.61816 c 0.143933,-0.224366 0.300566,-0.3429 0.554566,-0.3429 0.262467,0 0.4318,0.143934 0.4318,0.3937 0,0.3429 -0.300567,0.575733 -0.588433,0.575733 h -0.08043 v 0.160867 h 0.08467 c 0.4064,0 0.766233,0.249766 0.766233,0.626532 0,0.414867 -0.258233,0.537633 -0.524933,0.537633 -0.1016,0 -0.160866,-0.01693 -0.3429,-0.110066 -0.148166,-0.0762 -0.182033,-0.09737 -0.249766,-0.09737 -0.110067,0 -0.1651,0.09737 -0.1651,0.186267 0,0.110066 0.09313,0.232833 0.474133,0.232833 0.618066,0 1.155699,-0.296333 1.155699,-0.8763 0,-0.376766 -0.283633,-0.601132 -0.6223,-0.706966 v -0.0127 c 0.2667,-0.169333 0.4572,-0.325966 0.4572,-0.618066 0,-0.321733 -0.249766,-0.567266 -0.681566,-0.567266 -0.347133,0 -0.609599,0.194733 -0.766233,0.563033 z m 3.712626,0.766233 c 0,-0.872066 -0.381,-1.375832 -0.9271,-1.375832 -0.613832,0 -0.939799,0.558799 -0.939799,1.363132 0,0.749299 0.249767,1.401232 0.931333,1.401232 0.664633,0 0.935566,-0.664633 0.935566,-1.388532 z m -0.410633,0.0254 c 0,0.812799 -0.1905,1.210732 -0.524933,1.210732 -0.338667,0 -0.524933,-0.406399 -0.524933,-1.227665 0,-0.8382 0.186266,-1.240366 0.520699,-1.240366 0.347134,0 0.529167,0.397933 0.529167,1.257299 z m 2.036227,-0.990599 c 0,-0.402167 -0.300567,-0.6477 -0.6477,-0.6477 -0.368299,0 -0.643466,0.249767 -0.643466,0.6477 0,0.397933 0.2667,0.643466 0.643466,0.643466 0.376767,0 0.6477,-0.245533 0.6477,-0.643466 z m -0.232833,0 c 0,0.287866 -0.1778,0.444499 -0.414867,0.444499 -0.237066,0 -0.410633,-0.160866 -0.410633,-0.444499 0,-0.283633 0.182034,-0.448733 0.410633,-0.448733 0.237067,0 0.414867,0.160866 0.414867,0.448733 z"
+       id="text13"
+       aria-label="30°" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:'STIX Two Math';-inkscape-font-specification:'STIX Two Math, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.139755;stroke-miterlimit:3.6;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0"

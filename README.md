@@ -100,6 +100,8 @@ Otherwise static files such as css sheets won't be served properly.
   where n stands for current page number
 - [ ] Show second pager `choose page` (выберите страницу) in list only when there is
   more than ~5 elements or so.
+- [ ] In problem_detail link to next/previous problem doesn't appear if there 
+  is no problem with id+1/id-1. (E.g. 750, 752).
 - [ ] Check if the exam sheet is a full variant in `variants/admin.py`:
   change manual setting `NUMBER_OF_PROBLEMS = 26` to automatic (how?
   last type from `Second part`, ignoring next part
