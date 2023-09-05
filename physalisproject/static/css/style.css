@@ -279,6 +279,24 @@ ol,ul {
 .ml-40 { margin-left: -40px; }
 .ml20 { margin-left: 20px; }
 
+.rmw100 { min-width: 100px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw110 { min-width: 110px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw120 { min-width: 120px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw130 { min-width: 130px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw140 { min-width: 140px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw150 { min-width: 150px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw160 { min-width: 160px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw170 { min-width: 170px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw180 { min-width: 180px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw190 { min-width: 190px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw200 { min-width: 200px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw210 { min-width: 210px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw220 { min-width: 220px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw230 { min-width: 230px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw240 { min-width: 240px; float: right; padding-left: 1em; margin-top: 5px;}
+.rmw250 { min-width: 250px; float: right; padding-left: 1em; margin-top: 5px;}
+
+
 .Mw400 { max-width: 400px; }
 
 .mt-5  { margin-top:-5px; }
@@ -311,6 +329,7 @@ ol,ul {
   text-align: center;
   padding-left:  0.5em;
   padding-right: 0.5em;
+  min-width: 25px;
 }
 
 
@@ -436,5 +455,14 @@ h1>a.lnk_btn {
   }
   .no-print, .no-print * {
       display: none !important;
+  }
+  .ofa {
+    overflow:none;
+  }
+  .center-table tr td {
+    text-align: center;
+    padding-left:  0.4em;
+    padding-right: 0.4em;
+    min-width: 0px;
   }
 }
