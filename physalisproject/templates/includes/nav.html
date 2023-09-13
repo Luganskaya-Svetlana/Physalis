@@ -16,7 +16,7 @@
     <a href="{% url 'tags:list'%}"{% if '/tags/' in request.path %} class='current_nav'{% endif %}>Тэги</a>
     <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %} class='current_nav'{% endif %}>Типы</a>
     <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %} class='current_nav'{% endif %}>Задачи</a>
-    <a href="{% url 'variants:list'%}"{% if '/variants/' in request.path %} class='current_nav'{% endif %}>Варианты</a>
+    <a href="{% url 'variants:list'%}?order_by=-id"{% if '/variants/' in request.path %} class='current_nav'{% endif %}>Варианты</a>
     {% if '/problems/' in request.path and request.path != '/problems/' and request.user.is_staff %}
     <a href="/admin/problems/problem/{{problem.id}}/change" class=bold>✎</a>
     {% elif '/variants/' in request.path and request.path != '/variants/' and request.user.is_staff %}
