@@ -96,6 +96,8 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Change automatically variant complexity in /variants/ when complexity
+  of a problem in the variant changes
 - [ ] Pagination: show `1 2 3 ... n-1 n-2 n n+1 n+2 ... last-2 las -1 last`,
   where n stands for current page number
 - [ ] Show second pager `choose page` (выберите страницу) in list only when there is
