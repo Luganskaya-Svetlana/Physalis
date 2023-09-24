@@ -13,16 +13,23 @@
         <div class='col5'>
           <h2>{{type.part_ege}}</h2>
         {% endifchanged %}
-          <div> <a href="{{ type.get_absolute_url }}"> {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.] </a> </div>
+          <div class=type> <a href="{{ type.get_absolute_url }}"> {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.] </a> </div>
         {% endif %}
       {% endfor %}
       </div>
     </div>
 
     <p class=mt30>
-    Не всем задачам на сайте присвоен тип ЕГЭ. Все задачи можно найти на странице
-    <a href=/problems/>Задачи.</a> Например, задачи олимпиадного уровня можно
-    найти по фильтру <a href=/problems/?complexity_min=8&complexity_max=10>сложность 8-10.</a>
+      Не всем задачам на сайте присвоен тип ЕГЭ текущего года.
+      Например, имеющиеся на сайте задачи по статике не показаны
+      в механической задаче №26,
+      поскольку в 2024 году на экзамене в №26 статики не будет.
+    </p>
+
+    <p>
+      <b>Все</b> задачи перечислены на странице <a href=/problems/>Задачи.</a>
+      Из них можно выбрать задачи олимпиадного уровня, если поставить фильтр на 
+      <a href=/problems/?complexity_min=8&complexity_max=10>сложность 8-10.</a>
     </p>
 
 {% endblock %}
