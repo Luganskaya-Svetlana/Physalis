@@ -96,6 +96,8 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Search id range (example: 1, 4, 8-13, 20-26) 
+- [ ] Make inactive other fields when **id** is selected
 - [ ] Change automatically variant complexity in /variants/ when complexity
   of a problem in the variant changes
 - [ ] Pagination: show `1 2 3 ... n-1 n-2 n n+1 n+2 ... last-2 las -1 last`,
