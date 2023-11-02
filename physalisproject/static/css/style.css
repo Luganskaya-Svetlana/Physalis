@@ -146,6 +146,10 @@ div.rel:has(div.var-id-in-list) {
   white-space: pre;
 }
 
+.tag_in_list {
+  margin-top:3pt;
+}
+
 .tag {
   border: 2px solid #3377cc;
   border-radius: 3px;
