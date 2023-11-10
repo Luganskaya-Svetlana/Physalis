@@ -3,7 +3,6 @@ from string import ascii_lowercase as letters
 
 from django import forms
 from django.contrib import admin
-from django.core.exceptions import ValidationError
 
 from .models import Variant
 
