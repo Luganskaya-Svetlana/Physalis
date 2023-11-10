@@ -194,6 +194,7 @@ class Problem(models.Model):
     type_ege = models.ForeignKey(TypeInEGE,
                                  on_delete=models.CASCADE,
                                  verbose_name='Тип задания',
+                                 blank=True,
                                  null=True)
 
     class Meta:
