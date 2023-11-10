@@ -9,21 +9,21 @@
   <h2>Ответы на вариант <a href='/variants/{{variant.id}}'>#{{variant.id}}</a></h2>
   <div class=ofa>
     <table class='center-table ans-table'>
-      {% for problem in variant.get_answers %}
-        {% ifchanged problem.type_ege.part_ege %}
-        {% if variant.is_full %}
-          <tr> <td colspan=3 class='ta-center bold'>{{ problem.type_ege.part_ege }}</td> </tr>
-        {% endif %}
-          <tr>
+      <tr>
             <td class=bold>№</td>
             <td class=bold>Ответ</td>
             <td class=bold>Максимальный балл</td>
-          </tr>
-        {% endifchanged %}
+      </tr>
+      {% for problem in variant.get_answers %}
+<!--        {% ifchanged problem.type_ege.part_ege %}-->
+<!--        {% if variant.is_full %}-->
+<!--          <tr> <td colspan=3 class='ta-center bold'>{{ problem.type_ege.part_ege }}</td> </tr>-->
+<!--        {% endif %}-->
+<!--        {% endifchanged %}-->
         <tr>
           <td class='ta-right bold'><a href=#{{forloop.counter}}>{{forloop.counter}}</a></td>
           <td class=pl15>{% if problem.answer %}{{problem.answer|ziamath_filter|safe}}{% else %}См. решение {% endif %}</td>
-          <td class=center>{{problem.type_ege.max_score}}</td>
+          <td class=center>{% if problem.type_ege %}{{problem.type_ege.max_score}}{% else %}?{% endif %}</td>
         </tr>
       {% endfor %}
     </table>
@@ -33,13 +33,13 @@
   <div class=card id={{forloop.counter}}>
     <span class=id-in-var>{{ forloop.counter }}</span>
     <span class=compl>Задача <a href='/problems/{{problem.id}}'>#{{problem.id}}</a></span>
-    {% if not variant.is_full %}<span class=compl>(тип {{problem.type_ege.number}})</span>{% endif %}
+    {% if not variant.is_full and problem.type_ege %}<span class=compl>(тип {{problem.type_ege.number}})</span>{% endif %}
     {% if problem.complexity%}<span class=compl>Сложность {{problem.complexity}}/10</span>{% endif %}
     {% if problem.source %}<span class=compl>Источник: {{problem.source}}</span>{% endif %}
     <div class=problem>{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
     {% if problem.solution%}<h2>Решение</h2><div class=solution>{{problem.solution|ziamath_filter|markdown|safe}}</div>{% endif %}
     {% if problem.answer%}<h2>Ответ </h2><div class=answer>{{problem.answer|ziamath_filter|markdown|safe}}</div>{% endif %}
-    Максимальный балл: {{problem.type_ege.max_score}}
-  <div><hr>
+    {% if problem.type_ege %}Максимальный балл: {{problem.type_ege.max_score}}{% endif %}
+  </div><hr>
   {% endfor %}
 {% endblock %}
