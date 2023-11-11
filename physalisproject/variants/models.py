@@ -37,7 +37,7 @@ class Variant(models.Model):
     def get_problems(self):  # задачи для страницы варианта
         problems = (self.problems
                         .only('text', 'type_ege__number'))
-        if self.is_full:
+        if self.is_full and (None,) not in problems.values_list('type_ege'):
             problems = problems.order_by('type_ege__number')
         return problems
 
@@ -45,7 +45,7 @@ class Variant(models.Model):
         problems = (self.problems
                         .only('solution', 'answer', 'type_ege__max_score',
                               'complexity', 'source', 'id'))
-        if self.is_full:
+        if self.is_full and (None,) not in problems.values_list('type_ege'):
             problems = problems.order_by('type_ege__number')
         return problems
 
