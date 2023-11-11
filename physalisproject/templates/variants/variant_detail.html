@@ -21,7 +21,7 @@
 
   {% for problem in variant.get_problems %}
       <div class="problem">
-        <span class='id-in-var'>{{ forloop.counter }}</span>  {% if not variant.is_full %}(тип {{problem.type_ege.number}}){% endif %}
+        <span class='id-in-var'>{{ forloop.counter }}</span>  {% if not variant.is_full and problem.type_ege %}(тип {{problem.type_ege.number}}){% endif %}
         {{problem.text|abbr|ziamath_filter|markdown|safe}}
       </div>
     {% if variant.is_full and forloop.counter == 19 %}
