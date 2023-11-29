@@ -7,10 +7,10 @@
   <div class="card">
     <h1 class="card-title">Задача #{{problem.id}}
       {% if previous_problem %}
-        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">«</a>
+        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">←</a>
       {% endif %}
       {% if next_problem %}
-        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">»</a>
+        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">→</a>
       {% endif %}
     </h1>
     <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
