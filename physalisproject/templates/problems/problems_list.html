@@ -11,10 +11,10 @@
   <h1>{{title}}
     {% comment %} Для страниц с задачами по типам {% endcomment %}
     {% if previous_type %}
-      <a class="lnk_btn no-print" href="/types/{{type_num|add:"-1"}}" title="Тип {{type_num|add:"-1"}}">«</a>
+      <a class="lnk_btn no-print" href="/types/{{type_num|add:"-1"}}" title="Тип {{type_num|add:"-1"}}">←</a>
     {% endif %}
     {% if next_type %}
-      <a class="lnk_btn no-print" href="/types/{{type_num|add:"+1"}}" title="Тип {{type_num|add:"+1"}}">»</a>
+      <a class="lnk_btn no-print" href="/types/{{type_num|add:"+1"}}" title="Тип {{type_num|add:"+1"}}">→</a>
     {% endif %}
   </h1>
 
