@@ -55,14 +55,16 @@ h6 { font-size:12pt; line-height: 16pt;}
 .problem {
   overflow-y: auto;   /* causes large margin-top for p */
   overflow-x: hidden;
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 14pt;
+  /*  font-family: 'Times New Roman', Times, serif;
+  *font-size: 14pt;
+  */
 }
 
-.solution, .answer {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 14pt;
-}
+/*.solution, .answer {
+ * font-family: 'Times New Roman', Times, serif;
+ * font-size: 14pt;
+ *}
+ */
 
 
 .solution h1, .solution h2, .solution h3, .solution h4, .solution h5, .solution h6 {
