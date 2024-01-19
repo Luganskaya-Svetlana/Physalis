@@ -4,11 +4,11 @@ from django import template
 import xml.etree.ElementTree as ET
 ET.register_namespace("", "http://www.w3.org/2000/svg")
 
-# To check which version is in use
-import importlib.metadata
-
+# import importlib.metadata # To check which version is in use
+# zm.config.math.mathfont = '/home/slisakov/.fonts/XITSMath-Regular.otf'
 # zm.config.minsizefraction = .6
-zm.config.precision = 2
+# zm.config.precision = 2
+
 zm.config.svg2 = False
 zm.config.decimal_separator = ','
 
@@ -72,7 +72,9 @@ shortcuts = {
     r'\\dU(?![a-zA-Z])': r'\\Delta U',
     r'\\dt(?![a-zA-Z])': r'\\Delta t',
     r'\\dx(?![a-zA-Z])': r'\\Delta x',
-    r'\\dl(?![a-zA-Z])': r'\\Delta \\ell',
+    r'\\ell(?![a-zA-Z])': r'𝓁', # 0001D4C1
+    # r'\\ell(?![a-zA-Z])': r'𝓵', # 0001D4F5 (looks bold)
+    r'\\dl(?![a-zA-Z])': r'\\Delta 𝓁',
 }
 
 
@@ -113,11 +115,8 @@ def render_formula(match, display_style=False):
             .replace('<svg', f'<svg class="{svg_class}"')
 
         # return svg + f'<span class="hidden" data-content="{formula}"></span>'
-        #version = importlib.metadata.version('ziamath')
+        # version = importlib.metadata.version('ziamath')
         return svg
-
-
-
 
     except Exception as e:
         return f'<span style="color: red;">Error formula: {str(e)}</span>'
