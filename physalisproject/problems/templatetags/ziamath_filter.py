@@ -4,7 +4,7 @@ from django import template
 import xml.etree.ElementTree as ET
 ET.register_namespace("", "http://www.w3.org/2000/svg")
 
-# import importlib.metadata # To check which version is in use
+# import importlib.metadata  # To check which version is in use
 # zm.config.math.mathfont = '/home/slisakov/.fonts/XITSMath-Regular.otf'
 # zm.config.minsizefraction = .6
 # zm.config.precision = 2
@@ -72,8 +72,8 @@ shortcuts = {
     r'\\dU(?![a-zA-Z])': r'\\Delta U',
     r'\\dt(?![a-zA-Z])': r'\\Delta t',
     r'\\dx(?![a-zA-Z])': r'\\Delta x',
-    r'\\ell(?![a-zA-Z])': r'𝓁', # 0001D4C1
-    # r'\\ell(?![a-zA-Z])': r'𝓵', # 0001D4F5 (looks bold)
+    r'\\ell(?![a-zA-Z])': r'𝓁',  # 0001D4C1
+    # r'\\ell(?![a-zA-Z])': r'𝓵',  # 0001D4F5 (looks bold)
     r'\\dl(?![a-zA-Z])': r'\\Delta 𝓁',
 }
 
