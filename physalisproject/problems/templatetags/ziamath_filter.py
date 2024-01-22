@@ -11,6 +11,9 @@ ET.register_namespace("", "http://www.w3.org/2000/svg")
 
 zm.config.svg2 = False
 zm.config.decimal_separator = ','
+zm.tex.declareoperator = r'\d'
+zm.config.declareoperator = r'\d'
+zm.tex.declareoperator = r'\\d'
 
 
 register = template.Library()

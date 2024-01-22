@@ -31,7 +31,7 @@
 
   {% for problem in variant.get_answers %}
   <div class=card id={{forloop.counter}}>
-    <span class=id-in-var>{{ forloop.counter }}</span>
+    <span class='id-in-var sans fs12'>{{ forloop.counter }}</span>
     <span class=compl>Задача <a href='/problems/{{problem.id}}'>#{{problem.id}}</a></span>
     {% if not variant.is_full and problem.type_ege %}<span class=compl>(тип {{problem.type_ege.number}})</span>{% endif %}
     {% if problem.complexity%}<span class=compl>Сложность {{problem.complexity}}/10</span>{% endif %}

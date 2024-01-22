@@ -16,32 +16,34 @@
     <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
     {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|abbr|ziamath_filter|markdown|safe}}</div>{% endif %}
     {% if problem.answer%}<h2>Ответ </h2><div class="answer">{{problem.answer|ziamath_filter|markdown|safe}}</div>{% endif %}
-    {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
-    {% if problem.source%}<p><b>Источник: </b><a href="/problems/?source={{problem.source.id}}">{{problem.source}}</a></p>{% endif %}
-    {% if problem.category%}<p><b>Раздел: </b><a href="/problems/?category={{problem.category.id}}">{{problem.category}}</a></p>{% endif %}
-    {% if problem.subcategory%}<p><b>Подраздел: </b><a href="/problems/?subcategory={{problem.subcategory.id}}">{{problem.subcategory}}</a></p>{% endif %}
-    {% if problem.type_ege %}
-    <p>
-    <b>Номер в ЕГЭ: </b>
-    <a href="/types/{{problem.type_ege}}">{{problem.type_ege}}</a>
-    </p>
-    {% endif %}
+    <div class='sans fs12'>
+      {% if problem.complexity%}<p><b>Сложность: </b>{{problem.complexity}}/10</p>{% endif %}
+      {% if problem.source%}<p><b>Источник: </b><a href="/problems/?source={{problem.source.id}}">{{problem.source}}</a></p>{% endif %}
+      {% if problem.category%}<p><b>Раздел: </b><a href="/problems/?category={{problem.category.id}}">{{problem.category}}</a></p>{% endif %}
+      {% if problem.subcategory%}<p><b>Подраздел: </b><a href="/problems/?subcategory={{problem.subcategory.id}}">{{problem.subcategory}}</a></p>{% endif %}
+      {% if problem.type_ege %}
+      <p>
+      <b>Номер в ЕГЭ: </b>
+      <a href="/types/{{problem.type_ege}}">{{problem.type_ege}}</a>
+      </p>
+      {% endif %}
 
-    {% if problem.tags.all %}
-    <div class='ta-left'>
-      <b>Тэги:</b>
-      {% for tag in problem.tags.all %}
-        <a class='tag' href={{tag.get_absolute_url}}>{{ tag.name }}</a>
-      {% endfor %}
+      {% if problem.tags.all %}
+      <div class='ta-left'>
+        <b>Тэги:</b>
+        {% for tag in problem.tags.all %}
+          <a class='tag' href={{tag.get_absolute_url}}>{{ tag.name }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% if request.user.is_staff and problem.variants.all %}
+      <p>
+        <b>Варианты:</b>
+        {% for variant in problem.variants.all %}
+          <a href="{{variant.get_absolute_url}}">#{{variant.id}}</a>
+        {% endfor %}
+      </p>
+      {% endif %}
     </div>
-    {% endif %}
-    {% if request.user.is_staff and problem.variants.all %}
-    <p>
-      <b>Варианты:</b>
-      {% for variant in problem.variants.all %}
-        <a href="{{variant.get_absolute_url}}">#{{variant.id}}</a>
-      {% endfor %}
-    </p>
-    {% endif %}
   </div>
 {% endblock %}
