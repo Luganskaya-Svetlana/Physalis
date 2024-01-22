@@ -21,7 +21,7 @@
 
   {% for problem in variant.get_problems %}
       <div class="problem">
-        <span class='id-in-var'>{{ forloop.counter }}</span>  {% if not variant.is_full and problem.type_ege %}(тип {{problem.type_ege.number}}){% endif %}
+        <span class='id-in-var sans fs12'>{{ forloop.counter }}</span>  {% if not variant.is_full and problem.type_ege %}(тип {{problem.type_ege.number}}){% endif %}
         {{problem.text|abbr|ziamath_filter|markdown|safe}}
       </div>
     {% if variant.is_full and forloop.counter == 19 %}
@@ -42,7 +42,7 @@
   {% endif %}
   {% if variant.show_answers %}
   <div class='center-flex mt50 fs130'>
-    <a class='page bordered no-print' href={{variant.get_answers_url}}>Перейти к ответам</a>
+    <a class='page bordered no-print sans' href={{variant.get_answers_url}}>Перейти к ответам</a>
   </div>
   {% endif %}
 {% endblock %}

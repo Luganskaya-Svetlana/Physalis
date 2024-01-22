@@ -1,4 +1,5 @@
 html { overflow-y: scroll; }
+
 body {
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
@@ -7,25 +8,21 @@ body {
   margin: 0px auto;
   width: 723px;
   max-width: 100%;
-  font-family: Tahoma, Arial, sans-serif;
+  font-family: 'STIX Two Text', XITS, 'Times New Roman', Times, serif;
   text-align: justify;
-  font-size: 12pt;
-  line-height: 16pt;
+  font-size: 14pt;
+  line-height: 17.5pt;
   margin-bottom:12ex;
 }
 
-/*
-*p {
-*  font-size: 121%;
-*  line-height: 110%;
-*  font-family: XITS, 'Times New Roman', Times, serif;
-*}
-*li {
-*  font-family: XITS, 'Times New Roman', Times, serif;
-*}
-*/
+.sans {
+  font-family: Tahoma, Arial, sans-serif;
+}
 
-h1, h2, h3, h4, h5, h6 { text-align: left; }
+h1, h2, h3, h4, h5, h6 {
+  text-align: left; 
+  font-family: Tahoma, Arial, sans-serif;
+}
 h1 { font-size:21pt; line-height: 25pt;}
 h2 { font-size:17pt; line-height: 21pt;}
 h3 { font-size:15pt; line-height: 19pt;}
@@ -36,7 +33,8 @@ h6 { font-size:12pt; line-height: 16pt;}
 .h2 {
   font-size:17pt;
   font-weight:bold;
-  line-height:3ex;
+  line-height:3.5ex;
+  font-family: Tahoma, Arial, sans-serif;
 }
 
 .math-svg path,
@@ -55,17 +53,7 @@ h6 { font-size:12pt; line-height: 16pt;}
 .problem {
   overflow-y: auto;   /* causes large margin-top for p */
   overflow-x: hidden;
-  /*  font-family: 'Times New Roman', Times, serif;
-  *font-size: 14pt;
-  */
 }
-
-/*.solution, .answer {
- * font-family: 'Times New Roman', Times, serif;
- * font-size: 14pt;
- *}
- */
-
 
 .solution h1, .solution h2, .solution h3, .solution h4, .solution h5, .solution h6 {
   font-family: Tahoma, Arial, sans-serif;
@@ -84,6 +72,8 @@ h6 { font-size:12pt; line-height: 16pt;}
   border: 2px solid #3377cc;
   border-radius: 3px;
   padding: 0px 2px 0px 2px;
+  font-family: Tahoma, Arial, sans-serif;
+  font-size:12pt;
 }
 .id-in-var {
   display: inline-flex;
@@ -182,6 +172,8 @@ a {
   color: #3377cc;
 }
 nav {
+  font-size: 12.5pt;
+  font-family: Tahoma, Arial, sans-serif;
   margin: 5ex 0 4ex 0;
   display: flex;
   justify-content: space-between;
@@ -203,6 +195,10 @@ nav a {
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+}
+label {
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 12pt;
 }
 
 input[name="complexity_min"],
@@ -274,6 +270,7 @@ ol,ul {
 .col9 { flex: 90%; }
 
 .fs130 { font-size: 130%; }
+.fs12 { font-size: 12pt; }
 
 .pl15  { padding-left: 15px; }
 .mw50  { min-width: 50px; }
@@ -316,10 +313,84 @@ ol,ul {
 .rmw240 { min-width: 240px; float: right; padding-left: 1em; margin-top: 5px;}
 .rmw250 { min-width: 250px; float: right; padding-left: 1em; margin-top: 5px;}
 
+.Mw100 { max-width: 100px; }
+.Mw110 { max-width: 110px; }
+.Mw120 { max-width: 120px; }
+.Mw130 { max-width: 130px; }
+.Mw140 { max-width: 140px; }
+.Mw150 { max-width: 150px; }
+.Mw160 { max-width: 160px; }
+.Mw170 { max-width: 170px; }
+.Mw180 { max-width: 180px; }
+.Mw190 { max-width: 190px; }
+
 .Mw200 { max-width: 200px; }
+.Mw210 { max-width: 210px; }
+.Mw220 { max-width: 220px; }
+.Mw230 { max-width: 230px; }
+.Mw240 { max-width: 240px; }
 .Mw250 { max-width: 250px; }
+.Mw260 { max-width: 260px; }
+.Mw270 { max-width: 270px; }
+.Mw280 { max-width: 280px; }
+.Mw290 { max-width: 290px; }
+
 .Mw300 { max-width: 300px; }
+.Mw310 { max-width: 310px; }
+.Mw320 { max-width: 320px; }
+.Mw330 { max-width: 330px; }
+.Mw340 { max-width: 340px; }
+.Mw350 { max-width: 350px; }
+.Mw360 { max-width: 360px; }
+.Mw370 { max-width: 370px; }
+.Mw380 { max-width: 380px; }
+.Mw390 { max-width: 390px; }
+
 .Mw400 { max-width: 400px; }
+.Mw410 { max-width: 410px; }
+.Mw420 { max-width: 420px; }
+.Mw430 { max-width: 430px; }
+.Mw440 { max-width: 440px; }
+.Mw450 { max-width: 450px; }
+.Mw460 { max-width: 460px; }
+.Mw470 { max-width: 470px; }
+.Mw480 { max-width: 480px; }
+.Mw490 { max-width: 490px; }
+
+.Mw500 { max-width: 500px; }
+.Mw510 { max-width: 510px; }
+.Mw520 { max-width: 520px; }
+.Mw530 { max-width: 530px; }
+.Mw540 { max-width: 540px; }
+.Mw550 { max-width: 550px; }
+.Mw560 { max-width: 560px; }
+.Mw570 { max-width: 570px; }
+.Mw580 { max-width: 580px; }
+.Mw590 { max-width: 590px; }
+
+.Mw600 { max-width: 600px; }
+.Mw610 { max-width: 610px; }
+.Mw620 { max-width: 620px; }
+.Mw630 { max-width: 630px; }
+.Mw640 { max-width: 640px; }
+.Mw650 { max-width: 650px; }
+.Mw660 { max-width: 660px; }
+.Mw670 { max-width: 670px; }
+.Mw680 { max-width: 680px; }
+.Mw690 { max-width: 690px; }
+
+.Mw700 { max-width: 700px; }
+.Mw710 { max-width: 710px; }
+.Mw720 { max-width: 720px; }
+.Mw730 { max-width: 730px; }
+.Mw740 { max-width: 740px; }
+.Mw750 { max-width: 750px; }
+.Mw760 { max-width: 760px; }
+.Mw770 { max-width: 770px; }
+.Mw780 { max-width: 780px; }
+.Mw790 { max-width: 790px; }
+
+
 
 .mt-5  { margin-top:-5px; }
 .mt-10 { margin-top: -10px; }
@@ -341,12 +412,6 @@ ol,ul {
 .center-table {
   margin: 1em auto;
 }
-/*
-*.center-table tr td:first-child {
-*  text-align: left;
-*  font-weight:500;
-*}
-*/
 .center-table tr td {
   text-align: center;
   padding-left:  0.5em;

@@ -12,7 +12,7 @@
   </form>
 
   <div class=center-flex><h3>Сначала показывать</h3></div>
-  <div class="center-flex mb10 mt-5"> 
+  <div class="center-flex mb10 mt-5 sans fs12"> 
     <a class='var-sort{% if "=complexity" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="complexity" %}">Легкие</a>
     <a class='var-sort{% if "=-complexity" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="-complexity" %}">Сложные</a>
     <a class='var-sort{% if "=id" in request.get_full_path %} current {% endif %}' href="?{% param_save order_by="id" %}">Старые</a>
