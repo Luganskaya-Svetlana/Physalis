@@ -24,9 +24,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="pt"
-     inkscape:zoom="1.3563339"
-     inkscape:cx="198.69739"
-     inkscape:cy="193.16777"
+     inkscape:zoom="1.6320682"
+     inkscape:cx="224.86805"
+     inkscape:cy="185.654"
      inkscape:window-width="1440"
      inkscape:window-height="819"
      inkscape:window-x="0"
@@ -197,25 +197,10 @@
      style="font-style:italic;font-size:29px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';stroke-width:3.2;stroke-linejoin:round;stroke-miterlimit:3.2;paint-order:stroke fill markers"
      aria-label="m" />
   <path
-     d="m 95.29947,181.37301 c 3.915,-2.436 7.453,-6.554 7.453,-11.397 0,-1.131 -0.406,-2.726 -1.856,-2.726 -0.696,0 -1.305,0.406 -1.305,1.276 0,1.363 1.45,1.45 1.45,3.219 0,2.668 -2.291,5.742 -5.017,7.946 h -0.058 l 0.058,-1.015 c -0.116,-3.625 -0.406,-7.656 -0.841,-11.368 h -0.696 l -3.799,0.464 v 0.899 c 0.377,-0.058 0.638,-0.087 0.928,-0.087 0.957,0 1.189,0.348 1.334,1.711 0.493,3.77 0.754,6.699 0.928,11.078 z"
-     id="path58"
-     style="font-style:italic;font-size:29px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';stroke-width:3.2;stroke-linejoin:round;stroke-miterlimit:3.2;paint-order:stroke fill markers"
-     aria-label="v" />
-  <path
-     d="m 214.58484,181.37301 c 3.915,-2.436 7.453,-6.554 7.453,-11.397 0,-1.131 -0.406,-2.726 -1.856,-2.726 -0.696,0 -1.305,0.406 -1.305,1.276 0,1.363 1.45,1.45 1.45,3.219 0,2.668 -2.291,5.742 -5.017,7.946 h -0.058 l 0.058,-1.015 c -0.116,-3.625 -0.406,-7.656 -0.841,-11.368 h -0.696 l -3.799,0.464 v 0.899 c 0.377,-0.058 0.638,-0.087 0.928,-0.087 0.957,0 1.189,0.348 1.334,1.711 0.493,3.77 0.754,6.699 0.928,11.078 z"
-     id="path57"
-     style="font-style:italic;font-size:29px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';stroke-width:3.2;stroke-linejoin:round;stroke-miterlimit:3.2;paint-order:stroke fill markers"
-     aria-label="v" />
-  <path
      d="m 298.5223,154.27617 0.174,-0.87 c -2.204,0 -2.552,-0.377 -1.943,-3.364 l 2.407,-11.716 h 0.116 l 3.509,15.95 h 0.638 l 9.744,-15.979 h 0.116 l -2.581,12.528 c -0.435,2.117 -0.841,2.581 -2.987,2.581 l -0.174,0.87 h 7.743 l 0.174,-0.87 c -2.059,0 -2.61,-0.464 -2.175,-2.581 l 2.465,-12.093 c 0.464,-2.146 1.015,-2.639 3.074,-2.639 l 0.174,-0.87 h -5.481 l -8.845,14.674 h -0.116 l -3.132,-14.674 h -5.8 l -0.174,0.87 c 2.291,0 2.639,0.493 2.175,2.668 l -2.291,11.281 c -0.609,2.987 -1.102,3.364 -3.335,3.364 l -0.174,0.87 z"
      id="path56"
      style="font-style:italic;font-size:29px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';stroke-width:3.2;stroke-linejoin:round;stroke-miterlimit:3.2;paint-order:stroke fill markers"
      aria-label="M" />
-  <path
-     d="m 243.11998,53.345274 c 1.914,0 3.045,-1.624 4.06,-3.045 l -0.58,-0.435 c -0.464,0.522 -1.218,1.508 -2.204,1.508 -0.348,0 -0.551,-0.174 -0.551,-0.551 0,-0.203 0.058,-0.754 0.145,-1.218 l 3.364,-16.965 h -0.638 l -4.002,0.319 v 0.754 c 0,0 0.464,-0.058 0.986,-0.058 0.783,0 0.899,0.493 0.899,0.87 0,0.464 -0.087,0.928 -0.087,0.928 l -2.813,13.456 c -0.145,0.754 -0.406,2.146 -0.406,2.9 0,1.015 0.667,1.537 1.827,1.537 z"
-     id="path55"
-     style="font-style:italic;font-size:29px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';stroke-width:3.2;stroke-linejoin:round;stroke-miterlimit:3.2;paint-order:stroke fill markers"
-     aria-label="l" />
   <path
      d="m 182.20334,81.691294 c 2.117,0 4.06,-2.262 5.771,-5.017 h 0.232 c -0.087,0.957 -0.232,1.769 -0.232,2.465 0,1.421 0.493,2.465 1.856,2.465 2.349,0 3.451,-2.117 3.886,-2.842 l -0.464,-0.464 c -0.551,0.609 -1.102,1.131 -1.972,1.131 -1.537,0 -1.537,-2.813 -1.537,-4.901 0,-0.116 0,-0.232 0,-0.319 v -0.058 c 1.015,-1.508 3.77,-5.307 4.466,-6.119 l -0.029,-0.435 -2.407,0.058 c -0.551,0.754 -1.566,2.378 -2.262,4.002 h -0.174 c -0.261,-1.624 -0.812,-4.263 -3.625,-4.263 -4.002,0 -6.844,3.596 -6.844,8.932 0,3.335 0.957,5.365 3.335,5.365 z m 0.638,-2.552 c -1.334,0 -2.639,-0.957 -2.639,-3.48 0,-3.886 2.233,-5.858 5.365,-5.858 1.856,0 2.813,0.812 2.813,2.61 0,3.19 -2.755,6.728 -5.539,6.728 z"
      id="path54"
@@ -236,4 +221,30 @@
      id="path51"
      style="font-size:24px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Normal';stroke-width:3.2;stroke-linejoin:round;stroke-miterlimit:3.2;paint-order:stroke fill markers"
      aria-label="2" />
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:34.6667px;line-height:normal;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;paint-order:stroke fill markers;stop-color:#000000;stop-opacity:1"
+     x="145.24448"
+     y="141.55806"
+     id="text1"
+     transform="scale(0.75)"><tspan
+       sodipodi:role="line"
+       id="tspan1"
+       x="145.24448"
+       y="141.55806"></tspan></text>
+  <path
+     d="m 94.949822,182.8402 c 5.510998,0 8.084998,-5.742 8.084998,-11.517 0,-2.442 -0.462,-4.785 -2.211,-4.785 -0.956998,0 -1.517998,0.693 -1.517998,1.485 0,1.419 1.814998,1.98 1.814998,5.742 0,3.3 -1.385998,7.128 -5.180998,7.128 -2.079,0 -2.805,-1.155 -2.805,-3.102 0,-0.726 0.099,-1.419 0.231,-2.046 l 1.947,-9.042 h -0.726 l -4.389,0.495 -0.198,0.924 h 0.165 c 1.254,0.033 1.782,0.132 1.782,1.023 0,0.231 -0.033,0.561 -0.099,0.924 l -1.386,6.534 c -0.132,0.561 -0.165,1.155 -0.165,1.551 0,2.574 1.287,4.686 4.653,4.686 z"
+     id="text2"
+     style="font-style:italic;font-size:33px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';baseline-shift:baseline;stroke:#000000;stroke-width:0;stroke-miterlimit:3.2;paint-order:stroke fill markers"
+     aria-label="ʋ" />
+  <path
+     d="m 215.17715,182.8402 c 5.511,0 8.085,-5.742 8.085,-11.517 0,-2.442 -0.462,-4.785 -2.211,-4.785 -0.957,0 -1.518,0.693 -1.518,1.485 0,1.419 1.815,1.98 1.815,5.742 0,3.3 -1.386,7.128 -5.181,7.128 -2.079,0 -2.805,-1.155 -2.805,-3.102 0,-0.726 0.099,-1.419 0.231,-2.046 l 1.947,-9.042 h -0.726 l -4.389,0.495 -0.198,0.924 h 0.165 c 1.254,0.033 1.782,0.132 1.782,1.023 0,0.231 -0.033,0.561 -0.099,0.924 l -1.386,6.534 c -0.132,0.561 -0.165,1.155 -0.165,1.551 0,2.574 1.287,4.686 4.653,4.686 z"
+     id="text2-0"
+     style="font-style:italic;font-size:33px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Italic';baseline-shift:baseline;stroke:#000000;stroke-width:0;stroke-miterlimit:3.2;paint-order:stroke fill markers"
+     aria-label="ʋ" />
+  <path
+     d="m 235.78478,48.651622 c 2.1,0 4.98,-2.88 6.15,-4.95 l -0.81,-0.63 c -1.2,1.86 -2.61,3.45 -3.69,3.45 -0.51,0 -0.57,-0.33 -0.57,-0.63 0,-0.48 0.18,-1.14 0.66,-3.09 l 1.2,-4.83 c 3.81,-1.89 6.9,-4.74 6.9,-8.07 0,-1.71 -0.81,-2.91 -2.46,-2.91 -2.91,0 -5.1,3.84 -6.33,8.85 l -0.48,1.92 c -1.41,0.63 -2.91,1.11 -4.32,1.38 l 0.15,1.05 c 1.23,-0.24 2.55,-0.6 3.84,-1.05 l -1.38,5.64 c -0.27,1.11 -0.33,1.8 -0.33,2.19 0,1.08 0.51,1.68 1.47,1.68 z m 3.36,-12.36 0.45,-1.8 c 1.05,-4.2 1.92,-6.27 3.12,-6.27 0.78,0 0.99,0.9 0.99,1.71 0,2.46 -1.95,4.68 -4.56,6.36 z"
+     id="text3"
+     style="font-size:30px;font-family:'STIX Two Text';-inkscape-font-specification:'STIX Two Text, Normal';baseline-shift:baseline;stroke:#000000;stroke-width:0;stroke-miterlimit:3.2;paint-order:stroke fill markers"
+     aria-label="𝓁" />
 </svg>

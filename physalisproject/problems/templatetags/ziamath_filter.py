@@ -68,7 +68,7 @@ shortcuts = {
     r'\\Nm(?![a-zA-Z])': r'\\;Н/м',
     r'\\J(?![a-zA-Z])': r'\\;Дж',
     r'\\kJ(?![a-zA-Z])': r'\\;кДж',
-    r'\\eds(?![a-zA-Z])': r'\\mathcal{E}',
+    r'\\eds(?![a-zA-Z])': r'\\mathscr{E}',
     r'\\const(?![a-zA-Z])': r'\\text{const}',
     r'\\deg(?![a-zA-Z])': r'^\\circ',
     r'\\degc(?![a-zA-Z])': r'~^\\circ\\text{C}',

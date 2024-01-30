@@ -8,7 +8,8 @@ body {
   margin: 0px auto;
   width: 723px;
   max-width: 100%;
-  font-family: 'STIX Two Text', XITS, 'Times New Roman', Times, serif;
+  /*font-family: 'STIX Two Text', 'Times New Roman', Times, serif;*/
+  font-family: 'Times New Roman', Times, serif;
   text-align: justify;
   font-size: 14pt;
   line-height: 17.5pt;
@@ -296,6 +297,7 @@ ol,ul {
 .ml-40 { margin-left: -40px; }
 .ml20 { margin-left: 20px; }
 
+.rmw50  { min-width: 50px;  float: right; padding-left: 1em; margin-top: 5px;}
 .rmw100 { min-width: 100px; float: right; padding-left: 1em; margin-top: 5px;}
 .rmw110 { min-width: 110px; float: right; padding-left: 1em; margin-top: 5px;}
 .rmw120 { min-width: 120px; float: right; padding-left: 1em; margin-top: 5px;}
