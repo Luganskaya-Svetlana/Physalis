@@ -6,14 +6,15 @@ ET.register_namespace("", "http://www.w3.org/2000/svg")
 
 # import importlib.metadata  # To check which version is in use
 # zm.config.math.mathfont = '/home/slisakov/.fonts/XITSMath-Regular.otf'
-# zm.config.minsizefraction = .6
+# zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath3.otf'
+# zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath4.otf'
 # zm.config.precision = 2
 
+zm.config.minsizefraction = .6
 zm.config.svg2 = False
 zm.config.decimal_separator = ','
-zm.tex.declareoperator = r'\d'
-zm.config.declareoperator = r'\d'
-zm.tex.declareoperator = r'\\d'
+# zm.config.math.variant = 'sans'
+
 
 
 register = template.Library()
