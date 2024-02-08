@@ -16,7 +16,6 @@ zm.config.decimal_separator = ','
 # zm.config.math.variant = 'sans'
 
 
-
 register = template.Library()
 
 shortcuts = {
