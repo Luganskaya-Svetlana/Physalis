@@ -30,7 +30,9 @@
     <div class="id-in-list">
       <a href="{{problem.get_absolute_url}}"><span class='id-number bold'>#{{problem.id}}</span></a>
       <span class="compl">Сложность {{problem.complexity}}/10</span>
+      {% if problem.type_ege.number %}
       <span class="compl">Тип {{problem.type_ege.number}}</span>
+      {% endif %}
       {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
         {% if request.user.is_staff and problem.variants.all %}
           <span class="compl no-solution">

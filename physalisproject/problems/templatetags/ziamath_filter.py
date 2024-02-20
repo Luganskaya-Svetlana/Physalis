@@ -9,8 +9,8 @@ ET.register_namespace("", "http://www.w3.org/2000/svg")
 # zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath3.otf'
 # zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath4.otf'
 # zm.config.precision = 2
+# zm.config.minsizefraction = .6
 
-zm.config.minsizefraction = .6
 zm.config.svg2 = False
 zm.config.decimal_separator = ','
 # zm.config.math.variant = 'sans'
