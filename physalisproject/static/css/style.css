@@ -20,23 +20,17 @@ body {
   font-family: Tahoma, Arial, sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   text-align: left; 
-  font-family: Tahoma, Arial, sans-serif;
-}
-h1 { font-size:21pt; line-height: 25pt;}
-h2 { font-size:17pt; line-height: 21pt;}
-h3 { font-size:15pt; line-height: 19pt;}
-h4 { font-size:14pt; line-height: 18pt;}
-h5 { font-size:13pt; line-height: 17pt;}
-h6 { font-size:12pt; line-height: 16pt;}
-
-.h2 {
-  font-size:17pt;
   font-weight:bold;
-  line-height:3.5ex;
   font-family: Tahoma, Arial, sans-serif;
 }
+h1, .h1 { font-size:21pt; line-height: 25pt;}
+h2, .h2 { font-size:17pt; line-height: 21pt;}
+h3, .h3 { font-size:15pt; line-height: 19pt;}
+h4, .h4 { font-size:14pt; line-height: 18pt;}
+h5, .h5 { font-size:13pt; line-height: 17pt;}
+h6, .h5 { font-size:12pt; line-height: 16pt;}
 
 .math-svg path,
 .math-svg line,
@@ -270,6 +264,8 @@ ol,ul {
 .col8 { flex: 80%; }
 .col9 { flex: 90%; }
 
+.fs110 { font-size: 110%; }
+.fs120 { font-size: 120%; }
 .fs130 { font-size: 130%; }
 .fs12 { font-size: 12pt; }
 
