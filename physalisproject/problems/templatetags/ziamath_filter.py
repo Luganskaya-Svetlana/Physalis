@@ -35,6 +35,7 @@ shortcuts = {
     r'\\m(?![a-zA-Z])': r'\\;м',
     r'\\A(?![a-zA-Z])': r'\\;А',
     r'\\Am(?![a-zA-Z])': r'\\;А',
+    r'\\mA(?![a-zA-Z])': r'\\;мА',
     r'\\Om(?![a-zA-Z])': r'\\;Ом',
     r'\\g(?![a-zA-Z])': r'\\;г',
     r'\\Hz(?![a-zA-Z])': r'\\;Гц',
@@ -65,6 +66,7 @@ shortcuts = {
     r'\\Ftr(?![a-zA-Z])': r'F_{тр}',
     r'\\N(?![a-zA-Z])': r'\\;Н',
     r'\\mkF(?![a-zA-Z])': r'\\;мкФ',
+    r'\\Gn(?![a-zA-Z])': r'\\;Гн',
     r'\\Nm(?![a-zA-Z])': r'\\;Н/м',
     r'\\J(?![a-zA-Z])': r'\\;Дж',
     r'\\kJ(?![a-zA-Z])': r'\\;кДж',
@@ -96,7 +98,7 @@ def render_formula(match, display_style=False):
     try:
         formula = match.group(1)
         formula = replace_shortcuts(formula)
-        math_obj = zm.Math.fromlatex(formula, size=18.5)
+        math_obj = zm.Math.fromlatex(formula, size=19)
         svg = math_obj.svg()
         root = ET.fromstring(svg)
 
