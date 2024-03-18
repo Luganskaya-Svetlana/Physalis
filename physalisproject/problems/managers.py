@@ -13,7 +13,7 @@ class ProblemManager(models.Manager):
     def detail(self):
         return (
             self.get_queryset()
-            .prefetch_related('tags', 'variants')
+            .prefetch_related('tags', 'variants', 'similar_problems')
             .select_related('source', 'category', 'subcategory',
                             'type_ege')
         )
