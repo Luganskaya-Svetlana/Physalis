@@ -196,6 +196,7 @@ class Problem(models.Model):
                                  verbose_name='Тип задания',
                                  blank=True,
                                  null=True)
+    notes = models.TextField('заметки', blank=True, null=True)
 
     class Meta:
         verbose_name = 'задача'

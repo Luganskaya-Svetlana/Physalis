@@ -10,7 +10,8 @@ from .models import Variant
 class VariantForm(forms.ModelForm):
     class Meta:
         model = Variant
-        fields = ('problems', 'text', 'complexity', 'is_full', 'show_answers')
+        fields = ('problems', 'text', 'complexity', 'is_full', 'show_answers',
+                  'notes')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -86,7 +87,7 @@ class VariantAdmin(admin.ModelAdmin):
     readonly_fields = ('date',)
     fieldsets = (
         (None, {'fields': ('problems', 'text', 'is_full', 'show_answers',
-                           'is_published')}),
+                           'is_published', 'notes')}),
         (('Автозаполняемые поля'), {
             'classes': ('collapse',),
             'fields': (
@@ -97,7 +98,7 @@ class VariantAdmin(admin.ModelAdmin):
         }),
     )
     # поля, отображаемые в форме
-    list_display = ('id', 'text', 'is_full', 'is_published',)
+    list_display = ('id', 'text', 'is_full', 'is_published')
     # поля, отображаемые на странице со всеми вариантами
     search_fields = ('id', 'text')  # поля, по которым осущ. поиск в админке
     raw_id_fields = ('problems',)

@@ -15,7 +15,8 @@ class ImageInline(admin.TabularInline):
 class ProblemAdmin(admin.ModelAdmin):
     '''Настройки админки для задач'''
     fields = ('text', 'solution', 'answer', 'complexity', 'source', 'category',
-              'subcategory', 'tags', 'type_ege')  # поля, отображаемые в форме
+              'subcategory', 'tags', 'type_ege', 'notes',)
+    # поля, отображаемые в форме
     list_display = ('id', 'type_ege', 'author', 'date', 'get_variants')
     # поля, отображаемые на странице со всеми задачами
     search_fields = ('id', 'text')  # поля, по которым осущ. поиск в админке

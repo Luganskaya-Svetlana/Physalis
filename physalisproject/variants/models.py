@@ -17,7 +17,7 @@ class Variant(models.Model):
 
     problems = SortedManyToManyField(Problem,
                                      verbose_name='задачи')
-    text = models.TextField('комментарии', blank=True, null=True)
+    text = models.TextField('описание', blank=True, null=True)
     complexity = models.FloatField('сложность', blank=True, default=0)
     is_full = models.BooleanField('полный вариант', default=True)
     show_answers = models.BooleanField('показать решения', default=True)
@@ -28,6 +28,7 @@ class Variant(models.Model):
                                    validators=[validate_answer_slug])
     is_published = models.BooleanField('показывать в списке вариантов',
                                        default=True)
+    notes = models.TextField('заметки', blank=True, null=True)
 
     class Meta:
         verbose_name = 'вариант'
