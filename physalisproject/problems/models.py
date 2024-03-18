@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django_cleanup.signals import cleanup_pre_delete
 from sorl.thumbnail import delete
+from sortedm2m.fields import SortedManyToManyField
 
 from .managers import ProblemManager
 
@@ -197,6 +198,8 @@ class Problem(models.Model):
                                  blank=True,
                                  null=True)
     notes = models.TextField('заметки', blank=True, null=True)
+    similar_problems = SortedManyToManyField('self',
+                                             verbose_name='похожие задачи')
 
     class Meta:
         verbose_name = 'задача'
