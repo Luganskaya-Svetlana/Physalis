@@ -39,6 +39,10 @@ class ProblemAdmin(admin.ModelAdmin):
             form=form,
             change=change
         )
+        s_problems = obj.similar_problems.get_queryset()
+        for i in range(len(s_problems)):
+            for j in range(i + 1, len(s_problems)):
+                s_problems[i].similar_problems.add(s_problems[j])
 
 
 @admin.register(TypeInEGE)

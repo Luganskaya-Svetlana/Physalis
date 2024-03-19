@@ -199,6 +199,7 @@ class Problem(models.Model):
                                  null=True)
     notes = models.TextField('заметки', blank=True, null=True)
     similar_problems = SortedManyToManyField('self',
+                                             blank=True,
                                              verbose_name='похожие задачи')
 
     class Meta:
