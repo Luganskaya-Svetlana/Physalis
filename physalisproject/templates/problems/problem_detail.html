@@ -29,21 +29,21 @@
       {% endif %}
 
       {% if problem.tags.all %}
-      <div class='ta-left'>
+      <p class='ta-left'>
         <b>Тэги:</b>
         {% for tag in problem.tags.all %}
           <a class='tag' href={{tag.get_absolute_url}}>{{ tag.name }}</a>
         {% endfor %}
-      </div>
+      </p>
       {% endif %}
 
       {% if problem.similar_problems.all %}
-      <div class='ta-left'>
+      <p class='ta-left'>
         <b>Похожие задачи:</b>
         {% for pr in problem.similar_problems.all %}
-          <a class="lnk_btn no-print" href={{pr.get_absolute_url}}>#{{ pr.id }}</a>
+          <a class=tag href={{pr.get_absolute_url}}>#{{ pr.id }}</a>
         {% endfor %}
-      </div>
+      </p>
       {% endif %}
   
       {% if request.user.is_staff and problem.variants.all %}
