@@ -96,6 +96,7 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [ ] Remove 'edit' buttun from /tags/
 - [ ] /problems/last/ redirects to the last problem
 - [ ] https://phys.pro/problems/?page=last redirects to the last page
 - [ ] Search id range (example: 1, 4, 8-13, 20-26) 
