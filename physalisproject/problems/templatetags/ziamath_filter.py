@@ -23,6 +23,7 @@ shortcuts = {
     r'\\a(?![a-zA-Z])': r'\\alpha',
     r'\\b(?![a-zA-Z])': r'\\beta',
     r'\\f(?![a-zA-Z])': r'\\varphi',
+    r'\\e(?![a-zA-Z])': r'\\varepsilon',
     r'\\la(?![a-zA-Z])': r'\\lambda',
     r'\\cmc(?![a-zA-Z])': r'\\;см^3',
     r'\\mc(?![a-zA-Z])': r'\\;м^3',
