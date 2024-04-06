@@ -96,10 +96,16 @@ Otherwise static files such as css sheets won't be served properly.
 - [x] Adjust CSS styles for print: good-loking pdf saved with the standard
   system print dialog
 - [x] Generate sitemap.xml
+- [x] Add 'similar problems' field to admin panel
+- [ ] Rewrite 'similar problems' implementation using 'variants', allow user to
+  see the list with all 'similar problems'
+- [ ] Search id range (example: 1, 4, 8-13, 20-26). Important: users will be able to
+  generate their own variants.
+- [ ] Add field 'original number' in admin panel for problems. Use case: check
+  whether the problem already added to the database.
 - [ ] Remove 'edit' buttun from /tags/
 - [ ] /problems/last/ redirects to the last problem
 - [ ] https://phys.pro/problems/?page=last redirects to the last page
-- [ ] Search id range (example: 1, 4, 8-13, 20-26) 
 - [ ] Make inactive other fields when **id** is selected
 - [ ] Change automatically variant complexity in /variants/ when complexity
   of a problem in the variant changes
