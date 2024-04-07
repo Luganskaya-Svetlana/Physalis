@@ -73,13 +73,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 ```
 Otherwise static files such as css sheets won't be served properly.
 
-
 ## Features
+Note: 'variant' means 'exam sheet' or just some list of problems.
+
 - [x] Add problems to the database from the admin panel (mandatory parameters:
   text, number; optional parameters: solution, answer category, tag,
   difficulty)
 - [x] Process text with markdown.
-- [x] Generate two pages (exam sheet and answers) via admin panel by listing
+- [x] Generate two pages (variant and answers) via admin panel by listing
   ids of selected problems. Different styling for full and incomplete exam
   according to the structure of Unified State Exam in Russia (ЕГЭ)
 - [x] Upload images (including .svg) to problems
@@ -97,12 +98,19 @@ Otherwise static files such as css sheets won't be served properly.
   system print dialog
 - [x] Generate sitemap.xml
 - [x] Add 'similar problems' field to admin panel
+- [ ] Option to generate pdf when creating a 'variant'.
+- [ ] Case-insensitive inexact search (possibly need to move db to Postgre)
 - [ ] Rewrite 'similar problems' implementation using 'variants', allow user to
   see the list with all 'similar problems'
 - [ ] Search id range (example: 1, 4, 8-13, 20-26). Important: users will be able to
-  generate their own variants.
+  generate their own variants. Allow to generate page with solutions for chosen
+  ids (probably need to limit number of problems up to 50 or so).
+- [ ] Add *optional* caching for 'flatpages'.
+  Set in admin panel whether to cache the page.
+  Set time to store the cache in admin panel.
 - [ ] Add field 'original number' in admin panel for problems. Use case: check
-  whether the problem already added to the database.
+  whether the problem has already been added to the database. Warn user when he
+  is trying to create a problem with the same 'source' and 'original_number'.
 - [ ] Remove 'edit' buttun from /tags/
 - [ ] /problems/last/ redirects to the last problem
 - [ ] https://phys.pro/problems/?page=last redirects to the last page
@@ -112,10 +120,10 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Pagination: show `1 2 3 ... n-1 n-2 n n+1 n+2 ... last-2 las -1 last`,
   where n stands for current page number
 - [ ] Show second pager `choose page` (выберите страницу) in list only when there is
-  more than ~5 elements or so.
+  more than 10 elements.
 - [ ] In problem_detail link to next/previous problem doesn't appear if there 
   is no problem with id+1/id-1. (E.g. 750, 752).
-- [ ] Check if the exam sheet is a full variant in `variants/admin.py`:
+- [ ] Check if the 'variant' is a full variant in `variants/admin.py`:
   change manual setting `NUMBER_OF_PROBLEMS = 26` to automatic (how?
   last type from `Second part`, ignoring next part
   `not in EGE of current year`).
@@ -125,7 +133,7 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] Don't allow to create two types with the same number
 - [ ] Add field 'similar problems' in admin panel when adding a problem
 - [ ] At /admin/problems/typeinege/ show max_score (and possibly id)
-- [ ] Calculate exam difficulty as (average_test+average_2_part)/2 to increase
+- [ ] Calculate 'variant' difficulty as (average_test+average_2_part)/2 to increase
   significance of the second part
 - [ ] Add `<title>` tags for types
 - [ ] Add checkbox "show max points" when adding a set of problems (useful when
@@ -155,8 +163,6 @@ Otherwise static files such as css sheets won't be served properly.
   problems). May be used as an easy way for users to generate and share variants.
 - [ ] Copy problem/variant (useful when need to make similar problem/variant
   with a few changes). Perhaps, add a field "copy details from previous id / id=..."
-- [ ] Generate pdf automatically when generating exam sheets
-- [ ] Case-insensitive inexact search (possibly need to change to Postgre)
 - [ ] Add website logo to the svg file while uploading
 - [ ] Trim the whitespace from the svg files while uploading
 - [ ] Convert png to svg while uploading
@@ -169,9 +175,9 @@ Otherwise static files such as css sheets won't be served properly.
 - [ ] User registration and user-generated content: generate pdf of selected
   problems etc.
 - [ ] Store statistics for a user
-- [ ] Pass exam online and get points (note: answers 124 and 214 are both correct for
+- [ ] Pass the exam online and get points (note: answers 124 and 214 are both correct for
   types 10 etc)
-- [ ] Generate exam sheet on user request (e.g., full exam with chosen difficulty)
+- [ ] Generate 'variant' on user request (e.g., complete 'variant' with chosen difficulty)
 - [ ] Upload several svg images at the same time (instead of one at a time)
 - [ ] Add vim-like behavior to admin panel
 - [ ] In admin panel show number of corresponding problems next to
