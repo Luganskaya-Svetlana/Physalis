@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="309.50049pt"
+   height="305.67975pt"
+   viewBox="0 0 309.50048 305.67976"
+   version="1.1"
+   id="svg24"
+   sodipodi:docname="1127t.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview24"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:date>2024-04-20T16:14:49.345759</dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Matplotlib v3.8.2, https://matplotlib.org/</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1">
+    <style
+       type="text/css"
+       id="style1">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+  </defs>
+  <g
+     id="figure_1"
+     transform="translate(-10.461875,-8.761875)">
+    <g
+       id="axes_1">
+      <g
+         id="matplotlib.axis_1">
+        <g
+           id="xtick_1">
+          <g
+             id="line2d_1">
+            <defs
+               id="defs2">
+              <path
+                 id="m1e2992d8ea"
+                 d="M 0,0 V 6.5"
+                 style="stroke:#000000;stroke-width:2" />
+            </defs>
+            <g
+               id="g2">
+              <use
+                 xlink:href="#m1e2992d8ea"
+                 x="126.86216"
+                 y="275.72333"
+                 style="stroke:#000000;stroke-width:2"
+                 id="use2" />
+            </g>
+          </g>
+          <g
+             id="text_1">
+            <!-- $l_1$ -->
+            <g
+               transform="matrix(0.34,0,0,-0.34,115.81216,309.72519)"
+               id="g4">
+              <defs
+                 id="defs3">
+                <path
+                   id="STIXTwoText-Italic-6c"
+                   d="m 698,-58 q -192,0 -298,86 -106,87 -106,254 0,128 32,323 32,195 58,317 l 621,2969 q 0,0 9,64 10,64 10,141 0,64 -35,128 -35,64 -163,64 -84,0 -151,-7 -67,-6 -67,-6 v 167 l 883,70 h 141 L 890,768 q -13,-77 -23,-157 -9,-80 -9,-112 0,-64 32,-93 32,-28 89,-28 167,0 288,124 122,125 199,208 l 128,-96 Q 1485,461 1357,304 1229,147 1069,44 909,-58 698,-58 Z"
+                   transform="scale(0.015625)" />
+                <path
+                   id="STIXTwoText-31"
+                   d="M 2726,0 H 512 v 179 q 454,0 640,96 186,96 186,333 v 2707 q 0,167 -45,240 -45,74 -167,74 -64,0 -179,-13 -115,-13 -243,-36 -128,-22 -230,-54 v 212 l 1241,352 h 186 V 608 q 0,-237 192,-333 192,-96 633,-96 z"
+                   transform="scale(0.015625)" />
+              </defs>
+              <use
+                 xlink:href="#STIXTwoText-Italic-6c"
+                 transform="translate(0,0.5)"
+                 id="use3" />
+              <use
+                 xlink:href="#STIXTwoText-31"
+                 transform="matrix(0.7,0,0,0.7,27.299988,-13.871875)"
+                 id="use4" />
+            </g>
+          </g>
+        </g>
+        <g
+           id="xtick_2">
+          <g
+             id="line2d_2">
+            <g
+               id="g5">
+              <use
+                 xlink:href="#m1e2992d8ea"
+                 x="270.70648"
+                 y="275.72333"
+                 style="stroke:#000000;stroke-width:2"
+                 id="use5" />
+            </g>
+          </g>
+          <g
+             id="text_2">
+            <!-- $l_2$ -->
+            <g
+               transform="matrix(0.34,0,0,-0.34,259.65649,309.72519)"
+               id="g7">
+              <defs
+                 id="defs5">
+                <path
+                   id="STIXTwoText-32"
+                   d="M 2765,0 H 243 v 218 l 973,972 q 320,327 531,592 211,266 317,535 106,269 106,601 0,359 -215,573 -214,215 -585,215 -314,0 -535,-135 -221,-134 -400,-493 l -153,64 q 147,468 467,724 320,256 787,256 365,0 640,-138 275,-138 432,-384 157,-246 157,-586 0,-281 -119,-541 -118,-259 -352,-534 -233,-275 -572,-621 L 877,518 v -32 l 448,20 h 889 q 256,0 358,115 103,115 212,403 h 186 z"
+                   transform="scale(0.015625)" />
+              </defs>
+              <use
+                 xlink:href="#STIXTwoText-Italic-6c"
+                 transform="translate(0,0.5)"
+                 id="use6" />
+              <use
+                 xlink:href="#STIXTwoText-32"
+                 transform="matrix(0.7,0,0,0.7,27.299988,-13.871875)"
+                 id="use7" />
+            </g>
+          </g>
+        </g>
+        <g
+           id="xtick_3">
+          <g
+             id="line2d_3" />
+          <g
+             id="text_3">
+            <!-- $x$ -->
+            <g
+               transform="matrix(0.34,0,0,-0.34,303.64238,309.72519)"
+               id="g8">
+              <defs
+                 id="defs7">
+                <path
+                   id="STIXTwoText-Italic-78"
+                   d="m 2067,-64 q -237,0 -349,173 -112,173 -188,486 l -173,711 -71,108 -198,647 q -83,269 -163,422 -80,154 -199,218 -118,64 -310,64 -51,0 -99,-4 -48,-3 -112,-15 v 192 l 870,102 h 96 q 115,-134 208,-339 93,-205 157,-467 l 90,-391 64,-121 153,-500 q 135,-428 243,-627 109,-198 269,-198 128,0 233,102 106,103 222,256 L 2944,653 Q 2880,550 2790,425 2701,301 2592,189 2483,77 2352,6 2221,-64 2067,-64 Z m -1933,6 q -204,0 -287,99 -84,100 -84,209 0,108 68,191 67,84 188,84 96,0 208,-42 112,-41 189,-41 13,0 57,16 45,16 128,92 84,77 205,256 l 500,724 128,-288 h -90 L 934,576 Q 781,326 601,134 422,-58 134,-58 Z m 1965,2336 -429,-678 -121,307 h 83 l 314,538 q 83,147 195,288 112,141 265,237 154,96 352,96 167,0 240,-74 74,-74 74,-202 0,-160 -90,-234 -89,-73 -198,-73 -90,0 -176,32 -86,32 -170,32 -102,0 -179,-67 -77,-67 -160,-202 z"
+                   transform="scale(0.015625)" />
+              </defs>
+              <use
+                 xlink:href="#STIXTwoText-Italic-78"
+                 transform="translate(0,0.09375)"
+                 id="use8" />
+            </g>
+          </g>
+        </g>
+        <g
+           id="xtick_4">
+          <g
+             id="line2d_4" />
+          <g
+             id="text_4">
+            <!-- $0$ -->
+            <g
+               transform="matrix(0.34,0,0,-0.34,32.055568,309.72519)"
+               id="g9">
+              <defs
+                 id="defs8">
+                <path
+                   id="STIXTwoText-30"
+                   d="M 1581,-70 Q 1197,-70 928,99 659,269 492,563 326,858 249,1242 q -76,384 -76,806 0,608 163,1072 163,464 480,726 317,263 778,263 416,0 729,-247 314,-246 493,-710 179,-464 179,-1123 0,-410 -80,-788 Q 2835,864 2665,569 2496,275 2227,102 1958,-70 1581,-70 Z m 0,230 q 377,0 585,454 208,455 208,1376 0,973 -202,1437 -201,464 -598,464 -377,0 -582,-461 Q 787,2970 787,2016 787,1088 992,624 1197,160 1581,160 Z"
+                   transform="scale(0.015625)" />
+              </defs>
+              <use
+                 xlink:href="#STIXTwoText-30"
+                 transform="translate(0,0.796875)"
+                 id="use9" />
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         id="matplotlib.axis_2">
+        <g
+           id="ytick_1">
+          <g
+             id="line2d_5">
+            <defs
+               id="defs9">
+              <path
+                 id="m0679b9531d"
+                 d="M 0,0 H -6.5"
+                 style="stroke:#000000;stroke-width:2" />
+            </defs>
+            <g
+               id="g10">
+              <use
+                 xlink:href="#m0679b9531d"
+                 x="54.939999"
+                 y="155.85304"
+                 style="stroke:#000000;stroke-width:2"
+                 id="use10" />
+            </g>
+          </g>
+          <g
+             id="text_5">
+            <!-- $U_1$ -->
+            <g
+               transform="matrix(0.34,0,0,-0.34,7.2,167.85398)"
+               id="g12">
+              <defs
+                 id="defs10">
+                <path
+                   id="STIXTwoText-Italic-55"
+                   d="m 1997,-77 q -698,0 -1012,265 -313,266 -313,836 0,128 19,272 19,144 51,304 l 384,1850 q 13,70 22,134 10,64 10,109 0,185 -122,252 -121,68 -422,68 l 39,192 h 1837 l -39,-192 q -269,0 -413,-48 -144,-48 -211,-176 -67,-128 -118,-371 L 1331,1606 q -25,-128 -41,-259 -16,-131 -16,-221 0,-409 214,-605 214,-195 752,-195 627,0 944,298 317,298 451,957 l 327,1613 q 32,160 51,281 19,122 19,205 0,198 -109,265 -109,68 -390,68 l 32,192 h 1568 l -32,-192 q -275,0 -419,-64 -144,-64 -215,-234 -70,-169 -141,-502 L 4013,1670 Q 3834,800 3370,361 2906,-77 1997,-77 Z"
+                   transform="scale(0.015625)" />
+              </defs>
+              <use
+                 xlink:href="#STIXTwoText-Italic-55"
+                 transform="translate(0,0.296875)"
+                 id="use11" />
+              <use
+                 xlink:href="#STIXTwoText-31"
+                 transform="matrix(0.7,0,0,0.7,73.099991,-14.075)"
+                 id="use12" />
+            </g>
+          </g>
+        </g>
+        <g
+           id="ytick_2">
+          <g
+             id="line2d_6">
+            <g
+               id="g13">
+              <use
+                 xlink:href="#m0679b9531d"
+                 x="54.939999"
+                 y="83.930885"
+                 style="stroke:#000000;stroke-width:2"
+                 id="use13" />
+            </g>
+          </g>
+          <g
+             id="text_6">
+            <!-- $U_2$ -->
+            <g
+               transform="matrix(0.34,0,0,-0.34,7.2,95.931821)"
+               id="g15">
+              <use
+                 xlink:href="#STIXTwoText-Italic-55"
+                 transform="translate(0,0.296875)"
+                 id="use14" />
+              <use
+                 xlink:href="#STIXTwoText-32"
+                 transform="matrix(0.7,0,0,0.7,73.099991,-14.075)"
+                 id="use15" />
+            </g>
+          </g>
+        </g>
+        <g
+           id="ytick_3">
+          <g
+             id="line2d_7" />
+          <g
+             id="text_7">
+            <!-- $U$ -->
+            <g
+               transform="matrix(0.34,0,0,-0.34,19.78,31.201875)"
+               id="g16">
+              <use
+                 xlink:href="#STIXTwoText-Italic-55"
+                 transform="translate(0,0.296875)"
+                 id="use16" />
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         id="line2d_8">
+        <path
+           d="M 126.86216,155.85305 V 275.72332"
+           clip-path="url(#p3e21705758)"
+           style="fill:none;stroke:#000000;stroke-width:1.6;stroke-dasharray:5.92, 2.56;stroke-dashoffset:0"
+           id="path16" />
+      </g>
+      <g
+         id="line2d_9">
+        <path
+           d="M 126.86216,155.85305 H 54.94"
+           clip-path="url(#p3e21705758)"
+           style="fill:none;stroke:#000000;stroke-width:1.6;stroke-dasharray:5.92, 2.56;stroke-dashoffset:0"
+           id="path17" />
+      </g>
+      <g
+         id="line2d_10">
+        <path
+           d="M 270.70649,83.930883 V 275.72332"
+           clip-path="url(#p3e21705758)"
+           style="fill:none;stroke:#000000;stroke-width:1.6;stroke-dasharray:5.92, 2.56;stroke-dashoffset:0"
+           id="path18" />
+      </g>
+      <g
+         id="line2d_11">
+        <path
+           d="M 270.70649,83.930883 H 54.94"
+           clip-path="url(#p3e21705758)"
+           style="fill:none;stroke:#000000;stroke-width:1.6;stroke-dasharray:5.92, 2.56;stroke-dashoffset:0"
+           id="path19" />
+      </g>
+      <g
+         id="line2d_12">
+        <path
+           d="M 54.94,275.72332 126.86216,155.85305 270.70649,83.930883"
+           clip-path="url(#p3e21705758)"
+           style="fill:none;stroke:#000000;stroke-width:2.1;stroke-linecap:square"
+           id="path20" />
+      </g>
+      <g
+         id="patch_3">
+        <path
+           d="m 54.94,275.72332 q 128.26119,0 252.87694,0"
+           style="fill:none;stroke:#000000;stroke-width:2.56;stroke-linecap:round"
+           id="path21" />
+        <path
+           d="m 296.61694,271.52332 11.2,4.2 -11.2,4.2 z"
+           style="stroke:#000000;stroke-width:2.56;stroke-linecap:round"
+           id="path22" />
+      </g>
+      <g
+         id="patch_4">
+        <path
+           d="m 54.94,275.72332 q 0,-128.26119 0,-252.876941"
+           style="fill:none;stroke:#000000;stroke-width:2.56;stroke-linecap:round"
+           id="path23" />
+        <path
+           d="m 50.74,34.046379 4.2,-11.2 4.2,11.2 z"
+           style="stroke:#000000;stroke-width:2.56;stroke-linecap:round"
+           id="path24" />
+      </g>
+    </g>
+  </g>
+  <defs
+     id="defs24">
+    <clipPath
+       id="p3e21705758">
+      <rect
+         x="40.555569"
+         y="19.200937"
+         width="270.9068"
+         height="266.112"
+         id="rect24" />
+    </clipPath>
+  </defs>
+</svg>

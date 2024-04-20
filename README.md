@@ -98,6 +98,9 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
   system print dialog
 - [x] Generate sitemap.xml
 - [x] Add 'similar problems' field to admin panel
+- [x] Add 'notes' field to admin panel for problems (not displayed on the site)
+- [ ] Upload files up to 30 MB (now limit is ~5 MB)
+- [ ] Add 'notes' field to admin panel for `flatpages`.
 - [ ] Option to generate pdf when creating a 'variant'.
 - [ ] Case-insensitive inexact search (possibly need to move db to Postgre)
 - [ ] Rewrite 'similar problems' implementation using 'variants', allow user to
@@ -111,6 +114,7 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
 - [ ] Add field 'original number' in admin panel for problems. Use case: check
   whether the problem has already been added to the database. Warn user when he
   is trying to create a problem with the same 'source' and 'original_number'.
+- [ ] Add search in solution and answer; in flatpages (for admin only).
 - [ ] Remove 'edit' buttun from /tags/
 - [ ] /problems/last/ redirects to the last problem
 - [ ] https://phys.pro/problems/?page=last redirects to the last page
