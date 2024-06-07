@@ -99,6 +99,11 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
 - [x] Generate sitemap.xml
 - [x] Add 'similar problems' field to admin panel
 - [x] Add 'notes' field to admin panel for problems (not displayed on the site)
+- [ ] In /variants/ add types ДВИ and ЕГЭ (show only ДВИ or ЕГЭ...)
+- [ ] In /variants/ change 'Неизвестно' to '-------'
+- [ ] Decide on 'difficulty' in /variants/.
+  Full exam always has significantly lower 'difficulty' than its second part.
+  Perhaps, calculate difficulty only for the 'second part' in a full exam sheet.
 - [ ] Upload files up to 30 MB (now limit is ~5 MB)
 - [ ] Add 'notes' field to admin panel for `flatpages`.
 - [ ] Option to generate pdf when creating a 'variant'.
