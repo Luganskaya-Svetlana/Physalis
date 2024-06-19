@@ -256,6 +256,15 @@ ol,ul {
   /* text-align: left; */
 }
 
+ul.sav {
+    list-style: none;
+    padding-left: 0;
+}
+ul.sav li {
+    margin-top: 1ex;
+    text-indent: 1.5em;
+}
+
 .row { display: flex; gap:3em; }
 .col1 { flex: 10%; }
 .col2 { flex: 20%; }
