@@ -88,6 +88,7 @@ shortcuts = {
 def replace_shortcuts(formula):
     try:
         scientific_notation_pattern = r'\\num\{(\d+[.,]\d+)[eE]([+-]?\d+)\}'
+
         def replace_scientific_notation(match):
             # Замена точки на запятую в десятичной части, если это необходимо
             number = match.group(1).replace('.', ',')
@@ -95,7 +96,8 @@ def replace_shortcuts(formula):
             return f'{number} \\cdot 10^{{{exponent}}}'
 
         # Применение шаблона для научной нотации
-        formula = re.sub(scientific_notation_pattern, replace_scientific_notation, formula)
+        formula = re.sub(scientific_notation_pattern,
+                         replace_scientific_notation, formula)
 
         for shortcut, full_name in shortcuts.items():
             formula = re.sub(shortcut, full_name, formula)
@@ -104,6 +106,7 @@ def replace_shortcuts(formula):
 
     except Exception as e:
         return f'<span style="color: red;">Error shortcut: {str(e)}</span>'
+
 
 def render_formula(match, display_style=False):
     try:
