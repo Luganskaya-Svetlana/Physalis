@@ -99,6 +99,9 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
 - [x] Generate sitemap.xml
 - [x] Add 'similar problems' field to admin panel
 - [x] Add 'notes' field to admin panel for problems (not displayed on the site)
+- [ ] When paste an image from the clipboard (Ctrl+V) to the "text of problem" field,
+  send it via API to trained chat-gpt model and return latexified text.
+  Useful to convert screen captures to text seamlessly.
 - [ ] In /variants/ add types ДВИ and ЕГЭ (show only ДВИ or ЕГЭ...)
 - [ ] In /variants/ change 'Неизвестно' to '-------'
 - [ ] Decide on 'difficulty' in /variants/.
