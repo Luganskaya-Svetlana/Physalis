@@ -6,13 +6,15 @@
 {% load static %}
 
 {% block content %}
-  <h2>Ответы на вариант <a href='/variants/{{variant.id}}'>#{{variant.id}}</a></h2>
+  <h2>Вариант <a href='/variants/{{variant.id}}'>#{{variant.id}}</a> (ответы и решения)</h2>
   <div class=ofa>
     <table class='center-table ans-table'>
       <tr>
             <td class=bold>№</td>
             <td class=bold>Ответ</td>
+            {% if variant.is_full %}
             <td class=bold>Максимальный балл</td>
+            {% endif %}
       </tr>
       {% for problem in variant.get_answers %}
 <!--        {% ifchanged problem.type_ege.part_ege %}-->
@@ -23,7 +25,9 @@
         <tr>
           <td class='ta-right bold'><a href=#{{forloop.counter}}>{{forloop.counter}}</a></td>
           <td class=pl15>{% if problem.answer %}{{problem.answer|ziamath_filter|safe}}{% else %}См. решение {% endif %}</td>
+          {% if variant.is_full %}
           <td class=center>{% if problem.type_ege %}{{problem.type_ege.max_score}}{% else %}?{% endif %}</td>
+          {% endif %}
         </tr>
       {% endfor %}
     </table>
