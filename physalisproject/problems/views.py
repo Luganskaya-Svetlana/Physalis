@@ -15,6 +15,12 @@ class ProblemView(DetailView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
+
+        # Для проверки версии ziamath: добавить в templates/problems/problem_detail.html:
+        # Используемая версия ziamath: {{ ziamath_version }}
+        # import ziamath
+        # data['ziamath_version'] = ziamath.__version__
+
         problem_pk = self.kwargs['pk']
         # для временной навигации:
         data['next_problem'] = (Problem.objects
