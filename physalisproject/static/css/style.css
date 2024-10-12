@@ -199,6 +199,10 @@ label {
   font-size: 12pt;
 }
 
+.unit {
+  display: inline-block;
+}
+
 input[name="complexity_min"],
 input[name="complexity_max"] {
   width: 3ex;
