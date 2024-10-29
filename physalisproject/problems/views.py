@@ -20,8 +20,8 @@ class ProblemView(DetailView):
         # добавить в templates/problems/problem_detail.html:
         # Используемая версия ziamath: {{ ziamath_version }}
         #
-        # import ziamath
-        # data['ziamath_version'] = ziamath.__version__
+        import ziamath
+        data['ziamath_version'] = ziamath.__version__
 
         problem_pk = self.kwargs['pk']
         # для временной навигации:
