@@ -56,4 +56,9 @@
       {% endif %}
     </div>
   </div>
+  {% comment %}
+    {% if request.user.is_staff %}
+    Используемая версия ziamath: {{ ziamath_version }}
+    {% endif %}
+  {% endcomment %}
 {% endblock %}
