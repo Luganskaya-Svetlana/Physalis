@@ -69,7 +69,7 @@ abbr_dic = {
                  <tr><td>&nbsp;</td><td></td></tr></table>',
     'table_av': 'Ответ:<table class="change"><tr><td>А</td><td>Б</td>\
                  <td>В</td></tr><tr><td>&nbsp;</td><td></td><td></td></tr>\
-                 </table>'
+                 </table>',
 }
 
 
