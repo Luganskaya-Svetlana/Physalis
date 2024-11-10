@@ -443,7 +443,7 @@ ul.sav li {
 .img-side-by-side {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   text-align: center;
   gap:4%;
