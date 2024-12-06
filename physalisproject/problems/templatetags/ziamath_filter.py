@@ -85,27 +85,37 @@ shortcuts = {
 }
 
 
+import re
+
 def replace_shortcuts(formula):
     try:
-        scientific_notation_pattern = r'\\num\{(\d+[.,]\d+)[eE]([+-]?\d+)\}'
+        # Шаблон для научной нотации, позволяющий опускать число перед e:
+        # \num{e-5} или \num{2.5e3} и т.д.
+        scientific_notation_pattern = r'\\num\{([0-9.,]*)[eE]([+-]?\d+)\}'
 
         def replace_scientific_notation(match):
-            # Замена точки на запятую в десятичной части, если это необходимо
-            number = match.group(1).replace('.', ',')
+            number = match.group(1)
             exponent = match.group(2)
+
+            # Если перед e не было числа (пример: \num{e-5}), результатом будет просто 10^{exponent}
+            if not number:
+                return f'10^{{{exponent}}}'
+
+            # Если число было, заменяем точку на запятую и добавляем умножение
+            number = number.replace('.', ',')
             return f'{number} \\cdot 10^{{{exponent}}}'
 
-        # Применение шаблона для научной нотации
-        formula = re.sub(scientific_notation_pattern,
-                         replace_scientific_notation, formula)
+        formula = re.sub(scientific_notation_pattern, replace_scientific_notation, formula)
 
+        # Предполагается, что словарь shortcuts определен выше
         for shortcut, full_name in shortcuts.items():
             formula = re.sub(shortcut, full_name, formula)
 
         return formula
 
     except Exception as e:
-        return f'<span style="color: red;">Error shortcut: {str(e)}</span>'
+        # При необходимости можно логировать или обрабатывать исключение
+        raise e
 
 
 def render_formula(match, display_style=False):
