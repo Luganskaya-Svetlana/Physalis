@@ -97,7 +97,8 @@ def replace_shortcuts(formula):
             number = match.group(1)
             exponent = match.group(2)
 
-            # Если перед e не было числа (пример: \num{e-5}), результатом будет просто 10^{exponent}
+            # Если перед e не было числа (пример: \num{e-5}), результатом будет
+            # просто 10^{exponent}
             if not number:
                 return f'10^{{{exponent}}}'
 
@@ -105,7 +106,8 @@ def replace_shortcuts(formula):
             number = number.replace('.', ',')
             return f'{number} \\cdot 10^{{{exponent}}}'
 
-        formula = re.sub(scientific_notation_pattern, replace_scientific_notation, formula)
+        formula = re.sub(scientific_notation_pattern,
+                  replace_scientific_notation, formula)
 
         # Предполагается, что словарь shortcuts определен выше
         for shortcut, full_name in shortcuts.items():
