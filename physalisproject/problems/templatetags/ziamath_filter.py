@@ -85,8 +85,6 @@ shortcuts = {
 }
 
 
-import re
-
 def replace_shortcuts(formula):
     try:
         # Шаблон для научной нотации, позволяющий опускать число перед e:
@@ -107,7 +105,7 @@ def replace_shortcuts(formula):
             return f'{number} \\cdot 10^{{{exponent}}}'
 
         formula = re.sub(scientific_notation_pattern,
-                  replace_scientific_notation, formula)
+                         replace_scientific_notation, formula)
 
         # Предполагается, что словарь shortcuts определен выше
         for shortcut, full_name in shortcuts.items():
