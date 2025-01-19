@@ -99,6 +99,13 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
 - [x] Generate sitemap.xml
 - [x] Add 'similar problems' field to admin panel
 - [x] Add 'notes' field to admin panel for problems (not displayed on the site)
+- [ ] Generate 'variant' on user request (e.g., complete 'variant' with chosen difficulty, or set of selected ids...)
+- [ ] Search id range (example: 1, 4, 8-13, 20-26). Important: users will be able to
+  generate their own variants. Allow to generate page with solutions for chosen
+  ids (probably need to limit number of problems up to 50 or so).
+- [ ] For admin: Option to generate pdf when creating a 'variant'
+- [ ] Add comments for problems and flatpages
+- [ ] Subscribe on e-mail notifications on adding new articles/problems of specified difficulty/subject etc.
 - [ ] When paste an image from the clipboard (Ctrl+V) to the "text of problem" field,
   send it via API to trained chat-gpt model and return latexified text.
   Useful to convert screen captures to text seamlessly.
@@ -109,13 +116,9 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
   Perhaps, calculate difficulty only for the 'second part' in a full exam sheet.
 - [ ] Upload files up to 30 MB (now limit is ~5 MB)
 - [ ] Add 'notes' field to admin panel for `flatpages`.
-- [ ] Option to generate pdf when creating a 'variant'.
 - [ ] Case-insensitive inexact search (possibly need to move db to Postgre)
 - [ ] Rewrite 'similar problems' implementation using 'variants', allow user to
   see the list with all 'similar problems'
-- [ ] Search id range (example: 1, 4, 8-13, 20-26). Important: users will be able to
-  generate their own variants. Allow to generate page with solutions for chosen
-  ids (probably need to limit number of problems up to 50 or so).
 - [ ] Add *optional* caching for 'flatpages'.
   Set in admin panel whether to cache the page.
   Set time to store the cache in admin panel.
@@ -123,7 +126,7 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
   whether the problem has already been added to the database. Warn user when he
   is trying to create a problem with the same 'source' and 'original_number'.
 - [ ] Add search in solution and answer; in flatpages (for admin only).
-- [ ] Remove 'edit' buttun from /tags/
+- [ ] Remove 'edit' button from /tags/
 - [ ] /problems/last/ redirects to the last problem
 - [ ] https://phys.pro/problems/?page=last redirects to the last page
 - [ ] Make inactive other fields when **id** is selected
@@ -141,7 +144,7 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
   `not in EGE of current year`).
   Same for descriptions in `templates/variants/variant_detail.html.`
 - [ ] When total amount of types changes (happens nearly yearly), keep the
-  order in old-structured variants unhanged.
+  order in old-structured variants unchanged.
 - [ ] Don't allow to create two types with the same number
 - [ ] Add field 'similar problems' in admin panel when adding a problem
 - [ ] At /admin/problems/typeinege/ show max_score (and possibly id)
@@ -159,7 +162,7 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
   (or possibly make it default value of the solution field)
 - [ ] Update to the latest version of Django (4.2.3+ instead of 3.2.4).
 - [ ] Update ziamath (including ziafont and latex2mathml, unreleased versions from git?)
-- [ ] If the topic (раздел) is selected, show only appropritate subtopics
+- [ ] If the topic (раздел) is selected, show only appropriate subtopics
   (подразделы) in the list (both in admin panel and for filters on /problems,
   /types, /tags).
 - [ ] «Drafts» for problems and variants (problem/variant is saved and can be
@@ -184,12 +187,11 @@ Note: 'variant' means 'exam sheet' or just some list of problems.
 - [ ] .print-new-page (PART 2) start from even page only when print
   two pages on sheet
 - [ ] /variants/ order newest first by default
-- [ ] User registration and user-generated content: generate pdf of selected
-  problems etc.
+- [ ] User registration and user-generated content: generate page or pdf of selected
+  problems etc; store in account
 - [ ] Store statistics for a user
 - [ ] Pass the exam online and get points (note: answers 124 and 214 are both correct for
   types 10 etc)
-- [ ] Generate 'variant' on user request (e.g., complete 'variant' with chosen difficulty)
 - [ ] Upload several svg images at the same time (instead of one at a time)
 - [ ] Add vim-like behavior to admin panel
 - [ ] In admin panel show number of corresponding problems next to
