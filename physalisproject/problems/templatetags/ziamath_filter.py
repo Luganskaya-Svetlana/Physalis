@@ -8,6 +8,8 @@ ET.register_namespace("", "http://www.w3.org/2000/svg")
 # zm.config.math.mathfont = '/home/slisakov/.fonts/XITSMath-Regular.otf'
 # zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath3.otf'
 # zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath4.otf'
+zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath5.otf'
+# STIX 2.13b171 with ℰ symbol copied from stix-1.0.0 with fontforge
 # zm.config.precision = 2
 # zm.config.minsizefraction = .6
 
