@@ -74,3 +74,4 @@ venv.bak/
 dmypy.json
 .pyre/
 physalisproject/django.log
+get-pip.py
