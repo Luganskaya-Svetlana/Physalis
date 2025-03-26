@@ -35,12 +35,14 @@ h4, .h4 { font-size:14pt; line-height: 18pt;}
 h5, .h5 { font-size:13pt; line-height: 17pt;}
 h6, .h5 { font-size:12pt; line-height: 16pt;}
 
+/*
 .math-svg path,
 .math-svg line,
 .math-svg rect {
   stroke: black;
   stroke-width: 0.09;
 }
+*/
 
 .math-svg.display {
   display: block;
