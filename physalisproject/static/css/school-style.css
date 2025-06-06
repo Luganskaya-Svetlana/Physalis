@@ -1,4 +1,9 @@
 body {
+  /*-webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  text-align: justify;
+  hyphens: auto; */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0 auto;
   padding: 0 20px;
@@ -83,21 +88,22 @@ a {
   margin-bottom: 10px;
 }
 
-.enroll a {
-  display: inline-block;
-  background-color: #358ce9;
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: bold;
-  padding: 3px 15px 4px 15px;;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
-}
-
-.enroll a:hover {
-  background-color: #0056b3;
-}
+/*
+ *.enroll a {
+ * display: inline-block;
+ * background-color: #358ce9;
+ * color: #ffffff;
+ * text-decoration: none;
+ * font-weight: bold;
+ * padding: 3px 15px 4px 15px;;
+ * border-radius: 6px;
+ * transition: background-color 0.3s ease;
+ * margin-top: 10px;
+ * }
+ *.enroll a:hover {
+ *  background-color: #0056b3;
+ * }
+ */
 
 .toggle-btn {
   background: none;
