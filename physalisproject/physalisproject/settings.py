@@ -100,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     'default': {
         # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        ## For testing use DummyCache
+        # For testing use DummyCache
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         # 'LOCATION': os.path.join(BASE_DIR, '.cache'),
