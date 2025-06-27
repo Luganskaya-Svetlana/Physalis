@@ -24,7 +24,7 @@
 <!--        {% endifchanged %}-->
         <tr>
           <td class='ta-right bold'><a href=#{{forloop.counter}}>{{forloop.counter}}</a></td>
-          <td class=pl15>{% if problem.answer %}{{problem.answer|ziamath_filter|safe}}{% else %}См. решение {% endif %}</td>
+          <td class=pl15>{% if problem.answer %}{{problem.answer|ziamath_filter|markdown|safe}}{% else %}См. решение {% endif %}</td>
           {% if variant.is_full %}
           <td class=center>{% if problem.type_ege %}{{problem.type_ege.max_score}}{% else %}?{% endif %}</td>
           {% endif %}
