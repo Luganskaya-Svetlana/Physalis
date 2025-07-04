@@ -13,9 +13,8 @@ body {
   background-color: #fdfdfd;
 }
 
-header, section, footer {
-  padding: 40px 0;
-}
+/* header, section, footer { padding: 40px 0; } */
+section, footer { padding-top: 20px; }
 
 header {
   text-align: center;
@@ -235,10 +234,6 @@ footer a {
 
 .modal-close:hover {
   color: #000;
-}
-
-#faq {
-  margin: 60px 0;
 }
 
 .faq-item {
