@@ -26,9 +26,11 @@ class Variant(models.Model):
                                    max_length=4, unique=False,
                                    blank=True, default='',
                                    validators=[validate_answer_slug])
-    is_published = models.BooleanField('показывать в списке вариантов',
+    is_published = models.BooleanField('показать в списке вариантов',
                                        default=True)
     notes = models.TextField('заметки', blank=True, null=True)
+    sort_by_complexity = models.BooleanField('отсортировать по нарастанию сложности',
+                                             default=False)
 
     class Meta:
         verbose_name = 'вариант'
@@ -37,16 +39,22 @@ class Variant(models.Model):
 
     def get_problems(self):  # задачи для страницы варианта
         problems = (self.problems
-                        .only('text', 'type_ege__number'))
-        if self.is_full and (None,) not in problems.values_list('type_ege'):
+                    .only('text', 'type_ege__number', 'complexity'))
+
+        if self.sort_by_complexity:
+            problems = problems.order_by('complexity')
+        elif self.is_full and (None,) not in problems.values_list('type_ege'):
             problems = problems.order_by('type_ege__number')
+
         return problems
 
     def get_answers(self):  # задачи для страницы с ответами
         problems = (self.problems
-                        .only('solution', 'answer', 'type_ege__max_score',
-                              'complexity', 'source', 'id'))
-        if self.is_full and (None,) not in problems.values_list('type_ege'):
+                    .only('solution', 'answer', 'type_ege__max_score',
+                          'complexity', 'source', 'id'))
+        if self.sort_by_complexity:
+            problems = problems.order_by('complexity')
+        elif self.is_full and (None,) not in problems.values_list('type_ege'):
             problems = problems.order_by('type_ege__number')
         return problems
 
