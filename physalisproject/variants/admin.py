@@ -11,7 +11,7 @@ class VariantForm(forms.ModelForm):
     class Meta:
         model = Variant
         fields = ('problems', 'text', 'complexity', 'is_full', 'show_answers',
-                  'notes')
+                  'notes', 'sort_by_complexity')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -86,7 +86,7 @@ class VariantAdmin(admin.ModelAdmin):
     form = VariantForm
     readonly_fields = ('date',)
     fieldsets = (
-        (None, {'fields': ('problems', 'text', 'is_full', 'show_answers',
+        (None, {'fields': ('problems', 'text', 'is_full', 'sort_by_complexity', 'show_answers',
                            'is_published', 'notes')}),
         (('Автозаполняемые поля'), {
             'classes': ('collapse',),
