@@ -29,7 +29,8 @@ class Variant(models.Model):
     is_published = models.BooleanField('показать в списке вариантов',
                                        default=True)
     notes = models.TextField('заметки', blank=True, null=True)
-    sort_by_complexity = models.BooleanField('отсортировать по нарастанию сложности',
+    sort_by_complexity = models.BooleanField('отсортировать по'
+                                             ' нарастанию сложности',
                                              default=False)
 
     class Meta:
