@@ -58,7 +58,7 @@ a {
 
 .teacher-card {
   cursor: pointer;
-  width: 244px;
+  width: 340px;
   flex-shrink: 0;
 }
 
@@ -67,16 +67,20 @@ a {
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.07);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
   border: 1px solid #eee;
 }
 .course{
   margin-bottom: 30px;
 }
 
-.card:hover, .course:hover, .review:hover {
-  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-  transform: translateY(-4px);
+/*
+.card { transition: box-shadow 0.3s ease, transform 0.3s ease; }
+.card:hover { box-shadow: 0 12px 24px rgba(0,0,0,0.1); transform: translateY(-4px); }
+*/
+
+.details {
+  font-size:90%;
+  color: #358ce9;
 }
 
 .card img {
@@ -264,6 +268,81 @@ footer a {
   color: #555;
 }
 
-.hidden {
-  display: none;
+.hidden { display: none; }
+ul li { margin-bottom: 10px}
+
+.center { text-align: center }
+
+.pricing-grid{display:grid;grid-template-columns:1.2fr repeat(3,1fr);border:1px solid #eee;border-radius:10px;overflow:hidden}
+.pr-row{display:contents}
+.pr-cell{padding:10px 12px;border-right:1px solid #eee}
+.pr-row>.pr-cell{border-bottom:1px solid #eee;box-shadow:inset 0 1px 0 rgba(0,0,0,.03)}
+.pr-cell:last-child{border-right:none}
+.pr-row:last-child>.pr-cell{border-bottom:none}
+.pr-head .pr-cell{font-weight:700;background:#fafafa}
+.pr-plan{text-align:center}
+.pr-feature{font-weight:600}
+.pr-yes{color:#1ea756;font-weight:700;text-align:center}
+.pr-no{color:#ccc;text-align:center}
+.pr-qty{text-align:center;font-weight:700}
+.pr-price .pr-cell{background:#fbfefd;font-weight:800;color:#165e2a}
+
+/* Результаты */
+#results .results-text{font-variant-numeric:tabular-nums}
+#results .results-text p{line-height:1.9}
+
+#courses .course.course--pricing-full{display:block;padding:0;margin:0;background:transparent;border:none;box-shadow:none;border-radius:0}
+#courses .pricing-grid{--fcol:190px;--pcol:230px;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1px solid #eee}
+#courses .pr-row{display:grid;grid-template-columns:minmax(var(--fcol),1fr) repeat(3,minmax(var(--pcol),1fr));min-width:calc(var(--fcol)+3*var(--pcol))}
+#courses .pr-row:nth-child(odd){background:#fff}
+#courses .pr-row:nth-child(even){background:#fafafa}
+#courses .pr-cell{padding:12px 10px;border-bottom:1px solid #eee;box-sizing:border-box}
+#courses .pr-head .pr-cell{font-weight:700;text-align:center;background:#f6f6f6;border-bottom:1px solid #e9e9e9;position:sticky;top:0;z-index:3}
+#courses .pr-feature{position:sticky;left:0;z-index:2;background:inherit;border-right:1px solid #eee}
+#courses .pr-plan,.pr-yes,.pr-no,.pr-qty{text-align:center}
+#courses .pr-yes{color:#1a9c41}
+#courses .pr-no{color:#bbb}
+#courses .pr-price .pr-cell{font-weight:700;text-align:center}
+@media (max-width:560px){
+  #courses .pricing-grid{--fcol:170px;--pcol:210px}
+  #courses .pr-row{min-width:calc(var(--fcol)+3*var(--pcol))}
+  #courses .pr-cell{padding:10px 8px}
+}
+/* шире — без горизонтального скролла */
+@media (min-width:1100px){
+  #courses .pricing-grid{overflow-x:visible}
+  #courses .pr-row{min-width:auto;grid-template-columns:1.05fr repeat(3,1fr)}
+}
+/* гасим старое скрытие колонок на узких */
+@media (max-width:760px){
+  #courses .pricing-grid{grid-template-columns:unset!important}
+  #courses .pricing-grid .pr-plan:nth-child(n+3),
+  #courses .pricing-grid .pr-cell:nth-child(3),
+  #courses .pricing-grid .pr-cell:nth-child(4){display:block!important}
+}
+
+
+#reviews{padding-top:20px}
+#reviews .rv-wrapper{display:grid;grid-template-columns:60px 1fr 60px;gap:10px;align-items:center;position:relative}
+#reviews .rv-viewport{overflow:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory}
+#reviews .rv-track{display:flex;gap:12px}
+#reviews .rv-card{flex:0 0 calc((100% - 24px)/2.5);scroll-snap-align:start;padding:20px;background:#fff;border:1px solid #eee;border-radius:12px;box-shadow:0 6px 12px rgba(0,0,0,.07)}
+#reviews .rv-author{font-weight:700;margin-bottom:8px;text-align:left}
+#reviews .rv-text{white-space:pre-wrap;overflow-wrap:anywhere}
+#reviews .rv-clamp{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+#reviews .rv-toggle{background:none;border:none;color:#007BFF;cursor:pointer;padding:6px 0;font-weight:700}
+#reviews .rv-toggle:hover{text-decoration:underline}
+#reviews .rv-nav{background:#358ce9;color:#fff;border:1px solid #2c6fba;border-radius:12px;padding:10px 14px;margin:0 8px;font-weight:700;font-size:22px;cursor:pointer;z-index:3}
+#reviews .rv-nav:hover{filter:brightness(.92)}
+#reviews .rv-fab{display:none;position:fixed;top:50%;transform:translateY(-50%);z-index:5;width:36px;height:36px;border-radius:50%;align-items:center;justify-content:center;background:rgba(53,140,233,.95);color:#fff;border:1px solid #2c6fba;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s}
+#reviews .rv-fab-prev{left:6px}
+#reviews .rv-fab-next{right:6px}
+@media (max-width:1000px){#reviews .rv-card{flex:0 0 calc((100% - 12px)/1.5)}}
+@media (max-width:640px){
+  #reviews .rv-wrapper{grid-template-columns:1fr}
+  #reviews .rv-viewport{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+  #reviews .rv-card{flex:0 0 88%}
+  #reviews .rv-nav{display:none}
+  #reviews .rv-fab{display:flex}
+  #reviews.is-inview .rv-fab{opacity:1;pointer-events:auto}
 }
