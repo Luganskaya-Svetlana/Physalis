@@ -19,19 +19,19 @@ class Variant(models.Model):
                                      verbose_name='задачи')
     text = models.TextField('описание', blank=True, null=True)
     complexity = models.FloatField('сложность', blank=True, default=0)
-    is_full = models.BooleanField('полный вариант', default=True)
-    show_answers = models.BooleanField('показать решения', default=True)
+    is_full = models.BooleanField('полный вариант', default=False)
+    show_answers = models.BooleanField('показать решения', default=False)
     date = models.DateField('дата добавления', auto_now_add=True)
     answer_slug = models.SlugField('slug для получения ответов',
                                    max_length=4, unique=False,
                                    blank=True, default='',
                                    validators=[validate_answer_slug])
     is_published = models.BooleanField('показать в списке вариантов',
-                                       default=True)
+                                       default=False)
     notes = models.TextField('заметки', blank=True, null=True)
     sort_by_complexity = models.BooleanField('отсортировать по'
                                              ' нарастанию сложности',
-                                             default=False)
+                                             default=True)
 
     class Meta:
         verbose_name = 'вариант'
