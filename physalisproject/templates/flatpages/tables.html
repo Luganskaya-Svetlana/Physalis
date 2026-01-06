@@ -1,0 +1,24 @@
+{% load static %}
+{% load markdown_extras %}
+<!DOCTYPE html>
+<html lang=ru>
+  <head>
+    <title>{{ flatpage.title }}</title>
+    <meta charset=utf-8>
+    <meta name="author" content="Сергей Лисаков">
+    <meta property="og:description" content="Справочные материалы для ЕГЭ по физике">
+    <meta property="og:title" content="Справочные материалы для ЕГЭ по физике">
+    <meta property="og:type" content="website">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <link rel=stylesheet href={% static 'css/style.css'%}>
+    <link href="/media/favicon.svg" rel="icon">
+  </head>
+  <body>
+    <header>
+      {% include "includes/nav.html" %}
+    </header>
+    <main>
+      {{ flatpage.content|markdown|safe }}
+    </main>
+  </body>
+</html>
