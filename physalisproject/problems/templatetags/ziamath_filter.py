@@ -58,6 +58,7 @@ shortcuts = {
     r'\\Vm(?![a-zA-Z])': r'\\;В/м',
     r'\\Pa(?![a-zA-Z])': r'\\;Па',
     r'\\kPa(?![a-zA-Z])': r'\\;кПа',
+    r'\\mmrt(?![a-zA-Z])': r'\\;мм\\hspace{1.7mm}рт.\\hspace{1.6mm}ст.',
     r'\\ms(?![a-zA-Z])': r'\\;м/с',
     r'\\kmh(?![a-zA-Z])': r'\\;км/ч',
     r'\\mss(?![a-zA-Z])': r'\\;м/с^2',
