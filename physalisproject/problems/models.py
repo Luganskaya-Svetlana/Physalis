@@ -234,3 +234,73 @@ class Image(models.Model):
 
     def __str__(self):
         return (f'одно из изображений для {self.problem}')
+
+# problems/models.py
+
+class Law(models.Model):
+    name = models.CharField('закон / принцип', max_length=255, unique=True)
+    order = models.PositiveSmallIntegerField(
+        'порядок',
+        default=0,
+        db_index=True
+    )
+
+    class Meta:
+        verbose_name = 'закон'
+        verbose_name_plural = 'законы'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+
+class Justification(models.Model):
+    text = models.TextField('фраза обоснования', max_length=500, unique=True)
+    order = models.PositiveSmallIntegerField(
+        'порядок',
+        default=0,
+        db_index=True
+    )
+
+    class Meta:
+        verbose_name = 'обоснование'
+        verbose_name_plural = 'обоснования'
+        ordering = ['order', 'text']
+
+    def __str__(self):
+        return self.text[:80]
+
+
+class ProblemSolutionMethod(models.Model):
+    problem = models.ForeignKey(
+        Problem,
+        on_delete=models.CASCADE,
+        related_name='solution_methods',
+        verbose_name='задача',
+    )
+    title = models.CharField('название способа', max_length=255, blank=True)
+    order = models.PositiveSmallIntegerField(
+        'порядок',
+        default=0,
+        db_index=True
+    )
+    laws = models.ManyToManyField(
+        Law,
+        related_name='solution_methods',
+        verbose_name='законы',
+    )
+    justifications = models.ManyToManyField(
+        Justification,
+        related_name='solution_methods',
+        verbose_name='обоснования',
+        blank=True,
+    )
+    is_active = models.BooleanField('активен', default=True)
+
+    class Meta:
+        verbose_name = 'способ решения'
+        verbose_name_plural = 'способы решения'
+        ordering = ['problem_id', 'order', 'id']
+
+    def __str__(self):
+        return self.title or f'Способ #{self.id} для задачи #{self.problem_id}'
