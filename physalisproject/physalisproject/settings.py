@@ -9,13 +9,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 
-# Developement
-DEBUG = True
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+## Developement
+#DEBUG = True
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
-## Production
-#DEBUG = False
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# Production
+DEBUG = False
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', '82.148.29.71',
                  'phys.pro', 'www.phys.pro']

@@ -1,4 +1,5 @@
 import random
+import time
 
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -13,9 +14,10 @@ from problems.models import Justification, Law, Problem
 
 
 MAX_GAME_LAWS = 30
-MAX_GAME_JUSTIFICATIONS = 30
+MAX_GAME_JUSTIFICATIONS = 20
 GAME_SESSION_KEY = 'game_seen_ids'
 ONLY_WITH_JUSTIFICATIONS_PARAM = 'only_with_justifications'
+GAME_FLASH_SESSION_KEY = 'game_flash'
 
 
 class ProblemView(DetailView):
@@ -164,6 +166,12 @@ def get_active_methods(problem):
 
     return methods
 
+def parse_selected_ids(values):
+    return {
+        int(value)
+        for value in values
+        if str(value).isdigit()
+    }
 
 def limit_choices(all_objects, required_ids, limit):
     required = []
@@ -386,7 +394,26 @@ class ProblemGameView(View):
 
         return previous_id, next_id
 
-    def build_context(self, request, problem, checked=False):
+    def build_start_redirect(self, request):
+        mode = self.get_mode(request)
+        only_with_justifications = get_only_with_justifications(request)
+        url = reverse('game-start')
+        only_value = 1 if only_with_justifications else 0
+        return redirect(
+            f'{url}?mode={mode}&{ONLY_WITH_JUSTIFICATIONS_PARAM}={only_value}'
+        )
+
+    def pop_flash_data(self, request, problem_id):
+        flash_data = request.session.pop(GAME_FLASH_SESSION_KEY, None)
+        if not flash_data:
+            return None
+
+        if flash_data.get('problem_id') != problem_id:
+            return None
+
+        return flash_data
+
+    def build_context(self, request, problem, flash_data=None):
         mode = self.get_mode(request)
         only_with_justifications = get_only_with_justifications(request)
         methods = get_active_methods(problem)
@@ -395,7 +422,8 @@ class ProblemGameView(View):
             raise Http404('У этой задачи нет заполненных способов решения.')
 
         shuffle_seed = (
-            request.POST.get('shuffle_seed')
+            (flash_data or {}).get('shuffle_seed')
+            or request.POST.get('shuffle_seed')
             or request.GET.get('seed')
             or str(random.randint(100000, 999999))
         )
@@ -408,9 +436,10 @@ class ProblemGameView(View):
         passed = None
         revealed = False
         best = None
+        checked = flash_data is not None
 
-        if checked:
-            action = request.POST.get('action', 'check')
+        if flash_data:
+            action = flash_data.get('action', 'check')
 
             if action == 'show':
                 revealed = True
@@ -432,16 +461,13 @@ class ProblemGameView(View):
                     'extra_justifications': set(),
                 }
             else:
-                selected_law_ids = {
-                    int(value)
-                    for value in request.POST.getlist('laws')
-                    if value.isdigit()
-                }
-                selected_justification_ids = {
-                    int(value)
-                    for value in request.POST.getlist('justifications')
-                    if value.isdigit()
-                }
+                selected_law_ids = set(
+                    flash_data.get('selected_law_ids', [])
+                )
+                selected_justification_ids = set(
+                    flash_data.get('selected_justification_ids', [])
+                )
+
                 result = evaluate_answer(
                     methods,
                     selected_law_ids,
@@ -507,33 +533,61 @@ class ProblemGameView(View):
         }
 
     def get(self, request, pk):
+        start = time.perf_counter()
+
         problem = self.get_problem(request, pk)
 
         if problem is None:
-            mode = self.get_mode(request)
-            only_with_justifications = get_only_with_justifications(request)
-            url = reverse('game-start')
-            only_value = 1 if only_with_justifications else 0
-            return redirect(
-                f'{url}?mode={mode}&{ONLY_WITH_JUSTIFICATIONS_PARAM}={only_value}'
-            )
+            return self.build_start_redirect(request)
 
         remember_game_problem(request, problem.id)
-        context = self.build_context(request, problem, checked=False)
+        flash_data = self.pop_flash_data(request, problem.id)
+        context = self.build_context(
+            request,
+            problem,
+            flash_data=flash_data,
+        )
+
+        context['render_time'] = time.perf_counter() - start
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
         problem = self.get_problem(request, pk)
 
         if problem is None:
-            mode = self.get_mode(request)
-            only_with_justifications = get_only_with_justifications(request)
-            url = reverse('game-start')
-            only_value = 1 if only_with_justifications else 0
-            return redirect(
-                f'{url}?mode={mode}&{ONLY_WITH_JUSTIFICATIONS_PARAM}={only_value}'
-            )
+            return self.build_start_redirect(request)
 
         remember_game_problem(request, problem.id)
-        context = self.build_context(request, problem, checked=True)
-        return render(request, self.template_name, context)
+
+        action = request.POST.get('action', 'check')
+        shuffle_seed = (
+            request.POST.get('shuffle_seed')
+            or str(random.randint(100000, 999999))
+        )
+
+        flash_data = {
+            'problem_id': problem.id,
+            'action': action,
+            'shuffle_seed': shuffle_seed,
+        }
+
+        if action == 'check':
+            flash_data['selected_law_ids'] = list(
+                parse_selected_ids(request.POST.getlist('laws'))
+            )
+            flash_data['selected_justification_ids'] = list(
+                parse_selected_ids(request.POST.getlist('justifications'))
+            )
+
+        request.session[GAME_FLASH_SESSION_KEY] = flash_data
+
+        mode = self.get_mode(request)
+        only_with_justifications = get_only_with_justifications(request)
+        only_value = 1 if only_with_justifications else 0
+        url = reverse('game-detail', kwargs={'pk': problem.id})
+
+        anchor = '#result-box' if action in ('check', 'show') else '#trainer-form'
+
+        return redirect(
+            f'{url}?mode={mode}&{ONLY_WITH_JUSTIFICATIONS_PARAM}={only_value}{anchor}'
+        )
