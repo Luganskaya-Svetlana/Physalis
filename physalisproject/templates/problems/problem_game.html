@@ -45,12 +45,51 @@
     gap: 8px;
     font-size: 0.98rem;
     color: #374151;
-    margin-top:12px;
+    padding-top: 8px;
   }
 
   .filter-toggle input {
     width: 16px;
     height: 16px;
+  }
+
+  .game-progress {
+    margin: 10px 0 14px;
+  }
+
+  .game-problem-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+  }
+
+  .game-problem-item {
+    display: inline-block;
+    padding: 1px 4px 0 4px;
+    border: 1px solid #d4d8de;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #374151;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.2;
+  }
+
+  .game-problem-item.is-seen {
+    background: #f3f4f6;
+  }
+
+  .game-problem-item.is-solved {
+    background: #eaf8ee;
+    border-color: #2e8b57;
+    color: #1f5134;
+  }
+
+  .game-problem-item.is-current {
+    border-color: #2563eb;
+    box-shadow: inset 0 0 0 1px #2563eb;
   }
 
   .game-box {
@@ -61,22 +100,13 @@
     background: #fff;
   }
 
-  #result-box,
-  #trainer-form {
-    scroll-margin-top: 12px;
-  }
-
   .problem-statement {
     padding-top: 8px;
     padding-bottom: 8px;
   }
 
   .problem-statement p {
-    margin: 0;
-  }
-
-  .problem-statement p + p {
-    margin-top: 0.5em;
+    margin: 0px 0px 5px 0px;
   }
 
   .problem-statement img {
@@ -86,7 +116,7 @@
   .game-box h2 {
     margin-top: 0;
     margin-bottom: 10px;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
   }
 
   .chips-laws {
@@ -258,6 +288,7 @@
   .small-note {
     color: #666;
     font-size: 0.95rem;
+    font-family: Arial, sans-serif;
   }
 
   @media (max-width: 900px) {
@@ -275,12 +306,13 @@
 
 <div class="game-wrap">
   <h1 class="card-title game-title">
-    Тренажёр — <a class="game-problem-link" href="{{ problem.get_absolute_url }}">#{{ problem.id }}</a>
+    Тренажёр —
+    <a class="game-problem-link" href="{{ problem.get_absolute_url }}">#{{ problem.id }}</a>
 
     {% if previous_id %}
       <a
         class="lnk_btn no-print"
-        href="{% url 'game-detail' previous_id %}?mode=ordered&only_with_justifications={% if only_with_justifications %}1{% else %}0{% endif %}"
+        href="{% url 'game-detail' previous_id %}"
         title="#{{ previous_id }}"
       >←</a>
     {% endif %}
@@ -288,72 +320,66 @@
     {% if next_id %}
       <a
         class="lnk_btn no-print"
-        href="{% url 'game-detail' next_id %}?mode=ordered&only_with_justifications={% if only_with_justifications %}1{% else %}0{% endif %}"
+        href="{% url 'game-detail' next_id %}"
         title="#{{ next_id }}"
       >→</a>
     {% endif %}
-
-    <!--
-    <a
-      class="lnk_btn no-print"
-      href="{% url 'game-start' %}?mode=random&exclude={{ problem.id }}&only_with_justifications={% if only_with_justifications %}1{% else %}0{% endif %}"
-      title="Случайная задача: порядок будет перемешиваться"
-    >
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M25.8352 11.8454C26.0299 11.6502 26.0299 11.3342 25.8352 11.1391L22.8227 8.11954C22.5079 7.80399 21.9688 8.02695 21.9688 8.47268V10H20.3681C20.2041 10 19.9034 10.024 19.6431 10.046C17.6928 10.2108 15.8889 11.2991 14.9511 13.1172C14.8599 13.294 14.7687 13.4719 14.6773 13.6501L14.6766 13.6514C14.0974 14.7811 13.5102 15.9263 12.8715 16.9033C12.0872 18.1029 11.4577 18.6689 11.0302 18.8099C10.7259 18.9102 10.2386 18.9712 9.70636 18.9944C9.31497 19.0114 9.00719 19.006 8.79436 19.0023C8.72412 19.0011 8.66397 19 8.61484 19H6.5C6.22386 19 6 19.2239 6 19.5V21.5C6 21.7762 6.22386 22 6.5 22H8.61481L8.61733 22L8.62534 22.0001L8.65336 22.0005L8.74359 22.0021C8.81631 22.0034 8.9107 22.0049 9.02052 22.0056C9.23965 22.007 9.52332 22.0052 9.83692 21.9915C10.4296 21.9657 11.2576 21.8938 11.9698 21.6589C13.4646 21.1659 14.5792 19.7734 15.3824 18.5449C16.1156 17.4236 16.7836 16.1191 17.3562 15.0011L17.3566 15.0002L17.3574 14.9987L17.3587 14.9963C17.4472 14.8234 17.5334 14.655 17.6173 14.4925C18.042 13.6691 18.8843 13.1208 19.8956 13.0354C20.0367 13.0235 20.1566 13.014 20.2487 13.0076C20.2948 13.0044 20.3301 13.0023 20.3553 13.001L20.3773 13H21.9688V14.5117C21.9688 14.9575 22.5079 15.1804 22.8227 14.8649L25.8352 11.8454Z" fill="#212121"/> <path d="M19.6431 21.96C19.9034 21.982 20.2041 22.006 20.3681 22.006H21.9688V23.5196C21.9688 23.9653 22.5079 24.1882 22.8227 23.8727L25.8352 20.8532C26.0299 20.658 26.0299 20.3421 25.8352 20.1469L22.8227 17.1274C22.5079 16.8118 21.9688 17.0348 21.9688 17.4805V19.006H20.3773L20.3553 19.005C20.3301 19.0037 20.2948 19.0016 20.2487 18.9984C20.1566 18.992 20.0367 18.9826 19.8956 18.9707C19.0442 18.8987 18.3402 18.5335 17.8855 17.9285C17.7699 17.7748 17.5263 17.7643 17.4221 17.9259L16.0374 20.0747C15.9741 20.1729 15.9869 20.3023 16.0716 20.3827C17.039 21.3006 18.3066 21.8471 19.6431 21.96Z" fill="#212121"/> <path d="M10.3569 10.046C10.0966 10.024 9.79595 10 9.63195 10H6.5C6.22386 10 6 10.2239 6 10.5V12.5C6 12.7762 6.22386 13 6.5 13H9.62272L9.64471 13.001C9.66994 13.0023 9.7052 13.0044 9.7513 13.0076C9.84337 13.014 9.96327 13.0235 10.1044 13.0354C11.1157 13.1208 11.794 13.5204 12.2188 14.3438C12.3403 14.5794 12.6575 14.6032 12.796 14.3771C13.2116 13.6986 13.745 12.6789 14.0018 12.1796C14.0942 12 14.0688 11.7813 13.9282 11.6362C12.9634 10.641 11.769 10.1653 10.3569 10.046Z" fill="#212121"/> <path d="M6 1C3.23858 1 1 3.23858 1 6V26C1 28.7614 3.23858 31 6 31H26C28.7614 31 31 28.7614 31 26V6C31 3.23858 28.7614 1 26 1H6ZM3 6C3 4.34315 4.34315 3 6 3H26C27.6569 3 29 4.34315 29 6V26C29 27.6569 27.6569 29 26 29H6C4.34315 29 3 27.6569 3 26V6Z" fill="#212121"/> </svg>
-    </a>
-    -->
-
   </h1>
+
+  <div class="game-progress">
+    <div class="small-note">
+      Решено: <span id="solved-count">{{ solved_count }}</span> / <span id="total-count">{{ total_count }}</span>
+      {% comment %} · Просмотрено: <span id="seen-count">{{ seen_count }}</span> / {{ total_count }} {% endcomment %}
+    </div>
+
+    <div class="game-problem-list">
+      {% for item in game_problem_items %}
+        <a
+          id="game-problem-link-{{ item.id }}"
+          class="game-problem-item{% if item.is_current %} is-current{% endif %}{% if item.is_solved %} is-solved{% elif item.is_seen %} is-seen{% endif %}"
+          href="{{ item.url }}"
+          title="#{{ item.id }}"
+        >{{ item.id }}</a>
+      {% endfor %}
+    </div>
+  </div>
 
   <div class="game-box problem-statement">
     {{ problem.text|abbr|ziamath_filter|markdown|safe }}
   </div>
 
-  {% comment %}
-  {% if render_time %}
-    <div class="small-note" style="margin-top: 14px;">
-      Время генерации страницы: {{ render_time|floatformat:3 }} с
-    </div>
-  {% endif %}
-  {% endcomment %}
+  <div id="result-container">
+    {% if has_result %}
+      <div class="game-box {{ result_box_class }}" id="result-box">
+        <strong>{{ result_title }}</strong>
 
-  {% if checked %}
-    <div class="game-box {% if revealed %}result-show{% elif passed %}result-pass{% else %}result-fail{% endif %}" id="result-box">
-      {% if revealed %}
-        <strong>Показан один из способов решения.</strong>
-      {% elif passed %}
-        <strong>Ответ засчитан.</strong>
-      {% else %}
-        <strong>Пока не засчитано.</strong>
-      {% endif %}
+        <span class="small-note" style="margin-top: 8px;">
+          <a href="{{ problem.get_absolute_url }}">{{ solution_link_text }}</a>
+        </span>
 
-      <span class="small-note">
-        <a href="{{ problem.get_absolute_url }}">
-          {% if justification_items %}
-            Посмотреть полное решение с обоснованием.
-          {% else %}
-            Посмотреть полное решение.
-          {% endif %}
-        </a>
-      </span>
+        {% if ignored_justifications_message %}
+          <span class="small-note" style="margin-top: 8px;">
+            {{ ignored_justifications_message }}
+          </span>
+        {% endif %}
 
-      {% if more_methods_message %}
-        <div class="small-note" style="margin-top: 8px;">
-          {{ more_methods_message }}
-        </div>
-      {% endif %}
+        {% if more_methods_message %}
+          <span class="small-note" style="margin-top: 8px;">
+            {{ more_methods_message }}
+          </span>
+        {% endif %}
 
-      {% if checked and not revealed and not passed %}
-        <div class="small-note" style="margin-top: 8px;">
-          Зелёное — выбрано верно, красное — лишнее, жёлтое — пропущено.
-        </div>
-      {% endif %}
-    </div>
-  {% endif %}
+        {% if show_legend %}
+          <div class="small-note" style="margin-top: 8px;">
+            Зелёное — выбрано верно, красное — лишнее, жёлтое — пропущено.
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
 
   <form method="post" id="trainer-form">
     {% csrf_token %}
-    <input type="hidden" name="mode" value="{{ mode }}">
     <input type="hidden" name="shuffle_seed" value="{{ shuffle_seed }}">
     <input
       type="hidden"
@@ -363,7 +389,7 @@
 
     {% if law_items %}
       <div class="game-box">
-        <h2>Законы и формулы</h2>
+        <h2>Законы</h2>
         <div class="chips-laws">
           {% for item in law_items %}
             <label class="chip {{ item.state }}">
@@ -390,11 +416,19 @@
     {% endif %}
 
     <div class="actions">
-      <button type="submit" name="action" value="check" class="button-primary">
+      <button
+        type="button"
+        class="button-primary"
+        onclick="submitTrainerAction('check')"
+      >
         Проверить
       </button>
 
-      <button type="submit" name="action" value="show" class="button-secondary">
+      <button
+        type="button"
+        class="button-secondary"
+        onclick="submitTrainerAction('show')"
+      >
         Показать верные
       </button>
 
@@ -404,8 +438,8 @@
         onclick="
           document.querySelectorAll('#trainer-form input[type=checkbox]').forEach(el => el.checked = false);
           document.querySelectorAll('#trainer-form .chip').forEach(el => el.classList.remove('correct', 'extra', 'missing'));
-          const resultBox = document.getElementById('result-box');
-          if (resultBox) resultBox.remove();
+          const resultBox = document.getElementById('result-container');
+          if (resultBox) resultBox.innerHTML = '';
         "
       >
         Сбросить выбор
@@ -413,16 +447,23 @@
 
       <a
         class="button-link"
-        href="{% url 'game-start' %}?mode=random&exclude={{ problem.id }}&only_with_justifications={% if only_with_justifications %}1{% else %}0{% endif %}"
+        href="{% url 'game-start' %}?exclude={{ problem.id }}"
       >
         Другая случайная
       </a>
     </div>
+
+    {% comment %}
+    {% if render_time %}
+      <div class="small-note" style="margin-top: 14px;">
+        Время генерации страницы: {{ render_time|floatformat:3 }} с
+      </div>
+    {% endif %}
+    {% endcomment %}
   </form>
 
   <form method="get" class="game-tools">
-    <input type="hidden" name="mode" value="{{ mode }}">
-    <input type="hidden" name="only_with_justifications" value="0">
+    <input type="hidden" name="filter_submitted" value="1">
     <label class="filter-toggle">
       <input
         type="checkbox"
@@ -431,9 +472,120 @@
         {% if only_with_justifications %}checked{% endif %}
         onchange="this.form.submit()"
       >
-      Показывать задачи только с обоснованиями
+      Показывать только за­да­чи с обо­сно­ва­ни­ями
     </label>
   </form>
 
 </div>
+
+<script>
+  function applyChoiceStates(groupName, items) {
+    items.forEach(item => {
+      const selector = `#trainer-form input[name="${groupName}"][value="${item.id}"]`;
+      const input = document.querySelector(selector);
+      if (!input) return;
+
+      input.checked = item.checked;
+
+      const chip = input.closest('.chip');
+      if (!chip) return;
+
+      chip.classList.remove('correct', 'extra', 'missing');
+      if (item.state) {
+        chip.classList.add(item.state);
+      }
+    });
+  }
+
+  function updateProgressUI(data) {
+    const solvedCount = document.getElementById('solved-count');
+    const seenCount = document.getElementById('seen-count');
+    const totalCount = document.getElementById('total-count');
+
+    if (solvedCount) solvedCount.textContent = data.solved_count;
+    if (seenCount) seenCount.textContent = data.seen_count;
+    if (totalCount) totalCount.textContent = data.total_count;
+
+    const currentLink = document.getElementById(`game-problem-link-${data.current_problem_id}`);
+    if (currentLink) {
+      currentLink.classList.remove('is-seen', 'is-solved');
+      if (data.current_problem_is_solved) {
+        currentLink.classList.add('is-solved');
+      } else {
+        currentLink.classList.add('is-seen');
+      }
+    }
+  }
+
+  function renderResultBox(data) {
+    const container = document.getElementById('result-container');
+    if (!container) return;
+
+    let html = `
+      <div class="game-box ${data.result_box_class}" id="result-box">
+        <strong>${data.result_title}</strong>
+        <span class="small-note" style="margin-top: 8px;">
+          <a href="${data.solution_url}">${data.solution_link_text}</a>
+        </span>
+    `;
+
+    if (data.ignored_justifications_message) {
+      html += `
+        <span class="small-note" style="margin-top: 8px;">
+          ${data.ignored_justifications_message}
+        </span>
+      `;
+    }
+
+    if (data.more_methods_message) {
+      html += `
+        <span class="small-note" style="margin-top: 8px;">
+          ${data.more_methods_message}
+        </span>
+      `;
+    }
+
+    if (data.show_legend) {
+      html += `
+        <div class="small-note" style="margin-top: 8px;">
+          Зелёное — выбрано верно, красное — лишнее, жёлтое — пропущено.
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+    container.innerHTML = html;
+  }
+
+  async function submitTrainerAction(action) {
+    const form = document.getElementById('trainer-form');
+    if (!form) return;
+
+    const formData = new FormData(form);
+    formData.set('action', action);
+
+    const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const response = await fetch(window.location.href, {
+      method: 'POST',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrfToken
+      },
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.redirect_url) {
+      window.location.href = data.redirect_url;
+      return;
+    }
+
+    applyChoiceStates('laws', data.law_items);
+    applyChoiceStates('justifications', data.justification_items);
+    renderResultBox(data);
+    updateProgressUI(data);
+  }
+</script>
 {% endblock %}
