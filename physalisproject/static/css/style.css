@@ -187,6 +187,10 @@ nav {
 .nav-right, .ta-right {
   text-align:right;
 }
+nav button {
+  font-size: 18pt;
+  color: #3377cc;
+}
 .ta-center {
   text-align: center;
 }

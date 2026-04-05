@@ -1,30 +1,33 @@
-import time
-
 from django.conf import settings
 from django.contrib.flatpages.middleware import FlatpageFallbackMiddleware
 from django.contrib.flatpages.views import flatpage
+from django.core.cache import cache
 from django.http import Http404
-from django.views.decorators.cache import cache_page
 
-
-def flatpage_with_debug_header(request, url):
-    response = flatpage(request, url)
-    response['X-Flatpage-Generated-At'] = f'{time.time():.6f}'
-    return response
-
-
-cached_flatpage_view = cache_page(60 * 60)(flatpage_with_debug_header)
+from .cache_utils import flatpage_cache_key
 
 
 class CachedFlatpageFallbackMiddleware(FlatpageFallbackMiddleware):
+    cache_timeout = 7 * 24 * 60 * 60
+
     def process_response(self, request, response):
         if response.status_code != 404:
             return response
 
         try:
-            if request.user.is_authenticated:
-                return flatpage_with_debug_header(request, request.path_info)
-            return cached_flatpage_view(request, request.path_info)
+            key = flatpage_cache_key(
+                request.path_info,
+                is_staff=bool(getattr(request.user, 'is_staff', False)),
+            )
+
+            cached_response = cache.get(key)
+            if cached_response is not None:
+                return cached_response
+
+            page_response = flatpage(request, request.path_info)
+            cache.set(key, page_response, self.cache_timeout)
+            return page_response
+
         except Http404:
             return response
         except Exception:

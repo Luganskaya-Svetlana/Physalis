@@ -23,6 +23,7 @@ urlpatterns = [
     path('types/', include('typesinege.urls', namespace='typesinege')),
     path('variants/', include('variants.urls', namespace='variants')),
     path('tags/', include('tags.urls', namespace='tags')),
+    path('pages/', include('pages.urls', namespace='pages')),
 
     path(
         'sitemap.xml',
