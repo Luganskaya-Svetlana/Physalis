@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'physalisproject.middleware.CachedFlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'physalisproject.urls'
@@ -99,11 +99,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CACHES = {
     'default': {
-        # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        # For testing use DummyCache
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp/physalis_django_cache',
         # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         # 'LOCATION': os.path.join(BASE_DIR, '.cache'),
+        # For testing use DummyCache
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 
