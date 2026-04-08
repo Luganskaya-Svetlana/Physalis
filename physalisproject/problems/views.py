@@ -457,6 +457,7 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
             + len(missing_justifications)
             + len(extra_justifications)
         )
+        law_errors = len(missing_laws) + len(extra_laws)
 
         checks.append({
             'method': method,
@@ -464,6 +465,7 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
             'extra_laws': extra_laws,
             'missing_justifications': missing_justifications,
             'extra_justifications': extra_justifications,
+            'law_errors': law_errors,
             'total_errors': total_errors,
             'ignored_justifications': ignored_justifications,
             'soft_messages': soft_messages,
@@ -475,6 +477,7 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
     best = min(
         checks,
         key=lambda item: (
+            item['law_errors'],
             item['total_errors'],
             item['method'].order,
             item['method'].id,

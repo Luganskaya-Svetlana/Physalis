@@ -3,22 +3,40 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_FILE = BASE_DIR.parent / '.env'
+
+load_dotenv(ENV_FILE)
+
+
+def env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def env_list(name, default=''):
+    value = os.getenv(name)
+    if value is None:
+        value = default
+    return [
+        item.strip()
+        for item in value.split(',')
+        if item.strip()
+    ]
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
+DEBUG = env_bool('DEBUG', default=False)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-## Developement
-#DEBUG = True
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+if DEBUG:
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Production
-DEBUG = False
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', '82.148.29.71',
-                 'phys.pro', 'www.phys.pro']
+ALLOWED_HOSTS = env_list(
+    'ALLOWED_HOSTS',
+    default='.localhost,127.0.0.1,[::1],82.148.29.71,phys.pro,www.phys.pro',
+)
 
 INSTALLED_APPS = [
     'django.contrib.admin',

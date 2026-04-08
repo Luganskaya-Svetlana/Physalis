@@ -1,15 +1,15 @@
+from pathlib import Path
 import re
+import xml.etree.ElementTree as ET
+
 import ziamath as zm
 from django import template
-import xml.etree.ElementTree as ET
+
 ET.register_namespace("", "http://www.w3.org/2000/svg")
 
-# import importlib.metadata  # To check which version is in use
-# zm.config.math.mathfont = '/home/slisakov/.fonts/XITSMath-Regular.otf'
-# zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath3.otf'
-# zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath4.otf'
-zm.config.math.mathfont = '/home/slisakov/.fonts/STIXTwoMath5.otf'
-# zm.config.math.mathfont = '/Users/slisakov/.fonts/STIXTwoMath5.otf'
+FONT_PATH = Path(__file__).resolve().parents[2] / 'fonts' / 'STIXTwoMath5.otf'
+
+zm.config.math.mathfont = str(FONT_PATH)
 # STIX 2.13b171 with ℰ symbol copied from stix-1.0.0 with fontforge
 # zm.config.precision = 2
 # zm.config.minsizefraction = .6
