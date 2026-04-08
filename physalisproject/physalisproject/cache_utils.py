@@ -3,8 +3,6 @@ from django.utils.encoding import iri_to_uri
 def normalize_cache_path(path: str) -> str:
     if not path.startswith('/'):
         path = f'/{path}'
-    if path != '/' and not path.endswith('/'):
-        path = f'{path}/'
     return iri_to_uri(path)
 
 def flatpage_cache_key(path: str, is_staff: bool) -> str:

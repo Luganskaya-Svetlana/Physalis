@@ -38,6 +38,9 @@ class CachedFlatpageFallbackMiddleware(FlatpageFallbackMiddleware):
 
             page_response = flatpage(request, request.path_info)
 
+            if page_response.status_code != 200:
+                return page_response
+
             # На всякий случай убеждаемся, что контент уже отрендерен
             content = page_response.content
 
