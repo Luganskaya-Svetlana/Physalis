@@ -1,5 +1,6 @@
 import random
 
+from django.db.models import Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -12,13 +13,11 @@ from problems.filters import ProblemFilter
 from problems.models import Justification, Law, Problem
 
 
-MAX_GAME_LAWS = 30
-MAX_GAME_JUSTIFICATIONS = 20
-
+MAX_GAME_LAWS = 18
+MAX_GAME_JUSTIFICATIONS = 13
 GAME_SEEN_SESSION_KEY = 'game_seen_ids'
 GAME_SOLVED_SESSION_KEY = 'game_solved_ids'
 GAME_FILTER_SESSION_KEY = 'game_only_with_justifications'
-
 ONLY_WITH_JUSTIFICATIONS_PARAM = 'only_with_justifications'
 
 
@@ -78,10 +77,6 @@ class ProblemsView(ListView):
         return view
 
 
-def parse_bool_value(value):
-    return str(value).lower() in ('1', 'true', 'on', 'yes')
-
-
 def get_only_with_justifications(request):
     if 'filter_submitted' in request.GET:
         value = ONLY_WITH_JUSTIFICATIONS_PARAM in request.GET
@@ -95,6 +90,7 @@ def get_only_with_justifications(request):
 
     return request.session.get(GAME_FILTER_SESSION_KEY, True)
 
+
 def get_game_queryset(only_with_justifications=True):
     queryset = (
         Problem.objects
@@ -105,6 +101,8 @@ def get_game_queryset(only_with_justifications=True):
         .prefetch_related(
             'solution_methods__laws',
             'solution_methods__justifications',
+            'solution_methods__excluded_justifications',
+            'solution_methods__justification_groups__justifications',
         )
         .distinct()
         .order_by('id')
@@ -112,11 +110,110 @@ def get_game_queryset(only_with_justifications=True):
 
     if only_with_justifications:
         queryset = queryset.filter(
-            solution_methods__is_active=True,
-            solution_methods__justifications__isnull=False,
+            Q(solution_methods__justifications__isnull=False)
+            | Q(solution_methods__justification_groups__justifications__isnull=False)
         ).distinct()
 
     return queryset
+
+
+def method_has_any_justification_requirements(method):
+    if method.justifications.exists():
+        return True
+
+    for group in method.justification_groups.all():
+        if group.justifications.exists():
+            return True
+
+    return False
+
+
+def get_group_min_select(group):
+    return getattr(group, 'min_select', getattr(group, 'min_selected', 0))
+
+
+
+def get_group_max_select(group):
+    if hasattr(group, 'max_select'):
+        return group.max_select
+    return getattr(group, 'max_selected', None)
+
+
+
+def get_method_group_configs(method):
+    groups = []
+    group_member_ids = set()
+
+    for group in method.justification_groups.all():
+        member_ids = list(
+            group.justifications.order_by('order', 'text').values_list('id', flat=True)
+        )
+        if not member_ids:
+            continue
+
+        group_member_ids.update(member_ids)
+        groups.append({
+            'group': group,
+            'ids': member_ids,
+            'min_select': get_group_min_select(group),
+            'max_select': get_group_max_select(group),
+        })
+
+    return groups, group_member_ids
+
+
+def get_method_required_justification_ids(method):
+    return set(method.justifications.values_list('id', flat=True))
+
+
+
+def get_method_excluded_justification_ids(method):
+    return set(method.excluded_justifications.values_list('id', flat=True))
+
+
+
+def get_revealed_justification_ids(method):
+    revealed_ids = set(method.justifications.values_list('id', flat=True))
+
+    groups, _ = get_method_group_configs(method)
+    for cfg in groups:
+        revealed_ids.update(cfg['ids'][:cfg['min_select']])
+
+    return revealed_ids
+
+
+
+def build_group_soft_message(group_cfg, selected_count):
+    group = group_cfg['group']
+    min_select = group_cfg['min_select']
+    max_select = group_cfg['max_select']
+    size = len(group_cfg['ids'])
+
+    title = getattr(group, 'title', '') or getattr(group, 'name', '') or ''
+
+    if min_select == 1 and max_select == 1 and size == 2:
+        base = 'Из этих двух обоснований достаточно выбрать любое одно'
+        if title:
+            base = f'В группе «{title}» достаточно выбрать любое одно обоснование'
+        return f'{base}; оба выбирать избыточно.'
+
+    if max_select is None:
+        base = f'В этой группе нужно выбрать не меньше {min_select} пунктов'
+        if title:
+            base = f'В группе «{title}» нужно выбрать не меньше {min_select} пунктов'
+        return f'{base}; сейчас выбрано {selected_count}.'
+
+    if min_select == max_select:
+        base = f'В этой группе достаточно выбрать {max_select}'
+        if title:
+            base = f'В группе «{title}» достаточно выбрать {max_select}'
+        return f'{base}; сейчас выбрано {selected_count}.'
+
+    base = f'В этой группе нужно выбрать от {min_select} до {max_select} пунктов'
+    if title:
+        base = f'В группе «{title}» нужно выбрать от {min_select} до {max_select} пунктов'
+    return f'{base}; сейчас выбрано {selected_count}.'
+
 
 
 def remember_game_problem(request, problem_id):
@@ -126,11 +223,13 @@ def remember_game_problem(request, problem_id):
         request.session[GAME_SEEN_SESSION_KEY] = seen_ids
 
 
+
 def remember_solved_game_problem(request, problem_id):
     solved_ids = request.session.get(GAME_SOLVED_SESSION_KEY, [])
     if problem_id not in solved_ids:
         solved_ids.append(problem_id)
         request.session[GAME_SOLVED_SESSION_KEY] = solved_ids
+
 
 
 def get_random_game_problem_id(
@@ -170,19 +269,20 @@ def get_random_game_problem_id(
     return problem_id
 
 
+
 def get_active_methods(problem):
     methods = []
     for method in problem.solution_methods.all():
         if not method.is_active:
             continue
 
-        law_ids = {law.id for law in method.laws.all()}
-        if not law_ids:
+        if not method.laws.exists():
             continue
 
         methods.append(method)
 
     return methods
+
 
 
 def parse_selected_ids(values):
@@ -193,35 +293,43 @@ def parse_selected_ids(values):
     }
 
 
+
 def choose_objects_with_limit(all_objects, required_ids, limit, seed):
     required = [obj for obj in all_objects if obj.id in required_ids]
     optional = [obj for obj in all_objects if obj.id not in required_ids]
 
-    if len(required) >= limit:
-        result = required[:]
-        rnd = random.Random(f'{seed}:required')
-        rnd.shuffle(result)
-        return result
+    result = required[:]
 
-    rnd = random.Random(f'{seed}:optional')
-    rnd.shuffle(optional)
-
-    result = required + optional[:limit - len(required)]
+    if len(result) < limit:
+        rnd = random.Random(f'{seed}:optional')
+        rnd.shuffle(optional)
+        result.extend(optional[:limit - len(result)])
 
     rnd = random.Random(f'{seed}:final')
     rnd.shuffle(result)
     return result
 
 
+
 def get_choice_lists(methods, shuffle_seed):
     correct_law_ids = set()
-    correct_justification_ids = set()
+    required_justification_ids = set()
+    grouped_justification_ids = set()
+    excluded_justification_ids = set()
 
     for method in methods:
         correct_law_ids.update(method.laws.values_list('id', flat=True))
-        correct_justification_ids.update(
+        required_justification_ids.update(
             method.justifications.values_list('id', flat=True)
         )
+        excluded_justification_ids.update(
+            method.excluded_justifications.values_list('id', flat=True)
+        )
+
+        for group in method.justification_groups.all():
+            grouped_justification_ids.update(
+                group.justifications.values_list('id', flat=True)
+            )
 
     all_laws = list(Law.objects.all().order_by('order', 'name'))
     laws = choose_objects_with_limit(
@@ -231,13 +339,20 @@ def get_choice_lists(methods, shuffle_seed):
         seed=f'{shuffle_seed}:laws',
     )
 
-    if correct_justification_ids:
-        all_justifications = list(
-            Justification.objects.all().order_by('order', 'text')
-        )
+    visible_required_ids = (
+        required_justification_ids | grouped_justification_ids
+    ) - excluded_justification_ids
+
+    all_justifications = list(
+        Justification.objects
+        .exclude(id__in=excluded_justification_ids)
+        .order_by('order', 'text')
+    )
+
+    if visible_required_ids:
         justifications = choose_objects_with_limit(
             all_objects=all_justifications,
-            required_ids=correct_justification_ids,
+            required_ids=visible_required_ids,
             limit=MAX_GAME_JUSTIFICATIONS,
             seed=f'{shuffle_seed}:justifications',
         )
@@ -245,6 +360,7 @@ def get_choice_lists(methods, shuffle_seed):
         justifications = []
 
     return laws, justifications
+
 
 
 def build_choice_items(
@@ -276,27 +392,64 @@ def build_choice_items(
     return items
 
 
+
 def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
     checks = []
-    exact_law_checks = []
-    exact_full = None
-    exact_no_justifications = None
 
     for method in methods:
-        method_law_ids = {law.id for law in method.laws.all()}
-        method_justification_ids = {
-            justification.id for justification in method.justifications.all()
-        }
+        method_law_ids = set(method.laws.values_list('id', flat=True))
+
+        required_justification_ids = get_method_required_justification_ids(method)
+        excluded_justification_ids = get_method_excluded_justification_ids(method)
+        group_configs, group_member_ids = get_method_group_configs(method)
+
+        allowed_justification_ids = (
+            required_justification_ids | group_member_ids
+        ) - excluded_justification_ids
 
         missing_laws = method_law_ids - selected_law_ids
         extra_laws = selected_law_ids - method_law_ids
 
-        missing_justifications = (
-            method_justification_ids - selected_justification_ids
+        soft_messages = []
+        missing_group_justifications = set()
+
+        for cfg in group_configs:
+            group_ids = set(cfg['ids']) - excluded_justification_ids
+            selected_in_group = selected_justification_ids & group_ids
+            selected_count = len(selected_in_group)
+
+            if selected_count < cfg['min_select']:
+                need = cfg['min_select'] - selected_count
+                candidates = [
+                    jid for jid in cfg['ids']
+                    if jid in group_ids and jid not in selected_in_group
+                ]
+                missing_group_justifications.update(candidates[:need])
+
+            max_select = cfg['max_select']
+            if max_select is not None and selected_count > max_select:
+                soft_messages.append(
+                    build_group_soft_message(cfg, selected_count)
+                )
+
+        no_justifications_required = (
+            not required_justification_ids and not group_configs
         )
-        extra_justifications = (
-            selected_justification_ids - method_justification_ids
-        )
+        laws_match_exactly = method_law_ids == selected_law_ids
+
+        if laws_match_exactly and no_justifications_required:
+            missing_justifications = set()
+            extra_justifications = set()
+            ignored_justifications = bool(selected_justification_ids)
+        else:
+            missing_justifications = (
+                required_justification_ids - selected_justification_ids
+            ) | missing_group_justifications
+
+            extra_justifications = (
+                selected_justification_ids - allowed_justification_ids
+            )
+            ignored_justifications = False
 
         total_errors = (
             len(missing_laws)
@@ -305,52 +458,22 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
             + len(extra_justifications)
         )
 
-        check = {
+        checks.append({
             'method': method,
             'missing_laws': missing_laws,
             'extra_laws': extra_laws,
             'missing_justifications': missing_justifications,
             'extra_justifications': extra_justifications,
             'total_errors': total_errors,
-        }
-        checks.append(check)
-
-        if method_law_ids == selected_law_ids:
-            exact_law_checks.append(check)
-
-            if method_justification_ids == selected_justification_ids:
-                exact_full = check
-
-            if not method_justification_ids:
-                exact_no_justifications = {
-                    'method': method,
-                    'missing_laws': set(),
-                    'extra_laws': set(),
-                    'missing_justifications': set(),
-                    'extra_justifications': set(),
-                    'total_errors': 0,
-                }
+            'ignored_justifications': ignored_justifications,
+            'soft_messages': soft_messages,
+        })
 
     if not checks:
         return None
 
-    if exact_full is not None:
-        return {
-            'passed': True,
-            'best': exact_full,
-            'ignored_justifications': False,
-        }
-
-    if exact_no_justifications is not None:
-        return {
-            'passed': True,
-            'best': exact_no_justifications,
-            'ignored_justifications': bool(selected_justification_ids),
-        }
-
-    best_pool = exact_law_checks or checks
     best = min(
-        best_pool,
+        checks,
         key=lambda item: (
             item['total_errors'],
             item['method'].order,
@@ -359,10 +482,12 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
     )
 
     return {
-        'passed': False,
+        'passed': best['total_errors'] == 0,
         'best': best,
-        'ignored_justifications': False,
+        'ignored_justifications': best['ignored_justifications'],
+        'soft_messages': best['soft_messages'],
     }
+
 
 
 def other_methods_message(count):
@@ -380,6 +505,7 @@ def other_methods_message(count):
         word = 'способов'
 
     return f'Есть и другие способы решения: ещё {count} {word}.'
+
 
 
 def build_game_progress(request, current_problem_id, only_with_justifications):
@@ -468,6 +594,21 @@ class ProblemGameView(View):
             return redirect(f'{url}?exclude={exclude_id}')
         return redirect(url)
 
+    def build_reveal_evaluation(self, methods):
+        method = methods[0]
+        return {
+            'passed': False,
+            'best': {
+                'method': method,
+                'missing_laws': set(),
+                'extra_laws': set(),
+                'missing_justifications': set(),
+                'extra_justifications': set(),
+            },
+            'ignored_justifications': False,
+            'soft_messages': [],
+        }
+
     def build_context(
         self,
         request,
@@ -489,15 +630,24 @@ class ProblemGameView(View):
 
         laws, justifications = get_choice_lists(methods, shuffle_seed)
 
-        selected_law_ids = set(selected_law_ids or [])
-        selected_justification_ids = set(selected_justification_ids or [])
+        displayed_law_ids = {obj.id for obj in laws}
+        displayed_justification_ids = {obj.id for obj in justifications}
 
-        checked = evaluation is not None
-        has_result = checked or revealed
+        selected_law_ids = set(selected_law_ids or []) & displayed_law_ids
+        selected_justification_ids = (
+            set(selected_justification_ids or []) & displayed_justification_ids
+        )
+
+        checked = evaluation is not None and not revealed
+        has_result = evaluation is not None or revealed
         passed = evaluation['passed'] if evaluation is not None else None
         ignored_justifications = (
             evaluation.get('ignored_justifications', False)
             if evaluation is not None else False
+        )
+        soft_messages = (
+            evaluation.get('soft_messages', [])
+            if evaluation is not None else []
         )
         best = evaluation['best'] if evaluation is not None else None
 
@@ -509,15 +659,21 @@ class ProblemGameView(View):
         missing_justification_ids = set()
 
         if best is not None:
-            correct_law_ids = selected_law_ids - best['extra_laws']
-            extra_law_ids = best['extra_laws']
-            missing_law_ids = best['missing_laws']
+            correct_law_ids = (
+                selected_law_ids - best['extra_laws']
+            ) & displayed_law_ids
+            extra_law_ids = best['extra_laws'] & displayed_law_ids
+            missing_law_ids = best['missing_laws'] & displayed_law_ids
 
             correct_justification_ids = (
                 selected_justification_ids - best['extra_justifications']
+            ) & displayed_justification_ids
+            extra_justification_ids = (
+                best['extra_justifications'] & displayed_justification_ids
             )
-            extra_justification_ids = best['extra_justifications']
-            missing_justification_ids = best['missing_justifications']
+            missing_justification_ids = (
+                best['missing_justifications'] & displayed_justification_ids
+            )
 
         law_items = build_choice_items(
             objects=laws,
@@ -548,15 +704,8 @@ class ProblemGameView(View):
             only_with_justifications=only_with_justifications,
         )
 
-        only_with_justifications_count = get_game_queryset(
-            only_with_justifications=True
-        ).count()
-        all_game_problems_count = get_game_queryset(
-            only_with_justifications=False
-        ).count()
-
         if revealed:
-            result_title = 'Показан один из корректных способов решения.'
+            result_title = 'Показан один из способов решения.'
             result_box_class = 'result-show'
         elif checked and passed:
             result_title = 'Ответ засчитан.'
@@ -597,69 +746,29 @@ class ProblemGameView(View):
             'revealed': revealed,
             'result_title': result_title,
             'result_box_class': result_box_class,
+            'solution_link_text': solution_link_text,
+            'solution_url': problem.get_absolute_url(),
             'ignored_justifications_message': ignored_justifications_message,
+            'soft_messages': soft_messages,
             'more_methods_message': more_methods_message,
-            'show_legend': checked and not revealed and not passed,
+            'show_legend': has_result,
             'previous_id': previous_id,
             'next_id': next_id,
             'shuffle_seed': shuffle_seed,
             'only_with_justifications': only_with_justifications,
-            'only_with_justifications_count': (
-                only_with_justifications_count
-            ),
-            'all_game_problems_count': all_game_problems_count,
-            'solution_link_text': solution_link_text,
             'game_problem_items': progress['items'],
             'total_count': progress['total_count'],
             'seen_count': progress['seen_count'],
             'solved_count': progress['solved_count'],
-            'current_problem_is_solved': (
-                progress['current_problem_is_solved']
-            ),
-        }
-
-    def build_ajax_payload(self, context):
-        return {
-            'checked': context['checked'],
-            'has_result': context['has_result'],
-            'passed': context['passed'],
-            'revealed': context['revealed'],
-            'result_title': context['result_title'],
-            'result_box_class': context['result_box_class'],
-            'ignored_justifications_message': (
-                context['ignored_justifications_message']
-            ),
-            'more_methods_message': context['more_methods_message'],
-            'show_legend': context['show_legend'],
-            'solution_url': context['problem'].get_absolute_url(),
-            'solution_link_text': context['solution_link_text'],
-            'law_items': [
-                {
-                    'id': item['id'],
-                    'checked': item['checked'],
-                    'state': item['state'],
-                }
-                for item in context['law_items']
-            ],
-            'justification_items': [
-                {
-                    'id': item['id'],
-                    'checked': item['checked'],
-                    'state': item['state'],
-                }
-                for item in context['justification_items']
-            ],
-            'solved_count': context['solved_count'],
-            'seen_count': context['seen_count'],
-            'total_count': context['total_count'],
-            'current_problem_id': context['problem'].id,
-            'current_problem_is_solved': context['current_problem_is_solved'],
+            'current_problem_id': problem.id,
+            'current_problem_is_solved': progress['current_problem_is_solved'],
         }
 
     def get(self, request, pk):
         problem = self.get_problem(request, pk)
+
         if problem is None:
-            return self.build_start_redirect(request, exclude_id=pk)
+            return self.build_start_redirect(request)
 
         remember_game_problem(request, problem.id)
         context = self.build_context(request, problem)
@@ -667,18 +776,13 @@ class ProblemGameView(View):
 
     def post(self, request, pk):
         problem = self.get_problem(request, pk)
+
         if problem is None:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'redirect_url': reverse('game-start'),
-                })
-            return self.build_start_redirect(request, exclude_id=pk)
+                return JsonResponse({'redirect_url': reverse('game-start')})
+            return self.build_start_redirect(request)
 
         remember_game_problem(request, problem.id)
-
-        methods = get_active_methods(problem)
-        if not methods:
-            raise Http404('У этой задачи нет заполненных способов решения.')
 
         action = request.POST.get('action', 'check')
         shuffle_seed = (
@@ -686,36 +790,31 @@ class ProblemGameView(View):
             or str(random.randint(100000, 999999))
         )
 
+        methods = get_active_methods(problem)
+        if not methods:
+            raise Http404('У этой задачи нет заполненных способов решения.')
+
+        selected_law_ids = parse_selected_ids(request.POST.getlist('laws'))
+        selected_justification_ids = parse_selected_ids(
+            request.POST.getlist('justifications')
+        )
+
         evaluation = None
         revealed = False
-        selected_law_ids = set()
-        selected_justification_ids = set()
 
         if action == 'show':
             revealed = True
-            first_method = methods[0]
-            selected_law_ids = {
-                law.id for law in first_method.laws.all()
-            }
-            selected_justification_ids = {
-                justification.id
-                for justification in first_method.justifications.all()
-            }
+            method = methods[0]
+            selected_law_ids = set(method.laws.values_list('id', flat=True))
+            selected_justification_ids = get_revealed_justification_ids(method)
+            evaluation = self.build_reveal_evaluation(methods)
         else:
-            selected_law_ids = parse_selected_ids(
-                request.POST.getlist('laws')
-            )
-            selected_justification_ids = parse_selected_ids(
-                request.POST.getlist('justifications')
-            )
-
             evaluation = evaluate_answer(
                 methods,
                 selected_law_ids,
                 selected_justification_ids,
             )
-
-            if evaluation is not None and evaluation['passed']:
+            if evaluation and evaluation['passed']:
                 remember_solved_game_problem(request, problem.id)
 
         context = self.build_context(
@@ -729,6 +828,22 @@ class ProblemGameView(View):
         )
 
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse(self.build_ajax_payload(context))
+            return JsonResponse({
+                'law_items': context['law_items'],
+                'justification_items': context['justification_items'],
+                'result_title': context['result_title'],
+                'result_box_class': context['result_box_class'],
+                'solution_url': context['solution_url'],
+                'solution_link_text': context['solution_link_text'],
+                'ignored_justifications_message': context['ignored_justifications_message'],
+                'soft_messages': context['soft_messages'],
+                'more_methods_message': context['more_methods_message'],
+                'show_legend': context['show_legend'],
+                'solved_count': context['solved_count'],
+                'seen_count': context['seen_count'],
+                'total_count': context['total_count'],
+                'current_problem_id': context['current_problem_id'],
+                'current_problem_is_solved': context['current_problem_is_solved'],
+            })
 
         return render(request, self.template_name, context)

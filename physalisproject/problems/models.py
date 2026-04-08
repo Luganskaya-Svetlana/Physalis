@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Count
 from django.urls import reverse
@@ -270,7 +271,6 @@ class Justification(models.Model):
     def __str__(self):
         return self.text[:80]
 
-
 class ProblemSolutionMethod(models.Model):
     problem = models.ForeignKey(
         Problem,
@@ -284,17 +284,26 @@ class ProblemSolutionMethod(models.Model):
         default=0,
         db_index=True
     )
+
     laws = models.ManyToManyField(
         Law,
         related_name='solution_methods',
         verbose_name='законы',
+        blank=True,
     )
     justifications = models.ManyToManyField(
         Justification,
         related_name='solution_methods',
-        verbose_name='обоснования',
+        verbose_name='обязательные обоснования',
         blank=True,
     )
+    excluded_justifications = models.ManyToManyField(
+        Justification,
+        related_name='excluded_from_solution_methods',
+        verbose_name='исключённые обоснования',
+        blank=True,
+    )
+
     is_active = models.BooleanField('активен', default=True)
 
     class Meta:
@@ -304,3 +313,49 @@ class ProblemSolutionMethod(models.Model):
 
     def __str__(self):
         return self.title or f'Способ #{self.id} для задачи #{self.problem_id}'
+
+
+class JustificationGroup(models.Model):
+    method = models.ForeignKey(
+        ProblemSolutionMethod,
+        on_delete=models.CASCADE,
+        related_name='justification_groups',
+        verbose_name='способ решения',
+    )
+    title = models.CharField('название группы', max_length=255, blank=True)
+    order = models.PositiveSmallIntegerField(
+        'порядок',
+        default=0,
+        db_index=True,
+    )
+
+    min_selected = models.PositiveSmallIntegerField(
+        'минимум выбрать',
+        default=1,
+    )
+    max_selected = models.PositiveSmallIntegerField(
+        'максимум выбрать',
+        null=True,
+        blank=True,
+    )
+
+    justifications = models.ManyToManyField(
+        Justification,
+        related_name='justification_groups',
+        verbose_name='обоснования группы',
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = 'группа обоснований'
+        verbose_name_plural = 'группы обоснований'
+        ordering = ['method_id', 'order', 'id']
+
+    def __str__(self):
+        return self.title or f'Группа #{self.id} для способа #{self.method_id}'
+
+    def clean(self):
+        if self.max_selected is not None and self.max_selected < self.min_selected:
+            raise ValidationError(
+                'Максимум выбрать не может быть меньше, чем минимум выбрать.'
+            )

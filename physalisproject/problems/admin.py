@@ -5,6 +5,7 @@ from .models import (
     Category,
     Image,
     Justification,
+    JustificationGroup,
     Law,
     PartOfEGE,
     Problem,
@@ -15,12 +16,18 @@ from .models import (
     TypeInEGE,
 )
 
-
 class ImageInline(admin.TabularInline):
     form = ImageForm
     model = Image
     fields = ('path_to_image',)
 
+class JustificationGroupInline(admin.TabularInline):
+    model = JustificationGroup
+    fields = ('title', 'order', 'min_selected', 'max_selected')
+    extra = 0
+    show_change_link = True
+    verbose_name = 'группа обоснований'
+    verbose_name_plural = 'группы обоснований'
 
 class ProblemSolutionMethodInline(admin.TabularInline):
     model = ProblemSolutionMethod
@@ -107,15 +114,32 @@ class JustificationAdmin(admin.ModelAdmin):
         return obj.text[:120]
 
 
+@admin.register(JustificationGroup)
+class JustificationGroupAdmin(admin.ModelAdmin):
+    fields = ('method', 'title', 'order', 'min_selected', 'max_selected', 'justifications')
+    list_display = ('id', 'method', 'title', 'order', 'min_selected', 'max_selected')
+    search_fields = ('title', 'method__title', 'method__problem__id')
+    raw_id_fields = ('method',)
+    filter_horizontal = ('justifications',)
+
+
 @admin.register(ProblemSolutionMethod)
 class ProblemSolutionMethodAdmin(admin.ModelAdmin):
-    fields = ('problem', 'title', 'order', 'is_active', 'laws', 'justifications')
+    fields = (
+        'problem',
+        'title',
+        'order',
+        'is_active',
+        'laws',
+        'justifications',
+        'excluded_justifications',
+    )
     list_display = ('id', 'problem', 'title', 'order', 'is_active')
     search_fields = ('problem__text', 'title')
     raw_id_fields = ('problem',)
-    filter_horizontal = ('laws', 'justifications')
+    filter_horizontal = ('laws', 'justifications', 'excluded_justifications')
     list_filter = ('is_active',)
-
+    inlines = (JustificationGroupInline,)
 
 admin.site.register(Category)
 admin.site.register(Subcategory)

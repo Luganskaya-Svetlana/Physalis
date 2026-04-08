@@ -103,6 +103,7 @@
   .problem-statement {
     padding-top: 8px;
     padding-bottom: 8px;
+    display: flow-root;
   }
 
   .problem-statement p {
@@ -363,6 +364,12 @@
           </span>
         {% endif %}
 
+        {% for msg in soft_messages %}
+          <span class="small-note result-inline-note">
+            {{ msg }}
+          </span>
+        {% endfor %}
+
         {% if more_methods_message %}
           <span class="small-note" style="margin-top: 8px;">
             {{ more_methods_message }}
@@ -388,31 +395,31 @@
     >
 
     {% if law_items %}
-      <div class="game-box">
-        <h2>Законы</h2>
-        <div class="chips-laws">
-          {% for item in law_items %}
-            <label class="chip {{ item.state }}">
-              <input type="checkbox" name="laws" value="{{ item.id }}" {% if item.checked %}checked{% endif %}>
-              <span>{{ item.label|ziamath_filter|safe }}</span>
-            </label>
-          {% endfor %}
-        </div>
+    <div class="game-box">
+      <h2>Законы</h2>
+      <div class="chips-laws">
+        {% for item in law_items %}
+          <label class="chip {{ item.state }}">
+            <input type="checkbox" name="laws" value="{{ item.id }}" {% if item.checked %}checked{% endif %}>
+            <span>{{ item.label|ziamath_filter|safe }}</span>
+          </label>
+        {% endfor %}
       </div>
+    </div>
     {% endif %}
 
     {% if justification_items %}
-      <div class="game-box">
-        <h2>Обоснование применимости</h2>
-        <div class="chips-justifications">
-          {% for item in justification_items %}
-            <label class="chip {{ item.state }}">
-              <input type="checkbox" name="justifications" value="{{ item.id }}" {% if item.checked %}checked{% endif %}>
-              <span>{{ item.label|ziamath_filter|safe }}</span>
-            </label>
-          {% endfor %}
-        </div>
+    <div class="game-box">
+      <h2>Обоснование применимости</h2>
+      <div class="chips-justifications">
+        {% for item in justification_items %}
+          <label class="chip {{ item.state }}">
+            <input type="checkbox" name="justifications" value="{{ item.id }}" {% if item.checked %}checked{% endif %}>
+            <span>{{ item.label|ziamath_filter|safe }}</span>
+          </label>
+        {% endfor %}
       </div>
+    </div>
     {% endif %}
 
     <div class="actions">
@@ -460,6 +467,7 @@
       </div>
     {% endif %}
     {% endcomment %}
+
   </form>
 
   <form method="get" class="game-tools">
@@ -480,6 +488,8 @@
 
 <script>
   function applyChoiceStates(groupName, items) {
+    if (!items) return;
+
     items.forEach(item => {
       const selector = `#trainer-form input[name="${groupName}"][value="${item.id}"]`;
       const input = document.querySelector(selector);
@@ -502,9 +512,11 @@
     const seenCount = document.getElementById('seen-count');
     const totalCount = document.getElementById('total-count');
 
-    if (solvedCount) solvedCount.textContent = data.solved_count;
-    if (seenCount) seenCount.textContent = data.seen_count;
-    if (totalCount) totalCount.textContent = data.total_count;
+    if (solvedCount && data.solved_count !== undefined) solvedCount.textContent = data.solved_count;
+    if (seenCount && data.seen_count !== undefined) seenCount.textContent = data.seen_count;
+    if (totalCount && data.total_count !== undefined) totalCount.textContent = data.total_count;
+
+    if (data.current_problem_id === undefined) return;
 
     const currentLink = document.getElementById(`game-problem-link-${data.current_problem_id}`);
     if (currentLink) {
@@ -522,10 +534,10 @@
     if (!container) return;
 
     let html = `
-      <div class="game-box ${data.result_box_class}" id="result-box">
-        <strong>${data.result_title}</strong>
+      <div class="game-box ${data.result_box_class || ''}" id="result-box">
+        <strong>${data.result_title || ''}</strong>
         <span class="small-note" style="margin-top: 8px;">
-          <a href="${data.solution_url}">${data.solution_link_text}</a>
+          <a href="${data.solution_url || '#'}">${data.solution_link_text || ''}</a>
         </span>
     `;
 
@@ -535,6 +547,16 @@
           ${data.ignored_justifications_message}
         </span>
       `;
+    }
+
+    if (data.soft_messages && data.soft_messages.length) {
+      data.soft_messages.forEach(msg => {
+        html += `
+          <span class="small-note result-inline-note">
+            ${msg}
+          </span>
+        `;
+      });
     }
 
     if (data.more_methods_message) {
@@ -566,26 +588,38 @@
 
     const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    const response = await fetch(window.location.href, {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrfToken
-      },
-      body: formData
-    });
+    try {
+      const response = await fetch(window.location.href, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': csrfToken
+        },
+        body: formData
+      });
 
-    const data = await response.json();
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Trainer POST failed:', response.status, text);
+        alert(`Ошибка сервера (${response.status}). Откройте console / Network.`);
+        return;
+      }
 
-    if (data.redirect_url) {
-      window.location.href = data.redirect_url;
-      return;
+      const data = await response.json();
+
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+        return;
+      }
+
+      applyChoiceStates('laws', data.law_items || []);
+      applyChoiceStates('justifications', data.justification_items || []);
+      renderResultBox(data);
+      updateProgressUI(data);
+    } catch (error) {
+      console.error('Trainer JS error:', error);
+      alert('Ошибка JavaScript. Подробности в console.');
     }
-
-    applyChoiceStates('laws', data.law_items);
-    applyChoiceStates('justifications', data.justification_items);
-    renderResultBox(data);
-    updateProgressUI(data);
   }
 </script>
 {% endblock %}
