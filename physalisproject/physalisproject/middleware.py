@@ -3,7 +3,7 @@ from django.contrib.flatpages.middleware import FlatpageFallbackMiddleware
 from django.contrib.flatpages.views import flatpage
 from django.core.cache import cache
 from django.http import Http404, HttpResponse
-import time
+from django.utils import timezone
 
 from .cache_utils import flatpage_cache_key
 
@@ -49,7 +49,7 @@ class CachedFlatpageFallbackMiddleware(FlatpageFallbackMiddleware):
                 'status_code': page_response.status_code,
                 'content_type': page_response.get('Content-Type', 'text/html; charset=utf-8'),
                 'charset': getattr(page_response, 'charset', None),
-                'generated_at': f'{time.time():.6f}',
+                'generated_at': timezone.localtime().strftime('%Y-%m-%d %H:%M:%S'),
             }
             cache.set(key, cache_data, self.cache_timeout)
 
