@@ -470,6 +470,7 @@
 
   </form>
 
+  {% comment %}
   <form method="get" class="game-tools">
     <input type="hidden" name="filter_submitted" value="1">
     <label class="filter-toggle">
@@ -480,9 +481,10 @@
         {% if only_with_justifications %}checked{% endif %}
         onchange="this.form.submit()"
       >
-      Показывать только за­да­чи с обо­сно­ва­ни­ями
+      Показывать только за­да­чи с обо­сно­ва­ни­ями.
     </label>
   </form>
+  {% endcomment %}
 
 </div>
 
