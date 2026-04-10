@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from problems.models import Problem
@@ -15,6 +16,14 @@ from .validators import validate_answer_slug
 class Variant(models.Model):
     objects = VariantManager()
 
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_variants',
+        verbose_name='создатель',
+    )
     problems = SortedManyToManyField(Problem,
                                      verbose_name='задачи')
     text = models.TextField('описание', blank=True, null=True)
@@ -32,32 +41,70 @@ class Variant(models.Model):
     sort_by_complexity = models.BooleanField('отсортировать по'
                                              ' нарастанию сложности',
                                              default=True)
+    show_complexity = models.BooleanField(
+        'отображать в варианте сложность',
+        default=False,
+    )
+    show_source = models.BooleanField(
+        'отображать в варианте источник',
+        default=False,
+    )
+    show_type = models.BooleanField(
+        'отображать в варианте тип',
+        default=False,
+    )
+    show_max_score = models.BooleanField(
+        'отображать в варианте максимум баллов',
+        default=False,
+    )
+    show_original_number = models.BooleanField(
+        'отображать в варианте оригинальный номер',
+        default=False,
+    )
+    show_solution_link = models.BooleanField(
+        'отображать в варианте ссылку на решение',
+        default=False,
+    )
 
     class Meta:
         verbose_name = 'вариант'
         verbose_name_plural = 'варианты'
         default_related_name = 'variants'
 
-    def get_problems(self):  # задачи для страницы варианта
-        problems = (self.problems
-                    .only('text', 'type_ege__number', 'complexity'))
+    def _get_sorted_problems(self, problems):
+        problems = list(problems)
 
         if self.sort_by_complexity:
-            problems = problems.order_by('complexity')
-        elif self.is_full and (None,) not in problems.values_list('type_ege'):
-            problems = problems.order_by('type_ege__number')
+            indexed = list(enumerate(problems))
+            indexed.sort(key=lambda pair: ((pair[1].complexity or 0), pair[0]))
+            return [problem for _, problem in indexed]
+
+        if self.is_full and all(problem.type_ege_id is not None for problem in problems):
+            indexed = list(enumerate(problems))
+            indexed.sort(key=lambda pair: (pair[1].type_ege.number, pair[0]))
+            return [problem for _, problem in indexed]
 
         return problems
+
+    def get_problems(self):  # задачи для страницы варианта
+        problems = (self.problems
+                    .select_related('type_ege', 'source')
+                    .only(
+                        'id',
+                        'text',
+                        'type_ege__number',
+                        'type_ege__max_score',
+                        'complexity',
+                        'source__name',
+                    ))
+        return self._get_sorted_problems(problems)
 
     def get_answers(self):  # задачи для страницы с ответами
         problems = (self.problems
+                    .select_related('type_ege', 'source')
                     .only('solution', 'answer', 'type_ege__max_score',
-                          'complexity', 'source', 'id'))
-        if self.sort_by_complexity:
-            problems = problems.order_by('complexity')
-        elif self.is_full and (None,) not in problems.values_list('type_ege'):
-            problems = problems.order_by('type_ege__number')
-        return problems
+                          'type_ege__number', 'complexity', 'source__name', 'id'))
+        return self._get_sorted_problems(problems)
 
     def __str__(self):
         return f'вариант с id {self.id}'

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+{% load ziamath_filter %}
+{% load abbr %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <div id="variant-current-content">
+    {% include "variants/_variant_current_content.html" %}
+  </div>
+{% endblock %}

@@ -1,3 +1,4 @@
+{% load static %}
 <nav class="no-print">
 
   <div class='nav-left'>
@@ -6,7 +7,7 @@
     <a href="/admin/">Admin</a>
     {% endif %}
     {% endcomment %}
-    <a href="/"{% if request.path == '/' %} class='current_nav'{% endif %}>Главная</a>
+    <a href="/"{% if request.path == '/' %} class='current_nav nav-home-link'{% endif %} title="Главная">Главная</a>
     <a href="/articles/"{% if '/articles' in request.path %} class='current_nav'{% endif %}>Статьи</a>
     <a href="/courseware/"{% if '/courseware/' in request.path %} class='current_nav'{% endif %}>Материалы</a>
     <a href="/about/"{% if '/about/' in request.path %} class='current_nav'{% endif %}>О</a>
@@ -17,7 +18,20 @@
     <a href="{% url 'tags:list'%}"{% if '/tags/' in request.path %} class='current_nav'{% endif %}>Тэги</a>
     <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %} class='current_nav'{% endif %}>Типы</a>
     <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %} class='current_nav'{% endif %}>Задачи</a>
-    <a href="{% url 'variants:list'%}?order_by=-id"{% if '/variants/' in request.path %} class='current_nav'{% endif %}>Варианты</a>
+    <a href="{% url 'variants:list'%}?order_by=-id"{% if '/variants/' in request.path and request.path != '/variants/current/' %} class='current_nav'{% endif %}>Варианты</a>
+{% if request.user.is_authenticated %}
+    <a
+      href="{% url 'variants:current' %}"
+      class="variant-nav-link inactive{% if request.path == '/variants/current/' %} current_nav{% endif %}"
+      data-variant-nav
+      aria-label="Моя подборка"
+      title="Добавьте задачи, чтобы открыть подборку"
+      aria-disabled="true"
+    >
+      <span class="variant-nav-icon" aria-hidden="true"></span>
+      <span class="variant-nav-badge" data-variant-nav-badge hidden>0</span>
+    </a>
+{% endif %}
 {% if request.user.is_staff and problem and problem.id %}
   <a href="{% url 'admin:problems_problem_change' problem.id %}">✎</a>
 {% elif request.user.is_staff and variant and variant.id %}

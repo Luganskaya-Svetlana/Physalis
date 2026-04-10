@@ -12,6 +12,15 @@
       {% if next_problem %}
         <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">→</a>
       {% endif %}
+      <button
+        type="button"
+        class="variant-inline-toggle variant-inline-toggle-detail no-print"
+        data-variant-toggle
+        data-problem-id="{{ problem.id }}"
+        aria-label="Добавить в вариант"
+      >
+        +
+      </button>
     </h1>
     <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
     {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|abbr|ziamath_filter|markdown|safe}}</div>{% endif %}
@@ -46,10 +55,10 @@
       </p>
       {% endif %}
   
-      {% if request.user.is_staff and problem.variants.all %}
+      {% if request.user.is_staff and problem.get_recent_variants %}
       <p>
         <b>Варианты:</b>
-        {% for variant in problem.variants.all %}
+        {% for variant in problem.get_recent_variants %}
           <a href="{{variant.get_absolute_url}}">#{{variant.id}}</a>
         {% endfor %}
       </p>

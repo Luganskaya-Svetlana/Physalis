@@ -12,7 +12,19 @@ class VariantManager(models.Manager):
     def detail(self):
         return (
             self.get_queryset()
-                .only('id', 'complexity', 'text', 'show_answers')
+                .only(
+                    'id',
+                    'complexity',
+                    'text',
+                    'show_answers',
+                    'show_complexity',
+                    'show_source',
+                    'show_type',
+                    'show_max_score',
+                    'show_original_number',
+                    'show_solution_link',
+                    'owner_id',
+                )
         )
 
     def answers(self):

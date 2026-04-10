@@ -1,0 +1,176 @@
+{% load markdown_extras %}
+{% load ziamath_filter %}
+{% load abbr %}
+{% load static %}
+
+<div class="no-print variant-current-actions">
+  <div class="variant-current-summary sans">
+    <span class="compl">Выбрано задач: {{ summary.count }}/{{ summary.max_problems }}</span>
+    <span class="compl">Сложность: {{ summary.complexity }}/10</span>
+  </div>
+  {% if problems %}
+    <form method="post" data-selection-action-form>
+      {% csrf_token %}
+      <input type="hidden" name="action" value="clear">
+      <button type="submit" class="text-action-link">Очистить подборку</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if full_variant_error %}
+  <div class="instruction no-print">{{ full_variant_error }}</div>
+{% endif %}
+
+{% if problems %}
+  <div id="selection-problem-list">
+    {% for problem in problems %}
+      <div class="selection-entry" data-selection-entry data-problem-id="{{ problem.id }}" data-complexity="{{ problem.complexity|default:0 }}" data-original-index="{{ forloop.counter0 }}">
+        <div class="rel">
+          <div class="id-in-list">
+            <a href="{{ problem.get_absolute_url }}"><span class='id-number bold'>#{{ problem.id }}</span></a>
+            <span class="compl">Сложность {{ problem.complexity|default:"-" }}/10</span>
+            {% if problem.type_ege.number %}
+              <span class="compl">Тип {{ problem.type_ege.number }}</span>
+            {% endif %}
+            {% if problem.source %}
+              <span class="compl">Источник: {{ problem.source }}</span>
+            {% endif %}
+            <span class="no-solution variant-current-controls">
+              <form method="post" data-selection-action-form>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="move_up">
+                <input type="hidden" name="problem_id" value="{{ problem.id }}">
+                <button type="submit" class="variant-mini-btn variant-mini-btn-icon variant-mini-btn-up" title="Поднять выше"{% if forloop.first %} disabled{% endif %}></button>
+              </form>
+              <form method="post" data-selection-action-form>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="move_down">
+                <input type="hidden" name="problem_id" value="{{ problem.id }}">
+                <button type="submit" class="variant-mini-btn variant-mini-btn-icon variant-mini-btn-down" title="Опустить ниже"{% if forloop.last %} disabled{% endif %}></button>
+              </form>
+              <form method="post" data-selection-action-form>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="remove">
+                <input type="hidden" name="problem_id" value="{{ problem.id }}">
+                <button type="submit" class="variant-mini-btn variant-mini-btn-icon variant-mini-btn-remove" title="Убрать из подборки"></button>
+              </form>
+            </span>
+          </div>
+          <div class="problem" data-selection-problem>
+            {{ problem.text|abbr|ziamath_filter|markdown|safe }}
+          </div>
+        </div>
+        <hr class="mb20">
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if deleted_problems %}
+    <div class="no-print variant-deleted-box">
+      <div class="variant-deleted-header">
+        <span class="variant-deleted-title">Недавно удалённые</span>
+        <form method="post" data-selection-action-form>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="restore_all">
+          <button type="submit" class="text-action-link">Восстановить все</button>
+        </form>
+        <form method="post" data-selection-action-form>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="clear_deleted">
+          <button type="submit" class="text-action-link">Очистить список</button>
+        </form>
+      </div>
+      <div class="variant-deleted-list">
+        {% for problem in deleted_problems %}
+          <form method="post" class="variant-deleted-item" data-selection-action-form>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="restore">
+            <input type="hidden" name="problem_id" value="{{ problem.id }}">
+            <button type="submit" class="variant-mini-btn variant-mini-btn-icon variant-mini-btn-repeat" title="Вернуть в подборку"></button>
+            <a href="{{ problem.get_absolute_url }}">#{{ problem.id }}</a>
+            {% if problem.type_ege.number %}<span class="compl">тип {{ problem.type_ege.number }}</span>{% endif %}
+            <span class="compl">сложность {{ problem.complexity|default:"-" }}/10</span>
+          </form>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="no-print variant-generate-box">
+    <h2>Сгенерировать вариант</h2>
+    <form method="post" class="variant-generate-form" id="variant-generate-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="generate">
+      <p>{{ form.is_full }} {{ form.is_full.label_tag }}</p>
+      <p>{{ form.show_answers }} {{ form.show_answers.label_tag }}</p>
+      <p>{{ form.sort_by_complexity }} {{ form.sort_by_complexity.label_tag }}</p>
+      {% if form.is_published %}
+        <p>{{ form.is_published }} {{ form.is_published.label_tag }}</p>
+      {% endif %}
+
+      <fieldset class="variant-display-group">
+        <legend>Дополнительно отображать в варианте</legend>
+        <div class="variant-display-options">
+          <label>{{ form.show_complexity }} {{ form.show_complexity.label }}</label>
+          <label>{{ form.show_source }} {{ form.show_source.label }}</label>
+          <label>{{ form.show_type }} {{ form.show_type.label }}</label>
+          <label>{{ form.show_max_score }} {{ form.show_max_score.label }}</label>
+          <label>{{ form.show_original_number }} {{ form.show_original_number.label }}</label>
+          <label>{{ form.show_solution_link }} {{ form.show_solution_link.label }}</label>
+        </div>
+      </fieldset>
+      {% if form.non_field_errors %}
+        <ul class="errorlist">
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      <div class="variant-generate-links">
+        {% if last_generated_variant %}
+          <a
+            href="{{ last_generated_variant.get_absolute_url }}?answers_created=1"
+            class="button-primary"
+            data-last-generated-link
+            data-last-generated-signature="{{ last_generated_options_signature }}"
+          >Открыть вариант</a>
+          <button type="submit" class="text-action-link" name="force_regenerate" value="1" data-force-regenerate-button>Сгенерировать заново</button>
+        {% else %}
+          <button type="submit" class="button-primary">Сгенерировать вариант</button>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+{% else %}
+  <p><b>Подборка пока пуста.</b></p>
+  <p>Откройте задачи и добавьте интересующие в вариант.</p>
+
+  {% if deleted_problems %}
+    <div class="no-print variant-deleted-box">
+      <div class="variant-deleted-header">
+        <span class="variant-deleted-title">Недавно удалённые</span>
+        <form method="post" data-selection-action-form>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="restore_all">
+          <button type="submit" class="text-action-link">Восстановить все</button>
+        </form>
+        <form method="post" data-selection-action-form>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="clear_deleted">
+          <button type="submit" class="text-action-link">Очистить список</button>
+        </form>
+      </div>
+      <div class="variant-deleted-list">
+        {% for problem in deleted_problems %}
+          <form method="post" class="variant-deleted-item" data-selection-action-form>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="restore">
+            <input type="hidden" name="problem_id" value="{{ problem.id }}">
+            <button type="submit" class="variant-mini-btn variant-mini-btn-icon variant-mini-btn-repeat" title="Вернуть в подборку"></button>
+            <a href="{{ problem.get_absolute_url }}">#{{ problem.id }}</a>
+          </form>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endif %}

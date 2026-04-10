@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="11.596189mm"
+   height="11.596189mm"
+   viewBox="0 0 11.596189 11.596189"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7" />
+    </marker>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-46.65375,-31.290282)">
+    <rect
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.79375;stroke-linecap:square;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="rect1"
+       width="10.80244"
+       height="10.80244"
+       x="47.050625"
+       y="31.687157"
+       ry="2.0468497"
+       rx="2.0468497" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.719529;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;marker-start:url(#ConcaveTriangle);paint-order:stroke fill markers"
+       d="m 52.451845,37.28679 v 3.892503"
+       id="path1" />
+  </g>
+</svg>

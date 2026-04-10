@@ -8,10 +8,13 @@
 {% block content %}
   <h1>Вариант #{{ variant.id }}</h1>
   <div class=no-print>
-    {{ variant.text|ziamath_filter|markdown|safe }}
+    {{ variant.text|default_if_none:""|ziamath_filter|markdown|safe }}
     <p>Сложность: {{ variant.complexity }}/10 </p>
     <p><a href=/media/files/const.pdf>Справочные данные</a></p>
     {% if variant.pdf_file %} <p><a href="{{ variant.pdf_file.url }}">Скачать PDF</a></p> {% endif %}
+    {% if request.GET.answers_created and can_view_created_answers_link %}
+    <p class="sans">Ссылка на ответы: <a href="{{ variant.get_answers_url }}">{{ variant.get_answers_url }}</a></p>
+    {% endif %}
   </div>
 
   {% if variant.is_full %}
@@ -21,7 +24,33 @@
 
   {% for problem in variant.get_problems %}
       <div class="problem">
-        <span class='id-in-var sans fs12'>{{ forloop.counter }}</span>  {% if not variant.is_full and problem.type_ege %}(тип {{problem.type_ege.number}}){% endif %}
+        <span class='id-in-var sans fs12'>
+          {{ forloop.counter }}
+        </span>
+        {% if variant.show_original_number %}
+          <span class="compl">
+            {% if variant.show_solution_link %}
+              <a href="{{ variant.get_answers_url }}#{{ forloop.counter }}">#{{ problem.id }}</a>
+            {% else %}
+              #{{ problem.id }}
+            {% endif %}
+          </span>
+        {% endif %}
+        {% if variant.show_complexity and problem.complexity %}
+          <span class="compl no-wrap">Сложность&nbsp;{{ problem.complexity }}/10</span>
+        {% endif %}
+        {% if variant.show_source and problem.source %}
+          <span class="compl">Источник: {{ problem.source }}</span>
+        {% endif %}
+        {% if variant.show_type and problem.type_ege %}
+          <span class="compl">Тип {{ problem.type_ege.number }}</span>
+        {% endif %}
+        {% if variant.show_max_score and problem.type_ege %}
+          <span class="compl no-wrap">Макс.&nbsp;балл&nbsp;{{ problem.type_ege.max_score }}</span>
+        {% endif %}
+        {% if variant.show_solution_link and not variant.show_original_number %}
+          <span class="compl"><a href="{{ variant.get_answers_url }}#{{ forloop.counter }}">Решение</a></span>
+        {% endif %}
         {{problem.text|abbr|ziamath_filter|markdown|safe}}
       </div>
     {% if variant.is_full and forloop.counter == 19 %}

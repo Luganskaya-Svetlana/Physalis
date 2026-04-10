@@ -214,6 +214,9 @@ class Problem(models.Model):
     def get_absolute_url(self):
         return reverse('problems:detail', kwargs={'pk': self.pk})
 
+    def get_recent_variants(self):
+        return self.variants.order_by('-id')[:3]
+
 
 class Image(models.Model):
     path_to_image = models.ImageField('изображение',

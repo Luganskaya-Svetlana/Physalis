@@ -34,9 +34,18 @@
       <span class="compl">Тип {{problem.type_ege.number}}</span>
       {% endif %}
       {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
-        {% if request.user.is_staff and problem.variants.all %}
+      <button
+        type="button"
+        class="variant-inline-toggle no-print"
+        data-variant-toggle
+        data-problem-id="{{ problem.id }}"
+        aria-label="Добавить в вариант"
+      >
+        +
+      </button>
+        {% if request.user.is_staff and problem.get_recent_variants %}
           <span class="compl no-solution">
-            {% for variant in problem.variants.all %}
+            {% for variant in problem.get_recent_variants %}
               <a href="{{variant.get_absolute_url}}">#{{variant.id}}</a>
             {% endfor %}
           </span>
