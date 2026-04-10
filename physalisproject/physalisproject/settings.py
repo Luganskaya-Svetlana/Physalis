@@ -117,15 +117,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        # 'LOCATION': '/tmp/physalis_django_cache',
-        # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        # 'LOCATION': os.path.join(BASE_DIR, '.cache'),
+USE_DUMMY_CACHE = env_bool('USE_DUMMY_CACHE', default=DEBUG)
+
+if USE_DUMMY_CACHE:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': '/tmp/physalis_django_cache',
+        }
+    }
 
 
 LANGUAGE_CODE = 'ru'
