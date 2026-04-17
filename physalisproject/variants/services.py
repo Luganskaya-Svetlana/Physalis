@@ -14,7 +14,6 @@ LAST_GENERATED_VARIANT_SESSION_KEY = 'current_variant_last_generated'
 MIN_VARIANT_PROBLEMS = 1
 MAX_VARIANT_PROBLEMS = 40
 MAX_DELETED_PROBLEMS = 30
-FULL_VARIANT_TYPE_NUMBERS = tuple(range(1, 27))
 
 
 def generate_answer_slug():
@@ -28,72 +27,12 @@ def calculate_variant_complexity(problems):
     return round(sum(values) / len(values), 1)
 
 
-def describe_full_variant_issue(problems):
-    numbers = []
-    missing_type_ids = []
-
-    for problem in problems:
-        if problem.type_ege_id is None:
-            missing_type_ids.append(problem.id)
-            continue
-        numbers.append(problem.type_ege.number)
-
-    if missing_type_ids:
-        ids = ', '.join(str(problem_id) for problem_id in missing_type_ids)
-        return f'Для полного варианта у всех задач должен быть номер ЕГЭ. Без типа: {ids}.'
-
-    missing_numbers = []
-    duplicate_numbers = []
-    seen_numbers = set()
-
-    for number in FULL_VARIANT_TYPE_NUMBERS:
-        count = numbers.count(number)
-        if count == 0:
-            missing_numbers.append(number)
-        elif count > 1:
-            duplicate_numbers.append(number)
-        seen_numbers.add(number)
-
-    extra_numbers = sorted(number for number in set(numbers) if number not in seen_numbers)
-
-    if missing_numbers or duplicate_numbers or extra_numbers or len(numbers) != len(FULL_VARIANT_TYPE_NUMBERS):
-        parts = []
-        if missing_numbers:
-            parts.append(
-                'нет типов: ' + ', '.join(str(number) for number in missing_numbers)
-            )
-        if duplicate_numbers:
-            parts.append(
-                'повторяются типы: ' + ', '.join(str(number) for number in duplicate_numbers)
-            )
-        if extra_numbers:
-            parts.append(
-                'лишние типы: ' + ', '.join(str(number) for number in extra_numbers)
-            )
-        if len(numbers) != len(FULL_VARIANT_TYPE_NUMBERS):
-            parts.append(
-                f'нужно 26 задач, сейчас {len(problems)}'
-            )
-        return 'Полный вариант должен иметь структуру 20+6 с типами 1-26 по одному разу; ' + '; '.join(parts) + '.'
-
-    return ''
-
-
 def validate_problem_selection(problem_ids):
     count = len(problem_ids)
     if count < MIN_VARIANT_PROBLEMS:
         raise ValidationError(f'Нужно выбрать хотя бы {MIN_VARIANT_PROBLEMS} задачу.')
     if count > MAX_VARIANT_PROBLEMS:
         raise ValidationError(f'Можно выбрать не более {MAX_VARIANT_PROBLEMS} задач.')
-
-
-def validate_full_variant(problems, is_full):
-    if not is_full:
-        return
-
-    error_message = describe_full_variant_issue(problems)
-    if error_message:
-        raise ValidationError(error_message)
 
 
 def get_selection_problem_ids(request):
@@ -148,10 +87,12 @@ def build_problem_signature(problem_ids):
 
 def normalize_generation_options(options=None):
     options = options or {}
+    sort_by_type = bool(options.get('sort_by_type'))
     return {
         'is_full': bool(options.get('is_full')),
         'show_answers': bool(options.get('show_answers')),
-        'sort_by_complexity': bool(options.get('sort_by_complexity')) and not bool(options.get('is_full')),
+        'sort_by_complexity': bool(options.get('sort_by_complexity')) and not bool(options.get('is_full')) and not sort_by_type,
+        'sort_by_type': sort_by_type,
         'show_complexity': bool(options.get('show_complexity')),
         'show_source': bool(options.get('show_source')),
         'show_type': bool(options.get('show_type')),
@@ -170,6 +111,7 @@ def build_options_signature(options=None):
             'is_full',
             'show_answers',
             'sort_by_complexity',
+            'sort_by_type',
             'show_complexity',
             'show_source',
             'show_type',
@@ -401,6 +343,7 @@ def create_variant(
     is_full,
     show_answers,
     sort_by_complexity,
+    sort_by_type=False,
     show_complexity=False,
     show_source=False,
     show_type=False,
@@ -414,8 +357,9 @@ def create_variant(
 ):
     problem_ids = [problem.id for problem in problems]
     validate_problem_selection(problem_ids)
-    validate_full_variant(problems, is_full)
     if is_full:
+        sort_by_complexity = False
+    if sort_by_type:
         sort_by_complexity = False
 
     variant = Variant.objects.create(
@@ -428,6 +372,7 @@ def create_variant(
         answer_slug=generate_answer_slug(),
         is_published=is_published,
         sort_by_complexity=sort_by_complexity,
+        sort_by_type=sort_by_type,
         show_complexity=show_complexity,
         show_source=show_source,
         show_type=show_type,

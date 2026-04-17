@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content">
+  <h1>Задания</h1>
+
+  {% if assignments %}
+    <table class="change ans-table homework-compact-table homework-task-table">
+      <tr>
+        <th>Название ДЗ</th>
+        <th>Сдали</th>
+        <th>Последнее изменение</th>
+      </tr>
+      {% for assignment in assignments %}
+        <tr>
+          <td><a href="{% url 'homework:detail' assignment.id %}">{{ assignment.title|default:"Домашнее задание" }}</a></td>
+          <td>{{ assignment.submitted_students_count }}/{{ assignment.assigned_students_count }}</td>
+          <td>{{ assignment.updated_at|date:"d.m.Y H:i" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Пока нет созданных заданий.</p>
+  {% endif %}
+</section>
+{% endblock %}

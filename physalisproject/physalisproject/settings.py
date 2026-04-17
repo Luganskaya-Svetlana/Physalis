@@ -28,6 +28,7 @@ def env_list(name, default=''):
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 DEBUG = env_bool('DEBUG', default=False)
+SHOW_LOGIN_LINK = env_bool('SHOW_LOGIN_LINK', default=True)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 if DEBUG:
@@ -53,6 +54,8 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'accounts.apps.AccountsConfig',
+    'homework.apps.HomeworkConfig',
     'problems.apps.ProblemsConfig',
     'typesinege.apps.TypesinegeConfig',
     'pages.apps.PagesConfig',
@@ -84,6 +87,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'physalisproject.context_processors.runtime_flags',
             ],
         },
     },
@@ -151,7 +155,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SITE_ID = 1
+SITE_ID = int(os.getenv('SITE_ID', '1'))
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGOUT_REDIRECT_URL = '/'
 
 # This will write everything into physalisproject/django.log
 # LOGGING = {

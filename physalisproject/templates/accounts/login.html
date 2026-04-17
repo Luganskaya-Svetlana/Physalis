@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow">
+  <h1>Вход</h1>
+  <p>Если аккаунта еще нет, <a href="{% url 'accounts:signup' %}">зарегистрируйтесь</a>.</p>
+
+  <form method="post" class="stack-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button-primary">Войти</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,980 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+{% load ziamath_filter %}
+{% load abbr %}
+{% load static %}
+
+{% block content %}
+<section class="content">
+  <h1 class="homework-title-row">
+    {% if assignment_title_is_default_variant %}
+      ДЗ по варианту <a href="{{ assignment.variant.get_absolute_url }}">#{{ assignment.variant.id }}</a>
+    {% else %}
+      {{ assignment.title|default:"Домашнее задание" }}
+    {% endif %}
+    {% if not is_student_view %}
+      <a href="{% url 'homework:edit' assignment.id %}" class="homework-title-edit" aria-label="Редактировать ДЗ" title="Редактировать ДЗ">✎</a>
+    {% endif %}
+  </h1>
+
+  {% if not is_student_view %}
+    <div class="account-dashboard-card homework-assignment-card homework-assignment-card-static">
+      <div class="homework-assignment-card-grid">
+        <p><b>Вариант:</b> <a href="{{ assignment.variant.get_absolute_url }}">#{{ assignment.variant.id }}</a></p>
+        <p><b>Назначил:</b> {{ assignment.created_by }}</p>
+        <p><b>Статус:</b> {{ assignment.get_status_display }}</p>
+        <p><b>Дедлайн:</b> {{ assignment.due_at|default:"не задан" }}</p>
+        {% if assignment.due_at %}
+          <p><b>Поздняя сдача:</b> {% if assignment.allow_late_submissions %}разрешена{% else %}запрещена{% endif %}</p>
+        {% endif %}
+        <p><b>Максимум баллов:</b> {{ resolved_max_score|floatformat:"0"|default:"нужно уточнить вручную" }}</p>
+        {% if show_second_part_meta %}
+          <p><b>Вторая часть:</b>
+            {% if assignment.second_part_mode == assignment.SecondPartMode.PER_PROBLEM %}
+              отдельно
+            {% elif assignment.second_part_mode == assignment.SecondPartMode.FLEXIBLE %}
+              целиком или отдельно
+            {% else %}
+              целиком
+            {% endif %}
+          </p>
+          <p><b>Текст вместо файлов:</b> {% if assignment.allow_second_part_text %}разрешен{% else %}не разрешен{% endif %}</p>
+        {% endif %}
+        {% if assignment.target_students.all %}
+          <div class="homework-assignment-card-block">
+            <p><b>Ученики:</b></p>
+            <ul>
+              {% for student in assignment.target_students.all %}
+                <li>{{ student }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {% if assignment.target_groups.all %}
+          <div class="homework-assignment-card-block">
+            <p>
+              <b>Группы:</b>
+              {% for group in assignment.target_groups.all %}
+                {{ group.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    {% if not student_submission_is_submitted and assignment.due_at %}
+      <div class="homework-meta-box">
+        <p><b>Дедлайн:</b> {{ assignment.due_at }}</p>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  {% if assignment.instructions %}
+    <div class="instruction">
+      {{ assignment.instructions|linebreaksbr }}
+    </div>
+  {% endif %}
+
+  {% if is_student_view %}
+    {% if student_submission %}
+      <div class="account-dashboard-card homework-student-work-card homework-assignment-card-static">
+        {% if student_submission.status != student_submission.Status.ASSIGNED %}
+          <p><b>Статус:</b> {{ student_submission.get_status_display }}</p>
+        {% endif %}
+        <p><b>Сдано:</b> {{ student_submission.submitted_at|default:"-" }}</p>
+        <p><b>Проверено:</b> {{ student_submission.reviewed_at|default:"-" }}</p>
+        <p><b>Балл:</b> {{ student_submission.total_score|floatformat:"0"|default:"-" }}/{{ student_submission.max_score_snapshot|floatformat:"0"|default:"-" }}</p>
+        {% if student_submission.status == student_submission.Status.SUBMITTED %}
+          <p>Тестовая часть проверена автоматически. Решения и баллы показаны ниже. Вторую часть преподаватель проверит позже.</p>
+        {% endif %}
+        {% if student_submission.status == student_submission.Status.REVIEWED and student_submission.manual_score == 0 and second_part_problems %}
+          <p>За вторую часть автоматически поставлено 0 баллов, потому что при сдаче не было ни файлов, ни текста ответа.</p>
+        {% endif %}
+      </div>
+      {% if answerable_problems and student_submission.status != student_submission.Status.ASSIGNED %}
+        <h3>Проверено автоматически:</h3>
+        <table class="change ans-table homework-auto-table">
+          <tr>
+            <th>№</th>
+            <th>Ответ</th>
+            <th>Правильный ответ</th>
+            <th>Балл</th>
+          </tr>
+          {% for item in answerable_problems %}
+            {% if item.answer and item.answer.answer_text %}
+              <tr class="{% if item.answer_state %}homework-auto-row-{{ item.answer_state }}{% endif %}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.answer.answer_text }}</td>
+                <td>{{ item.problem.answer|default:"-" }}</td>
+                <td>{{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+      {% endif %}
+      {% if answerable_problems %}
+        <h2>Вторая часть</h2>
+      {% endif %}
+      <div class="homework-student-second-part">
+        {% if allow_shared_second_part_uploads %}
+          {% if assignment.second_part_mode == assignment.SecondPartMode.SINGLE_FILE %}
+            {% if second_part_problems %}
+              {% for item in second_part_problems %}
+                <div class="homework-second-part-text">
+                  <div class="id-in-list">
+                    <span class="id-in-var sans fs12">{{ item.display_number }}</span>
+                    {% if item.score %}<span class="compl">Балл: {{ item.score.score_awarded|floatformat:"0" }}{% if item.max_score %}/{{ item.max_score|floatformat:"0" }}{% endif %}</span>{% endif %}
+                  </div>
+                  <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+                  {% if assignment.allow_second_part_text and student_submission.can_student_edit %}
+                    <textarea
+                      name="second_part_text_{{ item.problem.id }}"
+                      form="homework-main-form"
+                      rows="5"
+                      data-second-part-textarea
+                    >{{ item.response.text_answer|default:'' }}</textarea>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+          {% if student_submission.can_student_edit %}
+            <div class="homework-second-part-help-box">
+              <p class="homework-second-part-help">
+                {% if assignment.second_part_mode == assignment.SecondPartMode.FLEXIBLE %}
+                  Можно загрузить всю вторую часть одним файлом. При желании ниже можно добавить и отдельные файлы по задачам.
+                {% else %}
+                  Загрузите фотографии решений второй части. Можно добавлять несколько файлов, комментировать работу и продолжать обсуждение после сдачи.
+                {% endif %}
+                {% if assignment.allow_second_part_text %} Вместо фотографий можно ввести решение текстом.{% endif %}
+              </p>
+            </div>
+            <form method="post" enctype="multipart/form-data" class="stack-form homework-upload-form" data-upload-form data-upload-scope="shared">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="upload_attachments">
+              <label class="button-secondary homework-upload-label">
+                Выбрать файлы
+                <input type="file" name="attachments" multiple accept="image/*,.pdf" class="homework-file-input">
+              </label>
+              <div class="form-actions">
+                <button type="submit" class="button-primary" disabled data-upload-submit>Загрузить</button>
+              </div>
+              <div class="homework-selected-files sans" data-selected-files></div>
+            </form>
+          {% endif %}
+
+          {% if shared_second_part_attachments %}
+            <div class="homework-attachments homework-attachments-grid" data-attachments-container data-attachments-scope="shared">
+              {% for attachment in shared_second_part_attachments %}
+                <div class="homework-attachment-card">
+                  {% if attachment.is_image %}
+                    <a href="{% url 'homework:attachment-detail' attachment.id %}" target="_blank" rel="noopener" class="homework-attachment-link">
+                      <img src="{{ attachment.file.url }}" alt="" class="homework-attachment-preview rotate-{{ attachment.rotation_degrees }}">
+                    </a>
+                    {% if student_submission.can_student_edit %}
+                      <form method="post" class="homework-attachment-action-form" data-attachment-action-form>
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="rotate_attachment">
+                        <input type="hidden" name="attachment_id" value="{{ attachment.id }}">
+                        <button type="submit" class="homework-attachment-icon-button" title="Повернуть на 90°" aria-label="Повернуть на 90°">
+                          <img src="{% static 'img/repeat.svg' %}" alt="">
+                        </button>
+                      </form>
+                    {% endif %}
+                  {% else %}
+                    <a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Открыть файл</a>
+                  {% endif %}
+                  {% if student_submission.can_student_edit %}
+                    <form method="post" class="homework-attachment-action-form" data-attachment-action-form>
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="delete_attachment">
+                      <input type="hidden" name="attachment_id" value="{{ attachment.id }}">
+                      <button type="submit" class="homework-attachment-icon-button homework-attachment-icon-button-remove" title="Удалить" aria-label="Удалить">
+                        <img src="{% static 'img/remove.svg' %}" alt="">
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% elif student_submission.can_student_edit %}
+            <p data-empty-attachments>Файлы пока не загружены.</p>
+            <div class="homework-attachments homework-attachments-grid" data-attachments-container data-attachments-scope="shared" hidden></div>
+          {% endif %}
+        {% endif %}
+      {% if allow_per_problem_second_part_uploads %}
+          {% for item in second_part_problems %}
+            <div class="homework-second-part-block">
+              <div class="id-in-list">
+                <span class="id-in-var sans fs12">{{ item.display_number }}</span>
+                {% if item.score %}<span class="compl">Балл: {{ item.score.score_awarded|floatformat:"0" }}{% if item.max_score %}/{{ item.max_score|floatformat:"0" }}{% endif %}</span>{% endif %}
+              </div>
+              <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+              {% if student_submission.can_student_edit %}
+                <div class="homework-second-part-help-box">
+                  <p class="homework-second-part-help">
+                    {% if assignment.second_part_mode == assignment.SecondPartMode.PER_PROBLEM %}
+                      Загрузите файл решения именно для этого задания.
+                    {% else %}
+                      Можно загрузить файл именно для этого задания.
+                    {% endif %}
+                    {% if assignment.allow_second_part_text %} Вместо фотографий можно ввести решение текстом.{% endif %}
+                  </p>
+                </div>
+              {% endif %}
+              {% if assignment.allow_second_part_text and student_submission.can_student_edit %}
+                <textarea
+                  name="second_part_text_{{ item.problem.id }}"
+                  form="homework-main-form"
+                  rows="5"
+                  data-second-part-textarea
+                >{{ item.response.text_answer|default:'' }}</textarea>
+              {% endif %}
+              {% if student_submission.can_student_edit %}
+                <form method="post" enctype="multipart/form-data" class="stack-form homework-upload-form" data-upload-form data-upload-scope="problem">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="upload_problem_attachments">
+                  <input type="hidden" name="problem_id" value="{{ item.problem.id }}">
+                  <label class="button-secondary homework-upload-label">
+                    Выбрать файлы
+                    <input type="file" name="attachments" multiple accept="image/*,.pdf" class="homework-file-input">
+                  </label>
+                  <button type="submit" class="button-primary" disabled data-upload-submit>Загрузить</button>
+                  <div class="homework-selected-files sans" data-selected-files></div>
+                </form>
+              {% endif %}
+              {% if item.attachments %}
+                <div class="homework-attachments homework-attachments-grid" data-attachments-container data-attachments-scope="problem-{{ item.problem.id }}">
+                  {% for attachment in item.attachments %}
+                    <div class="homework-attachment-card">
+                      {% if attachment.is_image %}
+                        <a href="{% url 'homework:attachment-detail' attachment.id %}" target="_blank" rel="noopener" class="homework-attachment-link">
+                          <img src="{{ attachment.file.url }}" alt="" class="homework-attachment-preview rotate-{{ attachment.rotation_degrees }}">
+                        </a>
+                        {% if student_submission.can_student_edit %}
+                          <form method="post" class="homework-attachment-action-form" data-attachment-action-form>
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="rotate_attachment">
+                            <input type="hidden" name="attachment_id" value="{{ attachment.id }}">
+                            <button type="submit" class="homework-attachment-icon-button" title="Повернуть на 90°" aria-label="Повернуть на 90°">
+                              <img src="{% static 'img/repeat.svg' %}" alt="">
+                            </button>
+                          </form>
+                        {% endif %}
+                      {% else %}
+                        <a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Открыть файл</a>
+                      {% endif %}
+                      {% if student_submission.can_student_edit %}
+                        <form method="post" class="homework-attachment-action-form" data-attachment-action-form>
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="delete_attachment">
+                          <input type="hidden" name="attachment_id" value="{{ attachment.id }}">
+                          <button type="submit" class="homework-attachment-icon-button homework-attachment-icon-button-remove" title="Удалить" aria-label="Удалить">
+                            <img src="{% static 'img/remove.svg' %}" alt="">
+                          </button>
+                        </form>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p data-empty-attachments>Файлы для этого задания пока не загружены.</p>
+                <div class="homework-attachments homework-attachments-grid" data-attachments-container data-attachments-scope="problem-{{ item.problem.id }}" hidden></div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% if student_submission.can_student_edit %}
+        <div class="form-actions">
+          <button type="submit" name="action" value="save_draft" class="button-secondary" form="homework-main-form">Сохранить черновик</button>
+          <button type="submit" name="action" value="submit" class="button-primary" form="homework-main-form">Сдать работу</button>
+        </div>
+      {% endif %}
+
+      <h2>Комментарии{% if not student_submission.comments.all %} (пока нет){% endif %}</h2>
+      <div class="homework-comments-section">
+        <div class="homework-comments">
+          {% for comment in student_submission.comments.all %}
+            <div class="homework-comment">
+              <div class="homework-comment-meta">
+                <p><b>{{ comment.author }}</b> <span class="compl">{{ comment.created_at|date:"d.m.Y H:i" }}</span></p>
+                {% if comment.author_id == request.user.id %}
+                  <form method="post" class="homework-comment-delete-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_comment">
+                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                    <button type="submit" class="homework-comment-delete-button" aria-label="Удалить комментарий" title="Удалить комментарий">
+                      <img src="{% static 'img/remove.svg' %}" alt="">
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+              <div class="homework-comment-body">{{ comment.body|markdown|safe }}</div>
+              {% if comment.image %}
+                <img src="{{ comment.image.url }}" alt="" class="homework-comment-image">
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        {% if student_submission.comments.all %}
+          <hr class="homework-comments-divider">
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" class="stack-form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_comment">
+          <p class="homework-comment-form-field">{{ comment_form.body.label_tag }} {{ comment_form.body }}</p>
+          <div class="comment-image-field">
+            <div class="form-actions homework-comment-actions">
+              <label class="button-secondary homework-comment-upload-label">
+                Выбрать файл
+                {{ comment_form.image }}
+              </label>
+              <button type="submit" class="button-secondary">Отправить комментарий</button>
+            </div>
+            <div class="comment-image-preview" hidden>
+              <button type="button" class="comment-image-remove" aria-label="Удалить картинку">×</button>
+              <img src="" alt="" class="comment-image-preview-img">
+            </div>
+          </div>
+        </form>
+      </div>
+      {% if not answerable_problems and student_submission.can_student_edit %}
+        <form method="post" id="homework-main-form" class="stack-form homework-submission-form" data-homework-form data-autosave-url="{% url 'homework:autosave' assignment.id %}">
+          {% csrf_token %}
+          <div class="homework-autosave-status sans" data-homework-autosave-status></div>
+        </form>
+      {% endif %}
+      {% if answerable_problems %}
+        <form method="post" id="homework-main-form" class="stack-form homework-submission-form" data-homework-form data-autosave-url="{% url 'homework:autosave' assignment.id %}">
+          {% csrf_token %}
+          <div class="homework-autosave-status sans" data-homework-autosave-status></div>
+          {% for item in answerable_problems %}
+            <div class="rel homework-answer-entry">
+              <div class="id-in-list">
+                <span class="id-in-var sans fs12 homework-answer-number{% if item.answer_state %} homework-answer-number-{{ item.answer_state }}{% endif %}">
+                  {{ forloop.counter }}
+                </span>
+                {% if item.problem.type_ege.number %}
+                  <span class="compl">Тип {{ item.problem.type_ege.number }}</span>
+                {% endif %}
+                {% if item.answer and student_submission.status == student_submission.Status.SUBMITTED and item.answer.answer_text %}
+                  <span class="compl">
+                    Балл: {{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}
+                  </span>
+                {% endif %}
+              </div>
+              <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+              <input
+                type="text"
+                id="answer_{{ item.problem.id }}"
+                name="answer_{{ item.problem.id }}"
+                value="{{ item.answer.answer_text|default:'' }}"
+                {% if not student_submission.can_student_edit %}disabled{% endif %}
+              >
+              {% if student_submission.status == student_submission.Status.SUBMITTED and item.answer and item.answer.answer_text and item.problem.solution %}
+                <div class="homework-solution-box">
+                  <p><b>Решение:</b></p>
+                  <div class="solution">{{ item.problem.solution|abbr|ziamath_filter|markdown|safe }}</div>
+                </div>
+              {% endif %}
+            </div>
+            <hr class="mb20">
+          {% endfor %}
+        </form>
+      {% elif not has_second_part %}
+        <p>Для этой работы пока нет онлайн-части с автоматической проверкой.</p>
+      {% endif %}
+    {% else %}
+      <p>Данные по работе пока не найдены.</p>
+    {% endif %}
+  {% else %}
+    <h2>Сдачи</h2>
+    {% if teacher_submission_summaries %}
+    <table class="change ans-table homework-compact-table homework-teacher-table">
+      <tr>
+        <th>Ученик</th>
+        <th>Статус</th>
+        <th>Сдано</th>
+        <th>Проверено</th>
+        <th>Балл</th>
+      </tr>
+        {% for item in teacher_submission_summaries %}
+          <tr class="homework-status-row-{{ item.summary_status_class }}">
+            <td><a href="{% url 'homework:detail' assignment.id %}?submission={{ item.submission.id }}">{{ item.submission.student }}</a></td>
+            <td>{{ item.summary_status_label }}</td>
+            <td>
+              {% if item.submission.submitted_at %}
+                {{ item.submission.submitted_at|date:"j M H:i"|lower }}{% if item.submission.submitted_at|date:"Y" != current_year|stringformat:"s" %} {{ item.submission.submitted_at|date:"Y" }}{% endif %}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>
+              {% if item.submission.reviewed_at %}
+                {{ item.submission.reviewed_at|date:"j M H:i"|lower }}{% if item.submission.reviewed_at|date:"Y" != current_year|stringformat:"s" %} {{ item.submission.reviewed_at|date:"Y" }}{% endif %}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>{{ item.submission.total_score|floatformat:"0"|default:"-" }}/{{ item.submission.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+          </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+      <p>Сдачи еще не созданы.</p>
+    {% endif %}
+
+    {% if not detailed_submissions %}
+      <p>Выберите ученика в таблице выше, чтобы открыть его сдачу и проверить работу.</p>
+    {% endif %}
+
+    {% for item in detailed_submissions %}
+      <div class="homework-meta-box homework-submission-box">
+        <h2>{{ item.submission.student }}</h2>
+        <p><b>Статус:</b> {{ item.submission.get_status_display }}</p>
+        <p><b>Сдано:</b> {{ item.submission.submitted_at|default:"-" }}</p>
+        <p><b>Балл:</b> {{ item.submission.total_score|floatformat:"0"|default:"-" }}/{{ item.submission.max_score_snapshot|floatformat:"0"|default:"-" }}</p>
+        {% if item.pending_review %}
+          <p><b>Требует проверки сейчас.</b></p>
+        {% endif %}
+        {% if item.auto_zero_second_part %}
+          <p><b>Вторая часть:</b> автоматический ноль, потому что ученик не приложил ни файлов, ни текста.</p>
+        {% endif %}
+
+        {% if item.answerable_problems %}
+          <h3>Проверено автоматически:</h3>
+          <table class="change ans-table homework-auto-table">
+            <tr>
+              <th>№</th>
+              <th>Ответ</th>
+              <th>Правильный ответ</th>
+              <th>Балл</th>
+          </tr>
+          {% for answer_item in item.answerable_problems %}
+            {% if answer_item.answer and answer_item.answer.answer_text %}
+              <tr class="{% if answer_item.answer_state %}homework-auto-row-{{ answer_item.answer_state }}{% endif %}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ answer_item.answer.answer_text }}</td>
+                <td>{{ answer_item.problem.answer|default:"-" }}</td>
+                <td>{{ answer_item.answer.score_awarded|floatformat:"0" }}/{{ answer_item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+              </tr>
+            {% endif %}
+            {% endfor %}
+          </table>
+        {% endif %}
+
+        <h3>Вторая часть</h3>
+        {% if item.shared_second_part_attachments or item.second_part_problems %}
+          {% if item.shared_second_part_attachments %}
+            <div class="homework-attachments homework-attachments-grid homework-attachments-grid-teacher">
+              {% for attachment in item.shared_second_part_attachments %}
+                <div class="homework-attachment-card">
+                  {% if attachment.is_image %}
+                    <a href="{% url 'homework:attachment-detail' attachment.id %}" target="_blank" rel="noopener" class="homework-attachment-link">
+                      <img src="{{ attachment.file.url }}" alt="" class="homework-attachment-preview rotate-{{ attachment.rotation_degrees }}">
+                    </a>
+                    <form method="post" class="homework-attachment-action-form" data-attachment-action-form>
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="teacher_rotate_attachment">
+                      <input type="hidden" name="submission_id" value="{{ item.submission.id }}">
+                      <input type="hidden" name="attachment_id" value="{{ attachment.id }}">
+                      <button type="submit" class="homework-attachment-icon-button" title="Повернуть на 90°" aria-label="Повернуть на 90°">
+                        <img src="{% static 'img/repeat.svg' %}" alt="">
+                      </button>
+                    </form>
+                  {% else %}
+                    <a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Открыть файл</a>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% for second_item in item.second_part_problems %}
+            <div class="homework-second-part-block">
+              <div class="id-in-list">
+                <span class="id-in-var sans fs12">{{ second_item.display_number }}</span>
+                {% if second_item.score %}<span class="compl">Балл: {{ second_item.score.score_awarded|floatformat:"0" }}{% if second_item.max_score %}/{{ second_item.max_score|floatformat:"0" }}{% endif %}</span>{% endif %}
+              </div>
+              <div class="problem">{{ second_item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+              {% if second_item.response and second_item.response.text_answer %}
+                <p>{{ second_item.response.text_answer|linebreaksbr }}</p>
+              {% endif %}
+              {% if second_item.attachments %}
+                <div class="homework-attachments homework-attachments-grid homework-attachments-grid-teacher">
+                  {% for attachment in second_item.attachments %}
+                    <div class="homework-attachment-card">
+                      {% if attachment.is_image %}
+                        <a href="{% url 'homework:attachment-detail' attachment.id %}" target="_blank" rel="noopener" class="homework-attachment-link">
+                          <img src="{{ attachment.file.url }}" alt="" class="homework-attachment-preview rotate-{{ attachment.rotation_degrees }}">
+                        </a>
+                        <form method="post" class="homework-attachment-action-form" data-attachment-action-form>
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="teacher_rotate_attachment">
+                          <input type="hidden" name="submission_id" value="{{ item.submission.id }}">
+                          <input type="hidden" name="attachment_id" value="{{ attachment.id }}">
+                          <button type="submit" class="homework-attachment-icon-button" title="Повернуть на 90°" aria-label="Повернуть на 90°">
+                            <img src="{% static 'img/repeat.svg' %}" alt="">
+                          </button>
+                        </form>
+                      {% else %}
+                        <a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Открыть файл</a>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              {% if allow_per_problem_second_part_uploads %}
+                <div class="homework-inline-problem-score">
+                  <label for="problem_score_inline_{{ second_item.problem.id }}">Балл за №{{ second_item.display_number }}:</label>
+                  <input
+                    type="number"
+                    name="problem_score_{{ second_item.problem.id }}"
+                    id="problem_score_inline_{{ second_item.problem.id }}"
+                    form="submission-review-{{ item.submission.id }}"
+                    step="1"
+                    min="0"
+                    inputmode="numeric"
+                    value="{{ second_item.score.score_awarded|floatformat:'0'|default:'' }}"
+                  >
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>Файлы не загружены.</p>
+        {% endif %}
+
+        <h3>Комментарии{% if not item.submission.comments.all %} (пока нет){% endif %}</h3>
+        <div class="homework-comments-section">
+        <div class="homework-comments">
+          {% for comment in item.submission.comments.all %}
+            <div class="homework-comment">
+              <div class="homework-comment-meta">
+                <p><b>{{ comment.author }}</b> <span class="compl">{{ comment.created_at|date:"d.m.Y H:i" }}</span></p>
+                {% if comment.author_id == request.user.id %}
+                  <form method="post" class="homework-comment-delete-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_comment">
+                    <input type="hidden" name="submission_id" value="{{ item.submission.id }}">
+                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                    <button type="submit" class="homework-comment-delete-button" aria-label="Удалить комментарий" title="Удалить комментарий">
+                      <img src="{% static 'img/remove.svg' %}" alt="">
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+              <div class="homework-comment-body">{{ comment.body|markdown|safe }}</div>
+              {% if comment.image %}
+                <img src="{{ comment.image.url }}" alt="" class="homework-comment-image">
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        {% if item.submission.comments.all %}
+          <hr class="homework-comments-divider">
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="stack-form" data-teacher-comment-form>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="teacher_comment">
+          <input type="hidden" name="submission_id" value="{{ item.submission.id }}">
+          <p class="homework-comment-form-field">{{ item.comment_form.body.label_tag }} {{ item.comment_form.body }}</p>
+          <div class="comment-image-field">
+            <div class="form-actions homework-comment-actions">
+              <label class="button-secondary homework-comment-upload-label">
+                Выбрать файл
+                {{ item.comment_form.image }}
+              </label>
+              <button type="submit" class="button-secondary">Ответить</button>
+            </div>
+            <div class="comment-image-preview" hidden>
+              <button type="button" class="comment-image-remove" aria-label="Удалить картинку">×</button>
+              <img src="" alt="" class="comment-image-preview-img">
+            </div>
+          </div>
+        </form>
+        </div>
+
+        <h3>Проверка</h3>
+        <form method="post" class="stack-form" id="submission-review-{{ item.submission.id }}">
+          {% csrf_token %}
+          <input type="hidden" name="submission_id" value="{{ item.submission.id }}">
+          <div class="homework-review-summary-row">
+            <label for="{{ item.review_form.manual_score.id_for_label }}">Суммарный балл:</label>
+            <input
+              type="number"
+              name="{{ item.review_form.manual_score.html_name }}"
+              id="{{ item.review_form.manual_score.id_for_label }}"
+              step="1"
+              min="0"
+              inputmode="numeric"
+              value="{{ item.submission.manual_score|floatformat:'0'|default:'' }}"
+            >
+          </div>
+          {% if item.manual_score_overrides_problem_scores %}
+            <p class="homework-score-warning">Сейчас учитывается суммарный балл. Отдельные баллы по задачам сохранены для справки, но в итог не входят.</p>
+          {% endif %}
+          {% if item.second_part_problems and not allow_per_problem_second_part_uploads %}
+            <p class="compl">ЛИБО по задачам отдельно:</p>
+          {% endif %}
+          {% if item.second_part_problems and not allow_per_problem_second_part_uploads %}
+            <div class="homework-review-grid">
+              {% for second_item in item.second_part_problems %}
+                <div class="homework-review-grid-item">
+                  <label for="problem_score_{{ second_item.problem.id }}">№{{ second_item.display_number }}</label>
+                  <input type="number" name="problem_score_{{ second_item.problem.id }}" id="problem_score_{{ second_item.problem.id }}" step="1" min="0" inputmode="numeric" value="{{ second_item.score.score_awarded|floatformat:"0"|default:'' }}">
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="form-actions">
+            <button type="submit" name="action" value="save_review" class="button-secondary">Сохранить балл</button>
+            <button type="submit" name="action" value="return_submission" class="button-secondary">Вернуть на доработку</button>
+            <button type="submit" name="action" value="mark_reviewed" class="button-primary">Проверено</button>
+          </div>
+        </form>
+      </div>
+    {% endfor %}
+  {% endif %}
+</section>
+<script>
+  (function () {
+    const csrfTokenValue = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value || '';
+
+    function buildHiddenInput(name, value) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      return input;
+    }
+
+    function getClipboardImageFile(event) {
+      return Array.from(event.clipboardData?.files || []).find((file) => file.type.startsWith('image/'));
+    }
+
+    function bindAttachmentActionForm(actionForm) {
+      actionForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(actionForm);
+        const response = await fetch(window.location.href, {
+          method: 'POST',
+          body: formData,
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+        });
+        if (!response.ok) {
+          return;
+        }
+        const payload = await response.json();
+        const card = actionForm.closest('.homework-attachment-card');
+        if (!card) {
+          return;
+        }
+        const action = formData.get('action');
+        if (payload.deleted && action === 'delete_attachment') {
+          const container = card.parentElement;
+          const block = container?.closest('.homework-second-part-block, .homework-student-second-part');
+          card.remove();
+          if (container && !container.children.length && block) {
+            container.hidden = true;
+            const emptyNote = block.querySelector('[data-empty-attachments]');
+            if (emptyNote) {
+              emptyNote.hidden = false;
+            }
+          }
+          return;
+        }
+        if (action === 'rotate_attachment' || action === 'teacher_rotate_attachment') {
+          const image = card.querySelector('.homework-attachment-preview');
+          if (!image) {
+            return;
+          }
+          image.classList.remove('rotate-0', 'rotate-90', 'rotate-180', 'rotate-270');
+          image.classList.add(`rotate-${payload.rotation_degrees}`);
+          updateAttachmentPreviewFrame(image);
+        }
+      });
+    }
+
+    function updateAttachmentPreviewFrame(image) {
+      const link = image.closest('.homework-attachment-link');
+      if (!link) {
+        return;
+      }
+      const naturalWidth = image.naturalWidth;
+      const naturalHeight = image.naturalHeight;
+      if (!naturalWidth || !naturalHeight) {
+        return;
+      }
+      const isQuarterTurn = image.classList.contains('rotate-90') || image.classList.contains('rotate-270');
+      const baseWidth = link.clientWidth;
+      if (!baseWidth) {
+        return;
+      }
+      const ratio = isQuarterTurn
+        ? naturalWidth / naturalHeight
+        : naturalHeight / naturalWidth;
+      link.style.height = `${Math.max(1, Math.round(baseWidth * ratio))}px`;
+    }
+
+    function bindAttachmentPreviewImage(image) {
+      const refresh = () => updateAttachmentPreviewFrame(image);
+      if (image.complete) {
+        refresh();
+      } else {
+        image.addEventListener('load', refresh, {once: true});
+      }
+      window.addEventListener('resize', refresh);
+    }
+
+    function createAttachmentCard(attachment) {
+      const card = document.createElement('div');
+      card.className = 'homework-attachment-card';
+
+      if (attachment.is_image) {
+        const link = document.createElement('a');
+        link.href = attachment.viewer_url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.className = 'homework-attachment-link';
+
+        const image = document.createElement('img');
+        image.src = attachment.file_url;
+        image.alt = '';
+        image.className = `homework-attachment-preview rotate-${attachment.rotation_degrees}`;
+        link.appendChild(image);
+        card.appendChild(link);
+        bindAttachmentPreviewImage(image);
+
+        const rotateForm = document.createElement('form');
+        rotateForm.method = 'post';
+        rotateForm.className = 'homework-attachment-action-form';
+        rotateForm.dataset.attachmentActionForm = '';
+        rotateForm.appendChild(buildHiddenInput('csrfmiddlewaretoken', csrfTokenValue));
+        rotateForm.appendChild(buildHiddenInput('action', 'rotate_attachment'));
+        rotateForm.appendChild(buildHiddenInput('attachment_id', attachment.id));
+        const rotateButton = document.createElement('button');
+        rotateButton.type = 'submit';
+        rotateButton.className = 'homework-attachment-icon-button';
+        rotateButton.title = 'Повернуть на 90°';
+        rotateButton.setAttribute('aria-label', 'Повернуть на 90°');
+        rotateButton.innerHTML = '<img src="{% static "img/repeat.svg" %}" alt="">';
+        rotateForm.appendChild(rotateButton);
+        bindAttachmentActionForm(rotateForm);
+        card.appendChild(rotateForm);
+      } else {
+        const fileLink = document.createElement('a');
+        fileLink.href = attachment.file_url;
+        fileLink.target = '_blank';
+        fileLink.rel = 'noopener';
+        fileLink.textContent = 'Открыть файл';
+        card.appendChild(fileLink);
+      }
+
+      const deleteForm = document.createElement('form');
+      deleteForm.method = 'post';
+      deleteForm.className = 'homework-attachment-action-form';
+      deleteForm.dataset.attachmentActionForm = '';
+      deleteForm.appendChild(buildHiddenInput('csrfmiddlewaretoken', csrfTokenValue));
+      deleteForm.appendChild(buildHiddenInput('action', 'delete_attachment'));
+      deleteForm.appendChild(buildHiddenInput('attachment_id', attachment.id));
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'submit';
+      deleteButton.className = 'homework-attachment-icon-button homework-attachment-icon-button-remove';
+      deleteButton.title = 'Удалить';
+      deleteButton.setAttribute('aria-label', 'Удалить');
+      deleteButton.innerHTML = '<img src="{% static "img/remove.svg" %}" alt="">';
+      deleteForm.appendChild(deleteButton);
+      bindAttachmentActionForm(deleteForm);
+      card.appendChild(deleteForm);
+
+      return card;
+    }
+
+    function appendAttachmentsToScope(scopeNode, attachments) {
+      if (!scopeNode || !attachments.length) {
+        return;
+      }
+      const container = scopeNode.querySelector('[data-attachments-container]');
+      if (!container) {
+        return;
+      }
+      const emptyNote = scopeNode.querySelector('[data-empty-attachments]');
+      if (emptyNote) {
+        emptyNote.hidden = true;
+      }
+      container.hidden = false;
+      attachments.forEach((attachment) => {
+        container.appendChild(createAttachmentCard(attachment));
+      });
+    }
+
+    const form = document.querySelector('[data-homework-form]');
+    if (form) {
+      const statusNode = form.querySelector('[data-homework-autosave-status]');
+      const autosaveUrl = form.dataset.autosaveUrl;
+      const fields = Array.from(form.querySelectorAll('input[name^="answer_"]'));
+      const secondPartFields = Array.from(document.querySelectorAll('textarea[name^="second_part_text_"][form="homework-main-form"]'));
+      let timeoutId = null;
+
+      async function autosave() {
+        const formData = new FormData();
+        const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (csrfToken) {
+          formData.append('csrfmiddlewaretoken', csrfToken.value);
+        }
+        fields.forEach((field) => formData.append(field.name, field.value));
+        secondPartFields.forEach((field) => formData.append(field.name, field.value));
+        statusNode.textContent = 'Сохраняем черновик...';
+        const response = await fetch(autosaveUrl, {
+          method: 'POST',
+          body: formData,
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+        });
+        if (!response.ok) {
+          statusNode.textContent = 'Не удалось сохранить черновик.';
+          return;
+        }
+        statusNode.textContent = 'Черновик сохранен автоматически.';
+      }
+
+      fields.forEach((field) => {
+        field.addEventListener('input', () => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(autosave, 900);
+        });
+      });
+      secondPartFields.forEach((field) => {
+        field.addEventListener('input', () => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(autosave, 900);
+        });
+        field.addEventListener('paste', async (event) => {
+          const imageFile = getClipboardImageFile(event);
+          if (!imageFile) {
+            return;
+          }
+          const problemBlock = field.closest('.homework-second-part-block');
+          const uploadForm = problemBlock?.querySelector('[data-upload-form]')
+            || document.querySelector('[data-upload-form][data-upload-scope="shared"]');
+          if (!uploadForm) {
+            return;
+          }
+          event.preventDefault();
+          const formData = new FormData(uploadForm);
+          formData.delete('attachments');
+          formData.append('attachments', imageFile, imageFile.name || 'clipboard-image.png');
+          const response = await fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+          });
+          if (!response.ok) {
+            if (statusNode) {
+              statusNode.textContent = 'Не удалось прикрепить картинку из буфера.';
+            }
+            return;
+          }
+          const payload = await response.json();
+          appendAttachmentsToScope(problemBlock || uploadForm.closest('.homework-student-second-part'), payload.attachments || []);
+          if (statusNode) {
+            statusNode.textContent = 'Картинка из буфера прикреплена.';
+          }
+        });
+      });
+    }
+    document.querySelectorAll('[data-upload-form]').forEach((uploadForm) => {
+      const input = uploadForm.querySelector('.homework-file-input');
+      const submit = uploadForm.querySelector('[data-upload-submit]');
+      const selectedFiles = uploadForm.querySelector('[data-selected-files]');
+      if (!input || !submit) return;
+      input.addEventListener('change', () => {
+        submit.disabled = !input.files.length;
+        if (selectedFiles) {
+          selectedFiles.innerHTML = '';
+          Array.from(input.files).forEach((file) => {
+            const item = document.createElement('span');
+            item.textContent = file.name;
+            selectedFiles.appendChild(item);
+          });
+        }
+      });
+    });
+    document.querySelectorAll('[data-attachment-action-form]').forEach((actionForm) => {
+      bindAttachmentActionForm(actionForm);
+    });
+    document.querySelectorAll('.homework-attachment-preview').forEach((image) => {
+      bindAttachmentPreviewImage(image);
+    });
+    document.querySelectorAll('textarea[name="body"]').forEach((textarea) => {
+      textarea.addEventListener('paste', (event) => {
+        const imageFile = getClipboardImageFile(event);
+        if (!imageFile) return;
+        const imageInput = textarea.form?.querySelector('.comment-image-input');
+        if (!imageInput) return;
+        const transfer = new DataTransfer();
+        transfer.items.add(imageFile);
+        imageInput.files = transfer.files;
+        imageInput.dispatchEvent(new Event('change'));
+      });
+    });
+    document.querySelectorAll('[data-teacher-comment-form]').forEach((commentForm) => {
+      commentForm.addEventListener('submit', () => {
+        commentForm.querySelectorAll('[data-review-mirror]').forEach((node) => node.remove());
+        const submissionId = commentForm.querySelector('input[name="submission_id"]')?.value;
+        if (!submissionId) {
+          return;
+        }
+        const reviewForm = document.getElementById(`submission-review-${submissionId}`);
+        if (!reviewForm) {
+          return;
+        }
+        reviewForm.querySelectorAll('input[name="manual_score"], input[name^="problem_score_"]').forEach((field) => {
+          const hidden = buildHiddenInput(field.name, field.value);
+          hidden.dataset.reviewMirror = '1';
+          commentForm.appendChild(hidden);
+        });
+      });
+    });
+    document.querySelectorAll('.comment-image-field').forEach((fieldWrap) => {
+      const input = fieldWrap.querySelector('.comment-image-input');
+      const preview = fieldWrap.querySelector('.comment-image-preview');
+      const image = fieldWrap.querySelector('.comment-image-preview-img');
+      const remove = fieldWrap.querySelector('.comment-image-remove');
+      if (!input || !preview || !image || !remove) return;
+
+      function clearPreview() {
+        input.value = '';
+        image.src = '';
+        preview.hidden = true;
+      }
+
+      input.addEventListener('change', () => {
+        const file = input.files && input.files[0];
+        if (!file || !file.type.startsWith('image/')) {
+          clearPreview();
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          image.src = reader.result;
+          preview.hidden = false;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      remove.addEventListener('click', () => {
+        clearPreview();
+      });
+    });
+    document.querySelectorAll('input[type="number"]').forEach((input) => {
+      input.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        input.blur();
+      }, {passive: false});
+    });
+  })();
+</script>
+{% endblock %}

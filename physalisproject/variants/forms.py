@@ -3,9 +3,7 @@ from django import forms
 from .services import (
     get_default_generation_options,
     get_selection_problem_ids,
-    get_selection_problems,
     normalize_generation_options,
-    validate_full_variant,
 )
 
 
@@ -20,6 +18,11 @@ class VariantGenerationForm(forms.Form):
     )
     sort_by_complexity = forms.BooleanField(
         label='Отсортировать по возрастанию сложности',
+        required=False,
+        initial=False,
+    )
+    sort_by_type = forms.BooleanField(
+        label='Отсортировать по типу',
         required=False,
         initial=False,
     )
@@ -82,9 +85,7 @@ class VariantGenerationForm(forms.Form):
         if not selected_ids:
             raise forms.ValidationError('Сначала выберите хотя бы одну задачу.')
 
-        problems = get_selection_problems(self.request)
         if cleaned_data.get('is_full'):
-            validate_full_variant(problems, is_full=True)
             cleaned_data['sort_by_complexity'] = False
 
         normalized = normalize_generation_options(cleaned_data)

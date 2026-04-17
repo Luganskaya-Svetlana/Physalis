@@ -292,6 +292,20 @@
     font-family: Arial, sans-serif;
   }
 
+  .result-inline-note {
+    display: block;
+    margin-top: 8px;
+  }
+
+  .result-inline-note ul {
+    margin: 6px 0 0 18px;
+    padding: 0;
+  }
+
+  .result-inline-note li + li {
+    margin-top: 4px;
+  }
+
   @media (max-width: 900px) {
     .chips-justifications {
       column-count: 2;
@@ -365,9 +379,15 @@
         {% endif %}
 
         {% for msg in soft_messages %}
-          <span class="small-note result-inline-note">
-            {{ msg }}
-          </span>
+          <div class="small-note result-inline-note">
+            Из выбранных обоснований:
+            <ul>
+              {% for item in msg.selected_items %}
+                <li>{{ item|ziamath_filter|safe }}</li>
+              {% endfor %}
+            </ul>
+            {{ msg.suffix }}
+          </div>
         {% endfor %}
 
         {% if more_methods_message %}
@@ -489,6 +509,15 @@
 </div>
 
 <script>
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
   function applyChoiceStates(groupName, items) {
     if (!items) return;
 
@@ -553,10 +582,15 @@
 
     if (data.soft_messages && data.soft_messages.length) {
       data.soft_messages.forEach(msg => {
+        const items = (msg.selected_items || [])
+          .map(item => `<li>${escapeHtml(item)}</li>`)
+          .join('');
         html += `
-          <span class="small-note result-inline-note">
-            ${msg}
-          </span>
+          <div class="small-note result-inline-note">
+            Из выбранных обоснований:
+            <ul>${items}</ul>
+            ${escapeHtml(msg.suffix || '')}
+          </div>
         `;
       });
     }
@@ -579,6 +613,16 @@
 
     html += `</div>`;
     container.innerHTML = html;
+  }
+
+  function scrollToResult() {
+    const container = document.getElementById('result-container');
+    if (!container) return;
+
+    container.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
 
   async function submitTrainerAction(action) {
@@ -618,6 +662,10 @@
       applyChoiceStates('justifications', data.justification_items || []);
       renderResultBox(data);
       updateProgressUI(data);
+
+      if (action === 'check') {
+        scrollToResult();
+      }
     } catch (error) {
       console.error('Trainer JS error:', error);
       alert('Ошибка JavaScript. Подробности в console.');

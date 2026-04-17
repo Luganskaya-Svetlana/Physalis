@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
+from homework.views import HomeworkTeacherTaskListView
 from problems.views import GameStartView, ProblemGameView
 from .sitemap import FlatPageSitemap, ProblemSitemap, StaticViewSitemap
 
@@ -15,6 +16,9 @@ sitemaps = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('tasks/', HomeworkTeacherTaskListView.as_view(), name='tasks'),
+    path('homework/', include('homework.urls', namespace='homework')),
 
     path('game/', GameStartView.as_view(), name='game-start'),
     path('game/<int:pk>/', ProblemGameView.as_view(), name='game-detail'),

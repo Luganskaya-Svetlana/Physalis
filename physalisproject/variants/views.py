@@ -34,6 +34,8 @@ from variants.services import (
     set_last_generated_variant_data,
     swap_problems_in_selection,
 )
+from accounts.permissions import can_manage_homework
+from homework.models import HomeworkAssignment
 
 
 class VariantsView(ListView):
@@ -88,6 +90,15 @@ class VariantView(DetailView):
             )
         )
         data['can_view_created_answers_link'] = can_view_answers_link
+        data['can_assign_homework'] = can_manage_homework(self.request.user)
+        if data['can_assign_homework']:
+            user = self.request.user
+            assignments = HomeworkAssignment.objects.filter(variant=variant)
+            if not user.is_staff:
+                assignments = assignments.filter(created_by=user)
+            data['visible_homework_assignments'] = assignments.order_by('-created_at')[:5]
+        else:
+            data['visible_homework_assignments'] = []
         return data
 
 
@@ -139,6 +150,7 @@ class CurrentVariantSelectionView(View):
             'is_full',
             'show_answers',
             'sort_by_complexity',
+            'sort_by_type',
             'show_complexity',
             'show_source',
             'show_type',
@@ -156,7 +168,7 @@ class CurrentVariantSelectionView(View):
             options['sort_by_complexity'] = False
         return options
 
-    def get_context_data(self, request, form=None, full_variant_error=''):
+    def get_context_data(self, request, form=None):
         problems = get_selection_problems(request)
         deleted_problems = get_deleted_selection_problems(request)
         summary = build_selection_summary(request)
@@ -178,16 +190,14 @@ class CurrentVariantSelectionView(View):
             'deleted_problems': deleted_problems,
             'summary': summary,
             'form': form,
-            'full_variant_error': full_variant_error,
             'last_generated_variant': last_generated_variant,
             'last_generated_options_signature': build_options_signature(current_options),
         }
 
-    def render_selection_html(self, request, form=None, full_variant_error=''):
+    def render_selection_html(self, request, form=None):
         context = self.get_context_data(
             request,
             form=form,
-            full_variant_error=full_variant_error,
         )
         return render_to_string(
             'variants/_variant_current_content.html',
@@ -308,6 +318,7 @@ class CurrentVariantSelectionView(View):
                         'is_full',
                         'show_answers',
                         'sort_by_complexity',
+                        'sort_by_type',
                         'show_complexity',
                         'show_source',
                         'show_type',
@@ -324,7 +335,10 @@ class CurrentVariantSelectionView(View):
                         options=options,
                     )
                 if existing_variant is not None:
-                    return redirect(f'{existing_variant.get_absolute_url()}?answers_created=1')
+                    redirect_url = existing_variant.get_absolute_url()
+                    if not existing_variant.show_answers:
+                        redirect_url = f'{redirect_url}?answers_created=1'
+                    return redirect(redirect_url)
                 owner = request.user if request.user.is_authenticated else None
                 variant = create_variant(
                     problems=get_selection_problems(request),
@@ -332,6 +346,7 @@ class CurrentVariantSelectionView(View):
                     is_full=form.cleaned_data['is_full'],
                     show_answers=form.cleaned_data['show_answers'],
                     sort_by_complexity=form.cleaned_data['sort_by_complexity'],
+                    sort_by_type=form.cleaned_data['sort_by_type'],
                     show_complexity=form.cleaned_data['show_complexity'],
                     show_source=form.cleaned_data['show_source'],
                     show_type=form.cleaned_data['show_type'],
@@ -341,20 +356,17 @@ class CurrentVariantSelectionView(View):
                     is_published=form.cleaned_data.get('is_published', False),
                 )
                 set_last_generated_variant_data(request, variant=variant, options=options)
-                return redirect(f'{variant.get_absolute_url()}?answers_created=1')
+                redirect_url = variant.get_absolute_url()
+                if not variant.show_answers:
+                    redirect_url = f'{redirect_url}?answers_created=1'
+                return redirect(redirect_url)
 
-            full_variant_error = ''
-            if form.cleaned_data.get('is_full') and form.errors:
-                full_variant_error = '; '.join(
-                    error for errors in form.errors.values() for error in errors
-                )
             return render(
                 request,
                 self.template_name,
                 self.get_context_data(
                     request,
                     form=form,
-                    full_variant_error=full_variant_error,
                 ),
             )
 

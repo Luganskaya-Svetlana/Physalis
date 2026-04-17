@@ -41,7 +41,7 @@
         data-problem-id="{{ problem.id }}"
         aria-label="Добавить в вариант"
       >
-        +
+        <img src="{% static 'img/add.svg' %}" alt="" class="variant-inline-toggle-icon">
       </button>
         {% if request.user.is_staff and problem.get_recent_variants %}
           <span class="compl no-solution">
@@ -64,5 +64,9 @@
        заполняйте это поле, ищите только в подразделе.</p>
   {% endfor %}
 
-  {% include "includes/pagination.html" %}
+{% include "includes/pagination.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+  <script defer src={% static 'js/variant-builder.js' %}></script>
 {% endblock %}

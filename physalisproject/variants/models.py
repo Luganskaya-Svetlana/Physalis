@@ -41,6 +41,10 @@ class Variant(models.Model):
     sort_by_complexity = models.BooleanField('отсортировать по'
                                              ' нарастанию сложности',
                                              default=True)
+    sort_by_type = models.BooleanField(
+        'отсортировать по типу',
+        default=False,
+    )
     show_complexity = models.BooleanField(
         'отображать в варианте сложность',
         default=False,
@@ -73,14 +77,23 @@ class Variant(models.Model):
 
     def _get_sorted_problems(self, problems):
         problems = list(problems)
+        indexed = list(enumerate(problems))
+
+        if self.sort_by_type:
+            indexed.sort(
+                key=lambda pair: (
+                    pair[1].type_ege.number if pair[1].type_ege_id is not None else 10**6,
+                    pair[1].complexity or 0,
+                    pair[0],
+                )
+            )
+            return [problem for _, problem in indexed]
 
         if self.sort_by_complexity:
-            indexed = list(enumerate(problems))
             indexed.sort(key=lambda pair: ((pair[1].complexity or 0), pair[0]))
             return [problem for _, problem in indexed]
 
         if self.is_full and all(problem.type_ege_id is not None for problem in problems):
-            indexed = list(enumerate(problems))
             indexed.sort(key=lambda pair: (pair[1].type_ege.number, pair[0]))
             return [problem for _, problem in indexed]
 

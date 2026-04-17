@@ -183,36 +183,25 @@ def get_revealed_justification_ids(method):
 
 
 
-def build_group_soft_message(group_cfg, selected_count):
-    group = group_cfg['group']
+def build_group_soft_message(group_cfg, selected_ids):
+    selected_items = [
+        justification.text
+        for justification in group_cfg['group'].justifications.order_by('order', 'text')
+        if justification.id in selected_ids
+    ]
+    if not selected_items:
+        return None
+
     min_select = group_cfg['min_select']
-    max_select = group_cfg['max_select']
-    size = len(group_cfg['ids'])
+    if min_select == 1:
+        suffix = 'достаточно выбрать один любой пункт.'
+    else:
+        suffix = f'достаточно выбрать любые {min_select}.'
 
-    title = getattr(group, 'title', '') or getattr(group, 'name', '') or ''
-
-    if min_select == 1 and max_select == 1 and size == 2:
-        base = 'Из этих двух обоснований достаточно выбрать любое одно'
-        if title:
-            base = f'В группе «{title}» достаточно выбрать любое одно обоснование'
-        return f'{base}; оба выбирать избыточно.'
-
-    if max_select is None:
-        base = f'В этой группе нужно выбрать не меньше {min_select} пунктов'
-        if title:
-            base = f'В группе «{title}» нужно выбрать не меньше {min_select} пунктов'
-        return f'{base}; сейчас выбрано {selected_count}.'
-
-    if min_select == max_select:
-        base = f'В этой группе достаточно выбрать {max_select}'
-        if title:
-            base = f'В группе «{title}» достаточно выбрать {max_select}'
-        return f'{base}; сейчас выбрано {selected_count}.'
-
-    base = f'В этой группе нужно выбрать от {min_select} до {max_select} пунктов'
-    if title:
-        base = f'В группе «{title}» нужно выбрать от {min_select} до {max_select} пунктов'
-    return f'{base}; сейчас выбрано {selected_count}.'
+    return {
+        'selected_items': selected_items,
+        'suffix': suffix,
+    }
 
 
 
@@ -427,10 +416,20 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
                 missing_group_justifications.update(candidates[:need])
 
             max_select = cfg['max_select']
-            if max_select is not None and selected_count > max_select:
-                soft_messages.append(
-                    build_group_soft_message(cfg, selected_count)
+            if max_select == len(cfg['ids']) and selected_count > cfg['min_select']:
+                soft_message = build_group_soft_message(
+                    cfg,
+                    selected_in_group,
                 )
+                if soft_message:
+                    soft_messages.append(soft_message)
+            elif max_select is not None and selected_count > max_select:
+                soft_message = build_group_soft_message(
+                    cfg,
+                    selected_in_group,
+                )
+                if soft_message:
+                    soft_messages.append(soft_message)
 
         no_justifications_required = (
             not required_justification_ids and not group_configs

@@ -2,15 +2,13 @@
 {% load markdown_extras %}
 {% load ziamath_filter %}
 {% load abbr %}
+{% load static %}
 
 {% block content %}
   <div class="card">
     <h1 class="card-title">Задача #{{problem.id}}
       {% if previous_problem %}
         <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">←</a>
-      {% endif %}
-      {% if next_problem %}
-        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">→</a>
       {% endif %}
       <button
         type="button"
@@ -19,8 +17,11 @@
         data-problem-id="{{ problem.id }}"
         aria-label="Добавить в вариант"
       >
-        +
+        <img src="{% static 'img/add.svg' %}" alt="" class="variant-inline-toggle-icon">
       </button>
+      {% if next_problem %}
+        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">→</a>
+      {% endif %}
     </h1>
     <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
     {% if problem.solution%}<h2>Решение</h2><div class="solution">{{problem.solution|abbr|ziamath_filter|markdown|safe}}</div>{% endif %}
@@ -70,4 +71,8 @@
     Используемая версия ziamath: {{ ziamath_version }}
     {% endif %}
   {% endcomment %}
+{% endblock %}
+
+{% block extra_scripts %}
+  <script defer src={% static 'js/variant-builder.js' %}></script>
 {% endblock %}

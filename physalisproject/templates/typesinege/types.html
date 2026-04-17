@@ -5,17 +5,25 @@
     <h1>Задачи по типам ЕГЭ-{% now "Y" %}</h1>
 
     <div class='row types-list'>
-      <div style='display:none;'>
-      {% for type in types %}
-        {% if type.number <= 30 %}
-        {% ifchanged type.part_ege %}
-        </div>
-        <div class='col5'>
-          <h2>{{type.part_ege}}</h2>
-        {% endifchanged %}
-          <div class=type> <a href="{{ type.get_absolute_url }}"> {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{type.problems_count}} шт.] </a> </div>
-        {% endif %}
-      {% endfor %}
+      <div class='col5'>
+        <h2>Первая часть</h2>
+        {% for type in first_part_types %}
+          <div class=type>
+            <a href="/types/{{ type.number }}/">
+              {% if type.number < 10 %}<span class='white types-item'>0</span>{% endif %}<span class='types-item'>{{ type.number }}</span> [{{ type.problems_count }} шт.]
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+      <div class='col5'>
+        <h2>Вторая часть</h2>
+        {% for type in second_part_types %}
+          <div class=type>
+            <a href="/types/{{ type.number }}/">
+              <span class='types-item'>{{ type.number }}</span> [{{ type.problems_count }} шт.]
+            </a>
+          </div>
+        {% endfor %}
       </div>
     </div>
 

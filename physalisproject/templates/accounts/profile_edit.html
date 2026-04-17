@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow account-page">
+  <h1>Личные данные</h1>
+
+  {% if request.user.is_staff %}
+    <p><b>Роль:</b> админ</p>
+  {% elif profile.role == profile.Role.TEACHER %}
+    {% if profile.teacher_approval_status == profile.TeacherApprovalStatus.APPROVED %}
+      <p><b>Роль:</b> {{ profile.get_role_display }}</p>
+    {% else %}
+      <p><b>Роль:</b> {{ profile.get_role_display }} ({{ profile.get_teacher_approval_status_display }})</p>
+    {% endif %}
+  {% else %}
+    <p><b>Роль:</b> {{ profile.get_role_display }}</p>
+  {% endif %}
+  <p><b>Логин:</b> {{ request.user.username }}</p>
+  <p><b>Текущая почта:</b> {{ request.user.email|default:"не указана" }}</p>
+
+  <form method="post" class="stack-form">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+      {% if field.name == 'statistics_share_enabled' %}
+        <p class="homework-inline-checkbox-label">
+          {{ field }} {{ field.label_tag }}
+        </p>
+        <div class="statistics-share-box"{% if not public_statistics_url %} hidden{% endif %} data-statistics-share-box>
+          <p><b>Внешняя ссылка на статистику.</b> Она показывает обезличенную таблицу с домашними работами и баллами.</p>
+          <div class="statistics-share-row">
+            <a href="{{ public_statistics_url }}" data-statistics-share-link>{{ public_statistics_url }}</a>
+            <button type="button" class="button-secondary copy-icon-button" data-copy-link-button data-copy-link-value="{{ public_statistics_url }}" aria-label="Скопировать ссылку" title="Скопировать ссылку">🔗</button>
+            <span class="copy-link-popup" data-copy-link-popup hidden>Скопировано</span>
+          </div>
+          {% if not has_statistics %}
+            <p>Ссылка уже работает, но таблица заполнится после первых домашних работ с сохраненной статистикой.</p>
+          {% endif %}
+        </div>
+      {% else %}
+        <p>{{ field.label_tag }} {{ field }}</p>
+        {% if field.help_text %}<div class="helptext">{{ field.help_text }}</div>{% endif %}
+        {% if field.errors %}{{ field.errors }}{% endif %}
+      {% endif %}
+    {% endfor %}
+    <button type="submit" class="button-primary">Сохранить</button>
+  </form>
+
+</section>
+<script>
+  (function () {
+    const editForm = document.querySelector('form.stack-form');
+    const checkbox = document.getElementById('id_statistics_share_enabled');
+    document.querySelectorAll('[data-copy-link-button]').forEach((copyButton) => {
+      copyButton.addEventListener('click', async () => {
+        const value = copyButton.dataset.copyLinkValue;
+        const popup = copyButton.parentElement?.querySelector('[data-copy-link-popup]');
+        try {
+          await navigator.clipboard.writeText(value);
+          if (popup) {
+            popup.hidden = false;
+            popup.classList.add('copy-link-popup-visible');
+            window.setTimeout(() => {
+              popup.classList.remove('copy-link-popup-visible');
+              popup.hidden = true;
+            }, 1400);
+          }
+        } catch (error) {
+          if (popup) {
+            popup.textContent = 'Не удалось';
+            popup.hidden = false;
+            popup.classList.add('copy-link-popup-visible');
+            window.setTimeout(() => {
+              popup.textContent = 'Скопировано';
+              popup.classList.remove('copy-link-popup-visible');
+              popup.hidden = true;
+            }, 1400);
+          }
+        }
+      });
+    });
+    if (!checkbox || !editForm) return;
+    checkbox.addEventListener('change', () => {
+      editForm.requestSubmit();
+    });
+  })();
+</script>
+{% endblock %}

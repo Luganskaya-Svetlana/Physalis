@@ -12,8 +12,11 @@
     <p>Сложность: {{ variant.complexity }}/10 </p>
     <p><a href=/media/files/const.pdf>Справочные данные</a></p>
     {% if variant.pdf_file %} <p><a href="{{ variant.pdf_file.url }}">Скачать PDF</a></p> {% endif %}
-    {% if request.GET.answers_created and can_view_created_answers_link %}
+    {% if request.GET.answers_created and can_view_created_answers_link and not variant.show_answers %}
     <p class="sans">Ссылка на ответы: <a href="{{ variant.get_answers_url }}">{{ variant.get_answers_url }}</a></p>
+    {% endif %}
+    {% if can_assign_homework %}
+      <p><a href="{% url 'homework:create' variant.id %}" class="button-primary">Назначить как ДЗ</a></p>
     {% endif %}
   </div>
 

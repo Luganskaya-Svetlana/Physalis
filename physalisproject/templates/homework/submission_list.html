@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content">
+  {% if is_student_view %}
+    <h1>Домашние задания</h1>
+
+    {% if assignments %}
+      <table class="change ans-table homework-compact-table homework-student-homework-table">
+        <tr>
+          <th>Название ДЗ</th>
+          <th>Статус</th>
+          <th>Балл</th>
+        </tr>
+        {% for assignment in assignments %}
+          <tr class="homework-status-row-{% if assignment.student_submission.status == assignment.student_submission.Status.ASSIGNED %}submitted{% elif assignment.student_submission.status == assignment.student_submission.Status.DRAFT %}reviewing{% elif assignment.student_submission.status == assignment.student_submission.Status.RETURNED %}submitted{% elif assignment.student_submission.status == assignment.student_submission.Status.REVIEWED %}reviewed{% elif assignment.student_submission.status == assignment.student_submission.Status.SUBMITTED %}reviewing{% elif assignment.student_submission.status == assignment.student_submission.Status.UNDER_REVIEW %}reviewing{% else %}default{% endif %}">
+            <td><a href="{% url 'homework:detail' assignment.id %}">{{ assignment.title|default:"Домашнее задание" }}</a></td>
+            <td>{{ assignment.student_submission.get_status_display|default:"назначено" }}</td>
+            <td>{% if assignment.student_has_total_score %}{{ assignment.student_submission.total_score|floatformat:"0" }}/{{ assignment.student_submission.max_score_snapshot|floatformat:"0"|default:"-" }}{% else %}-{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p>Пока нет назначенных ДЗ.</p>
+    {% endif %}
+  {% else %}
+    <h1>Работы</h1>
+
+    {% if submissions %}
+      <table class="change ans-table homework-compact-table homework-teacher-table">
+        <tr>
+          <th>Дата сдачи</th>
+          <th>Ученик</th>
+          <th>Название ДЗ</th>
+          <th>Баллы</th>
+          <th>Статус</th>
+        </tr>
+        {% for submission in submissions %}
+          <tr class="homework-status-row-{% if submission.status == submission.Status.SUBMITTED %}submitted{% elif submission.status == submission.Status.UNDER_REVIEW %}reviewing{% elif submission.status == submission.Status.REVIEWED %}reviewed{% else %}default{% endif %}">
+            <td>{{ submission.submitted_at|date:"d.m.Y H:i"|default:"-" }}</td>
+            <td>{{ submission.student }}</td>
+            <td><a href="{% url 'homework:detail' submission.assignment_id %}?submission={{ submission.id }}">{{ submission.assignment.title|default:"Домашнее задание" }}</a></td>
+            <td>{% if submission.status == submission.Status.REVIEWED %}{{ submission.total_score|floatformat:"0" }}/{{ submission.max_score_snapshot|floatformat:"0"|default:"-" }}{% else %}-{% endif %}</td>
+            <td>{{ submission.list_status_label }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p>Пока нет сданных работ.</p>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock %}

@@ -7,6 +7,7 @@ admin.site.unregister(FlatPage)
 
 @admin.register(FlatPage)
 class FlatPageAdmin(admin.ModelAdmin):
+    view_on_site = staticmethod(lambda obj: obj.url)
     fieldsets = (
         (None, {'fields': ('url', 'title', 'content', 'template_name',)}),
         (('Сайты'), {

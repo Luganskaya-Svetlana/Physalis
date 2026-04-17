@@ -15,10 +15,6 @@
   </div>
 
   <div class="nav-right">
-    <a href="{% url 'tags:list'%}"{% if '/tags/' in request.path %} class='current_nav'{% endif %}>Тэги</a>
-    <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %} class='current_nav'{% endif %}>Типы</a>
-    <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %} class='current_nav'{% endif %}>Задачи</a>
-    <a href="{% url 'variants:list'%}?order_by=-id"{% if '/variants/' in request.path and request.path != '/variants/current/' %} class='current_nav'{% endif %}>Варианты</a>
 {% if request.user.is_authenticated %}
     <a
       href="{% url 'variants:current' %}"
@@ -39,7 +35,7 @@
 {% elif request.user.is_staff and flatpage and flatpage.id %}
   <a href="{% url 'admin:flatpages_flatpage_change' flatpage.id %}">✎</a>
 {% endif %}
-{% if request.user.is_staff and flatpage and flatpage.id %}
+{% if not use_dummy_cache and request.user.is_staff and flatpage and flatpage.id %}
   <form method="post" action="{% url 'pages:clear_flatpage_cache' %}" style="display:inline;">
     {% csrf_token %}
     <input type="hidden" name="path" value="{{ request.path }}">
@@ -50,6 +46,26 @@
       style="border:none; background:none; cursor:pointer; padding:0 0 0 4px;"
       >⟳</button>
   </form>
+{% endif %}
+    <a href="{% url 'tags:list'%}"{% if '/tags/' in request.path %} class='current_nav'{% endif %}>Тэги</a>
+    <a href="{% url 'typesinege:list'%}"{% if '/types/' in request.path %} class='current_nav'{% endif %}>Типы</a>
+    <a href="{% url 'problems:list'%}"{% if '/problems/' in request.path %} class='current_nav'{% endif %}>Задачи</a>
+    <a href="{% url 'variants:list'%}?order_by=-id"{% if '/variants/' in request.path and request.path != '/variants/current/' %} class='current_nav'{% endif %}>Варианты</a>
+{% if request.user.is_authenticated %}
+    <a href="{% url 'accounts:profile' %}" class="homework-nav-link{% if cabinet_attention_count %} has-badge{% endif %}{% if '/accounts/profile/' in request.path %} current_nav{% endif %}">
+      Кабинет
+      {% if cabinet_attention_count %}
+        <span class="homework-nav-badge">{{ cabinet_attention_count }}</span>
+      {% endif %}
+    </a>
+    <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="nav-logout-button">Выйти</button>
+    </form>
+{% else %}
+    {% if show_login_link %}
+      <a href="{% url 'accounts:login' %}"{% if '/accounts/login/' in request.path %} class='current_nav'{% endif %}>Войти</a>
+    {% endif %}
 {% endif %}
   </div>
 

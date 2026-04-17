@@ -21,8 +21,15 @@
       {% include "includes/nav.html" %}
     </header>
     <main>
+      {% if messages %}
+        <section class="messages">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </section>
+      {% endif %}
       {% block content %}Пусто :({% endblock %}
     </main>
-    <script defer src={% static 'js/variant-builder.js' %}></script>
+    {% block extra_scripts %}{% endblock %}
   </body>
 </html>

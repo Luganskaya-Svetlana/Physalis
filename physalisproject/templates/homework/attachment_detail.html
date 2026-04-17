@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content">
+  <p><a href="{{ assignment.get_absolute_url }}{% if submission.student_id != request.user.id %}?submission={{ submission.id }}{% endif %}">Назад к работе</a></p>
+  <div class="homework-attachment-view">
+    {% if attachment.is_image %}
+      <img src="{{ attachment.file.url }}" alt="" class="homework-attachment-view-image rotate-{{ attachment.rotation_degrees }}">
+    {% else %}
+      <p><a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Открыть файл</a></p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

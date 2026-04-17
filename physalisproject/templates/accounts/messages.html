@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow account-page">
+  <h1>Непрочитанные сообщения</h1>
+
+  {% if unread_comment_links %}
+    <table class="change ans-table homework-compact-table homework-task-table homework-message-table">
+      <tr>
+        <th>Когда</th>
+        <th>Автор</th>
+        {% if request.user.is_staff or profile.is_teacher_approved %}
+          <th>Ученик</th>
+        {% endif %}
+        <th>ДЗ</th>
+      </tr>
+      {% for comment in unread_comment_links %}
+        <tr>
+          <td>{{ comment.created_at|date:"d.m.Y H:i" }}</td>
+          <td>{{ comment.author }}</td>
+          {% if request.user.is_staff or profile.is_teacher_approved %}
+            <td>{{ comment.submission.student|default:"-" }}</td>
+          {% endif %}
+          <td>
+            <a href="{% url 'homework:detail' comment.submission.assignment_id %}{% if request.user.is_staff or profile.is_teacher_approved %}?submission={{ comment.submission_id }}{% endif %}">
+              {{ comment.submission.assignment.title|default:"Домашнее задание" }}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Непрочитанных сообщений нет.</p>
+  {% endif %}
+</section>
+{% endblock %}

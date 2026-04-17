@@ -79,73 +79,19 @@ function updateWidget(summary) {
 }
 
 function updateSelectionMoveButtons() {
-  const content = document.getElementById('variant-current-content');
-  const sortCheckbox = content?.querySelector('input[name="sort_by_complexity"]');
-  const fullCheckbox = content?.querySelector('input[name="is_full"]');
-  const isSortedByComplexity = Boolean(sortCheckbox?.checked) && !Boolean(fullCheckbox?.checked);
   const entries = Array.from(document.querySelectorAll('[data-selection-entry]'));
 
   entries.forEach((entry, index) => {
     const upButton = entry.querySelector('input[name="action"][value="move_up"]')?.closest('form')?.querySelector('button');
     const downButton = entry.querySelector('input[name="action"][value="move_down"]')?.closest('form')?.querySelector('button');
-    const entryComplexity = Number(entry.dataset.complexity || 0);
-    const previousComplexity = index > 0 ? Number(entries[index - 1].dataset.complexity || 0) : null;
-    const nextComplexity = index < entries.length - 1 ? Number(entries[index + 1].dataset.complexity || 0) : null;
 
     if (upButton) {
-      upButton.disabled = isSortedByComplexity
-        ? index === 0 || previousComplexity !== entryComplexity
-        : index === 0;
+      upButton.disabled = index === 0;
     }
     if (downButton) {
-      downButton.disabled = isSortedByComplexity
-        ? index === entries.length - 1 || nextComplexity !== entryComplexity
-        : index === entries.length - 1;
+      downButton.disabled = index === entries.length - 1;
     }
   });
-}
-
-function getSortedSwapTarget(form) {
-  const action = form.querySelector('input[name="action"]')?.value;
-  if (action !== 'move_up' && action !== 'move_down') {
-    return null;
-  }
-
-  const content = document.getElementById('variant-current-content');
-  const sortCheckbox = content?.querySelector('input[name="sort_by_complexity"]');
-  const fullCheckbox = content?.querySelector('input[name="is_full"]');
-  const isSortedByComplexity = Boolean(sortCheckbox?.checked) && !Boolean(fullCheckbox?.checked);
-  if (!isSortedByComplexity) {
-    return null;
-  }
-
-  const entry = form.closest('[data-selection-entry]');
-  if (!entry) {
-    return null;
-  }
-
-  const entries = Array.from(document.querySelectorAll('[data-selection-entry]'));
-  const index = entries.indexOf(entry);
-  if (index === -1) {
-    return null;
-  }
-
-  const targetIndex = action === 'move_up' ? index - 1 : index + 1;
-  if (targetIndex < 0 || targetIndex >= entries.length) {
-    return null;
-  }
-
-  const targetEntry = entries[targetIndex];
-  const sourceComplexity = Number(entry.dataset.complexity || 0);
-  const targetComplexity = Number(targetEntry.dataset.complexity || 0);
-  if (sourceComplexity !== targetComplexity) {
-    return null;
-  }
-
-  return {
-    action: 'swap',
-    targetProblemId: targetEntry.dataset.problemId,
-  };
 }
 
 function ensureProblemToggle(problemId, container, isDetail = false) {
@@ -160,7 +106,7 @@ function ensureProblemToggle(problemId, container, isDetail = false) {
   button.dataset.variantToggle = '';
   button.dataset.problemId = String(problemId);
   button.setAttribute('aria-label', 'Добавить в вариант');
-  button.textContent = '+';
+  button.innerHTML = '<img src="/static/img/add.svg" alt="" class="variant-inline-toggle-icon">';
 
   if (container.classList.contains('id-in-list')) {
     container.appendChild(button);
@@ -169,6 +115,11 @@ function ensureProblemToggle(problemId, container, isDetail = false) {
   }
 
   return button;
+}
+
+function updateToggleButtonContent(button, isSelected) {
+  const iconPath = isSelected ? '/static/img/remove.svg' : '/static/img/add.svg';
+  button.innerHTML = `<img src="${iconPath}" alt="" class="variant-inline-toggle-icon">`;
 }
 
 function buildMissingToggles() {
@@ -206,7 +157,7 @@ function updateToggleButtons(summary) {
     const isSelected = Boolean(index);
     button.dataset.selected = isSelected ? 'true' : 'false';
     button.classList.toggle('active', isSelected);
-    button.textContent = isSelected ? '−' : '+';
+    updateToggleButtonContent(button, isSelected);
     button.title = isSelected
       ? `№ ${index} в подборке; нажмите, чтобы удалить`
       : 'Добавить в вариант';
@@ -232,23 +183,35 @@ function applyCurrentSelectionSort() {
   }
 
   const content = document.getElementById('variant-current-content');
-  const checkbox = content?.querySelector('input[name="sort_by_complexity"]');
+  const complexityCheckbox = content?.querySelector('input[name="sort_by_complexity"]');
+  const typeCheckbox = content?.querySelector('input[name="sort_by_type"]');
   const fullCheckbox = content?.querySelector('input[name="is_full"]');
   const entries = Array.from(list.querySelectorAll('[data-selection-entry]'));
 
-  if (!checkbox || entries.length === 0) {
+  if ((!complexityCheckbox && !typeCheckbox) || entries.length === 0) {
     return;
   }
 
   const wrappers = entries.map((entry) => ({
     entry,
     complexity: Number(entry.dataset.complexity || 0),
+    typeNumber: Number(entry.dataset.typeNumber || 1000000),
     originalIndex: Number(entry.dataset.originalIndex || 0),
   }));
 
-  const shouldSort = checkbox.checked && !(fullCheckbox && fullCheckbox.checked);
+  const shouldSortByType = Boolean(typeCheckbox?.checked);
+  const shouldSortByComplexity = Boolean(complexityCheckbox?.checked) && !shouldSortByType && !(fullCheckbox && fullCheckbox.checked);
   const sorted = wrappers.slice().sort((a, b) => {
-    if (!shouldSort) {
+    if (shouldSortByType) {
+      if (a.typeNumber !== b.typeNumber) {
+        return a.typeNumber - b.typeNumber;
+      }
+      if (a.complexity !== b.complexity) {
+        return a.complexity - b.complexity;
+      }
+      return a.originalIndex - b.originalIndex;
+    }
+    if (!shouldSortByComplexity) {
       return a.originalIndex - b.originalIndex;
     }
     if (a.complexity === b.complexity) {
@@ -309,7 +272,8 @@ function bindCurrentSelectionInteractions() {
     const signature = [
       has('is_full'),
       has('show_answers'),
-      has('sort_by_complexity') && !has('is_full'),
+      has('sort_by_complexity') && !has('is_full') && !has('sort_by_type'),
+      has('sort_by_type'),
       has('show_complexity'),
       has('show_source'),
       has('show_type'),
@@ -360,11 +324,6 @@ function bindCurrentSelectionInteractions() {
         new FormData(form).forEach((value, key) => {
           payload[key] = value;
         });
-        const swapTarget = getSortedSwapTarget(form);
-        if (swapTarget) {
-          payload.action = swapTarget.action;
-          payload.target_problem_id = swapTarget.targetProblemId;
-        }
         const data = await postForm('/variants/current/', payload);
         content.innerHTML = data.html;
         restoreGenerateFormState(generateFormState);
@@ -382,10 +341,17 @@ function bindCurrentSelectionInteractions() {
   });
 
   const sortCheckbox = content.querySelector('input[name="sort_by_complexity"]');
+  const typeSortCheckbox = content.querySelector('input[name="sort_by_type"]');
   const fullCheckbox = content.querySelector('input[name="is_full"]');
 
   if (sortCheckbox) {
     sortCheckbox.addEventListener('change', () => {
+      applyCurrentSelectionSort();
+    });
+  }
+
+  if (typeSortCheckbox) {
+    typeSortCheckbox.addEventListener('change', () => {
       applyCurrentSelectionSort();
     });
   }

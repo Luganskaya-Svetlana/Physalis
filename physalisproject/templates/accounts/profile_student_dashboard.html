@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow account-page">
+  <h1>Личный кабинет</h1>
+
+  <div class="account-dashboard-grid">
+    {% for card in dashboard_cards %}
+      <a href="{{ card.url }}" class="account-dashboard-card">
+        <span class="account-dashboard-card-title">{{ card.title }}</span>
+        <span class="account-dashboard-card-value">{{ card.value }}</span>
+        <span class="account-dashboard-card-description">{{ card.description }}</span>
+        {% if card.badge %}
+          <span class="account-dashboard-card-badge">{{ card.badge }}</span>
+        {% endif %}
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="account-dashboard-grid account-dashboard-grid-secondary">
+    <a href="{% url 'accounts:profile-edit' %}" class="account-dashboard-card account-dashboard-card-secondary">
+      <span class="account-dashboard-card-title">✎ Личные данные</span>
+      <span class="account-dashboard-card-description">почта, привязка к учителю и настройки статистики</span>
+    </a>
+  </div>
+</section>
+{% endblock %}

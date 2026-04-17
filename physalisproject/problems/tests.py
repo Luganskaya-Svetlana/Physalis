@@ -1,7 +1,18 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 
-from problems.models import Justification, Law, Problem, ProblemSolutionMethod
+from problems.models import (
+    Justification,
+    JustificationGroup,
+    Law,
+    PartOfEGE,
+    Problem,
+    ProblemSolutionMethod,
+    Source,
+    TypeInEGE,
+)
 from problems.views import evaluate_answer
 
 
@@ -87,3 +98,60 @@ class EvaluateAnswerTests(TestCase):
 
         self.assertEqual(evaluation['best']['method'].id, method_one.id)
         self.assertEqual(evaluation['best']['extra_laws'], {law_c.id})
+
+    def test_group_shows_soft_message_when_more_than_minimum_is_selected(self):
+        law_a = Law.objects.create(name='law-group')
+        justifications = [
+            Justification.objects.create(text=f'group-{index}')
+            for index in range(1, 4)
+        ]
+
+        method = self.create_method(
+            'method-with-group',
+            [law_a],
+            [],
+        )
+        group = JustificationGroup.objects.create(
+            method=method,
+            title='Проверочная группа',
+            min_selected=1,
+            max_selected=len(justifications),
+        )
+        group.justifications.set(justifications)
+
+        evaluation = evaluate_answer(
+            [method],
+            selected_law_ids={law_a.id},
+            selected_justification_ids={item.id for item in justifications[:2]},
+        )
+
+        self.assertEqual(
+            evaluation['soft_messages'],
+            [{
+                'selected_items': ['group-1', 'group-2'],
+                'suffix': 'достаточно выбрать один любой.',
+            }],
+        )
+
+
+class ReferenceDataValidationTests(TestCase):
+    def test_part_alias_is_normalized_to_canonical_name(self):
+        part = PartOfEGE.objects.create(name='Часть 1')
+        self.assertEqual(part.name, 'Первая часть')
+
+    def test_unknown_part_name_is_rejected(self):
+        with self.assertRaises(ValidationError):
+            PartOfEGE.objects.create(name='Р')
+
+    def test_source_name_must_not_be_single_character(self):
+        source = Source(name='S')
+        with self.assertRaises(ValidationError):
+            source.full_clean()
+
+    def test_type_number_is_unique_within_part(self):
+        part = PartOfEGE.objects.create(name='Первая часть')
+        TypeInEGE.objects.create(number=1, max_score=1, part_ege=part)
+
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                TypeInEGE.objects.create(number=1, max_score=2, part_ege=part)

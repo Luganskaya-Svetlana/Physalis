@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow">
+  <h1>Регистрация</h1>
+
+  <form method="post" class="stack-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button-primary">Создать аккаунт</button>
+  </form>
+</section>
+{% endblock %}

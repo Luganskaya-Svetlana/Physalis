@@ -41,6 +41,7 @@ class ProblemSolutionMethodInline(admin.TabularInline):
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
     '''Настройки админки для задач'''
+    view_on_site = staticmethod(lambda obj: obj.get_absolute_url())
     fields = (
         'text', 'solution', 'answer', 'complexity', 'source', 'category',
         'subcategory', 'tags', 'type_ege', 'similar_problems', 'notes',
@@ -86,6 +87,7 @@ class ProblemAdmin(admin.ModelAdmin):
 @admin.register(TypeInEGE)
 class TypeInEGEAdmin(admin.ModelAdmin):
     '''Настройки админки типов задач в ЕГЭ'''
+    view_on_site = staticmethod(lambda obj: obj.get_absolute_url())
     fields = ('number', 'max_score', 'part_ege')
     list_display = ('number', 'problems_count')
 
@@ -141,8 +143,23 @@ class ProblemSolutionMethodAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
     inlines = (JustificationGroupInline,)
 
+
+@admin.register(PartOfEGE)
+class PartOfEGEAdmin(admin.ModelAdmin):
+    fields = ('name',)
+    list_display = ('id', 'name')
+    search_fields = ('name',)
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
 admin.site.register(Category)
 admin.site.register(Subcategory)
-admin.site.register(PartOfEGE)
 admin.site.register(Source)
 admin.site.register(Tag)

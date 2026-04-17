@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow account-page">
+  <h1>{{ title }}</h1>
+
+  <p><b>Сдано работ:</b> {{ submitted_count }}/{{ total_count }}</p>
+  <p><b>Средний балл:</b> {% if average_score_100 is not None %}{{ average_score_100 }}/100{% else %}-{% endif %}</p>
+
+  {% if submissions %}
+    <table class="change ans-table homework-compact-table homework-task-table homework-stats-table">
+      <tr>
+        <th>ДЗ</th>
+        <th>Дата</th>
+        <th>Статус</th>
+        <th>Балл</th>
+      </tr>
+      {% for submission in submissions %}
+        <tr>
+          <td><a href="{{ submission.assignment.get_absolute_url }}">{{ submission.assignment.title|default:"Домашнее задание" }}</a></td>
+          <td>{{ submission.updated_at|date:"d.m.Y H:i" }}</td>
+          <td>{{ submission.get_status_display }}</td>
+          <td>{% if submission.total_score is not None %}{{ submission.total_score|floatformat:"0" }}/{{ submission.max_score_snapshot|floatformat:"0"|default:"-" }}{% else %}-{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Пока нет данных для отображения.</p>
+  {% endif %}
+</section>
+{% endblock %}

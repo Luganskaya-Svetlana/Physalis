@@ -16,7 +16,10 @@ class VariantManager(models.Manager):
                     'id',
                     'complexity',
                     'text',
+                    'is_full',
                     'show_answers',
+                    'sort_by_complexity',
+                    'sort_by_type',
                     'show_complexity',
                     'show_source',
                     'show_type',
@@ -30,5 +33,5 @@ class VariantManager(models.Manager):
     def answers(self):
         return (
             self.get_queryset()
-                .only('id')
+                .only('id', 'is_full', 'sort_by_complexity', 'sort_by_type')
         )

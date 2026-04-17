@@ -11,6 +11,32 @@ from sortedm2m.fields import SortedManyToManyField
 from .managers import ProblemManager
 
 
+CANONICAL_PART_ALIASES = {
+    'первая часть': 'Первая часть',
+    'часть 1': 'Первая часть',
+    '1': 'Первая часть',
+    'вторая часть': 'Вторая часть',
+    'часть 2': 'Вторая часть',
+    '2': 'Вторая часть',
+    'не входит в егэ этого года': 'Не входит в ЕГЭ этого года',
+    'не входит в егэ-2024': 'Не входит в ЕГЭ этого года',
+}
+
+
+def normalize_part_ege_name(value):
+    normalized = ' '.join((value or '').split()).strip()
+    if not normalized:
+        raise ValidationError('Название части ЕГЭ не может быть пустым.')
+
+    canonical = CANONICAL_PART_ALIASES.get(normalized.lower())
+    if canonical is None:
+        allowed_names = ', '.join(sorted(set(CANONICAL_PART_ALIASES.values())))
+        raise ValidationError(
+            f'Допустимые части ЕГЭ: {allowed_names}.'
+        )
+    return canonical
+
+
 class Tag(models.Model):
     '''Модель тегов'''
     name = models.CharField('название',
@@ -39,7 +65,8 @@ class Source(models.Model):
     '''Модель источников'''
     name = models.CharField('название',
                             max_length=500,
-                            help_text='Максимум 500 символов')
+                            help_text='Максимум 500 символов',
+                            unique=True)
 
     class Meta:
         verbose_name = 'источник'
@@ -49,6 +76,18 @@ class Source(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        super().clean()
+        self.name = ' '.join((self.name or '').split()).strip()
+        if len(self.name) < 2:
+            raise ValidationError({
+                'name': 'Название источника должно содержать минимум 2 символа.'
+            })
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
 
 class CategoryBaseModel(models.Model):
@@ -100,7 +139,8 @@ class PartOfEGE(models.Model):
     '''Модель частей ЕГЭ'''
     name = models.CharField('название',
                             max_length=150,
-                            help_text='Максимум 150 символов')
+                            help_text='Максимум 150 символов',
+                            unique=True)
 
     class Meta:
         verbose_name = 'часть'
@@ -110,6 +150,14 @@ class PartOfEGE(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        super().clean()
+        self.name = normalize_part_ege_name(self.name)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
 
 class TypeInEGEManager(models.Manager):
@@ -136,6 +184,12 @@ class TypeInEGE(models.Model):
         verbose_name_plural = 'типы'
         default_related_name = 'type'
         ordering = ['number']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['number', 'part_ege'],
+                name='unique_typeinege_number_per_part',
+            ),
+        ]
 
     def __str__(self):
         return str(self.number)

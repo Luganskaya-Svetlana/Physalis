@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow account-page">
+  <h1>Ученик {{ student_obj.username }}</h1>
+  <p><a href="{% url 'accounts:student-stats' student_obj.id %}">Посмотреть статистику ученика</a></p>
+
+  <form method="post" class="stack-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button-primary">Сохранить</button>
+  </form>
+</section>
+{% endblock %}
