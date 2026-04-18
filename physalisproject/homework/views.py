@@ -660,6 +660,14 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                     }
                     for problem in get_answerable_problems(assignment)
                 ]
+                context['first_part_max_score'] = sum(
+                    (
+                        getattr(getattr(item['problem'], 'type_ege', None), 'max_score', None)
+                        or (item['answer'].max_score_snapshot if item['answer'] else 0)
+                        or 0
+                    )
+                    for item in context['answerable_problems']
+                )
                 second_part_context = self.build_second_part_context(assignment, submission)
                 context['second_part_problems'] = second_part_context['items']
                 context['shared_second_part_attachments'] = second_part_context['shared_attachments']
@@ -708,6 +716,14 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                         payload__auto_zero_second_part=True,
                     ).exists(),
                 }
+                submission_item['first_part_max_score'] = sum(
+                    (
+                        getattr(getattr(answer_item['problem'], 'type_ege', None), 'max_score', None)
+                        or (answer_item['answer'].max_score_snapshot if answer_item['answer'] else 0)
+                        or 0
+                    )
+                    for answer_item in submission_item['answerable_problems']
+                )
                 detailed_submissions.append(submission_item)
             sorted_submissions = sorted(
                 detailed_submissions,

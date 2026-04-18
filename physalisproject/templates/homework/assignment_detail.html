@@ -94,24 +94,33 @@
       </div>
       {% if answerable_problems and student_submission.status != student_submission.Status.ASSIGNED %}
         <h3>Проверено автоматически:</h3>
-        <table class="change ans-table homework-auto-table">
+        <table class="homework-auto-table">
+          <colgroup>
+            <col class="homework-auto-colgroup-number">
+            <col class="homework-auto-colgroup-answer">
+            <col class="homework-auto-colgroup-correct">
+            <col class="homework-auto-colgroup-score">
+          </colgroup>
           <tr>
-            <th>№</th>
-            <th>Ответ</th>
-            <th>Правильный ответ</th>
-            <th>Балл</th>
+            <th class="homework-auto-col-number">№</th>
+            <th class="homework-auto-col-answer">Ответ</th>
+            <th class="homework-auto-col-correct">Правильный ответ</th>
+            <th class="homework-auto-col-score">Балл</th>
           </tr>
           {% for item in answerable_problems %}
             {% if item.answer and item.answer.answer_text %}
               <tr class="{% if item.answer_state %}homework-auto-row-{{ item.answer_state }}{% endif %}">
-                <td>{{ forloop.counter }}</td>
-                <td>{{ item.answer.answer_text }}</td>
-                <td>{{ item.problem.answer|default:"-" }}</td>
-                <td>{{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+                <td class="homework-auto-col-number">{{ forloop.counter }}</td>
+                <td class="homework-auto-col-answer">{{ item.answer.answer_text }}</td>
+                <td class="homework-auto-col-correct">{{ item.problem.answer|default:"-" }}</td>
+                <td class="homework-auto-col-score">{{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
               </tr>
             {% endif %}
           {% endfor %}
         </table>
+        <p class="homework-auto-summary">
+          <b>Итог по тестовой части:</b> {{ student_submission.auto_score|floatformat:"0"|default:"0" }}/{{ first_part_max_score|floatformat:"0"|default:"0" }}
+        </p>
       {% endif %}
       {% if answerable_problems %}
         <h2>Вторая часть</h2>
@@ -445,24 +454,33 @@
 
         {% if item.answerable_problems %}
           <h3>Проверено автоматически:</h3>
-          <table class="change ans-table homework-auto-table">
+          <table class="homework-auto-table">
+            <colgroup>
+              <col class="homework-auto-colgroup-number">
+              <col class="homework-auto-colgroup-answer">
+              <col class="homework-auto-colgroup-correct">
+              <col class="homework-auto-colgroup-score">
+            </colgroup>
             <tr>
-              <th>№</th>
-              <th>Ответ</th>
-              <th>Правильный ответ</th>
-              <th>Балл</th>
+              <th class="homework-auto-col-number">№</th>
+              <th class="homework-auto-col-answer">Ответ</th>
+              <th class="homework-auto-col-correct">Правильный ответ</th>
+              <th class="homework-auto-col-score">Балл</th>
           </tr>
           {% for answer_item in item.answerable_problems %}
             {% if answer_item.answer and answer_item.answer.answer_text %}
               <tr class="{% if answer_item.answer_state %}homework-auto-row-{{ answer_item.answer_state }}{% endif %}">
-                <td>{{ forloop.counter }}</td>
-                <td>{{ answer_item.answer.answer_text }}</td>
-                <td>{{ answer_item.problem.answer|default:"-" }}</td>
-                <td>{{ answer_item.answer.score_awarded|floatformat:"0" }}/{{ answer_item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+                <td class="homework-auto-col-number">{{ forloop.counter }}</td>
+                <td class="homework-auto-col-answer">{{ answer_item.answer.answer_text }}</td>
+                <td class="homework-auto-col-correct">{{ answer_item.problem.answer|default:"-" }}</td>
+                <td class="homework-auto-col-score">{{ answer_item.answer.score_awarded|floatformat:"0" }}/{{ answer_item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
               </tr>
             {% endif %}
             {% endfor %}
           </table>
+          <p class="homework-auto-summary">
+            <b>Итог по тестовой части:</b> {{ item.submission.auto_score|floatformat:"0"|default:"0" }}/{{ item.first_part_max_score|floatformat:"0"|default:"0" }}
+          </p>
         {% endif %}
 
         <h3>Вторая часть</h3>
