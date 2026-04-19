@@ -779,6 +779,17 @@ nav a {
 .homework-student-work-card p {
   margin: 0;
 }
+.homework-practice-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-family: Arial, sans-serif;
+}
+.homework-practice-row form {
+  margin: 0;
+}
 .homework-submission-box {
   padding: 0;
   border: none;
@@ -862,10 +873,57 @@ nav a {
   text-align: right;
 }
 .homework-auto-summary {
-  margin: 6px 0 0;
+  margin: 6px 0 20px;
   font-family: Arial, sans-serif;
   font-size: 10pt;
   line-height: 1.2;
+}
+.homework-score-breakdown {
+  margin: 6px 0 0;
+}
+.homework-score-breakdown p {
+  margin: 0 0 4px;
+}
+.homework-score-breakdown-table {
+  width: fit-content;
+  max-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.05;
+}
+.homework-score-breakdown-table th,
+.homework-score-breakdown-table td {
+  padding: 2px 8px;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: middle;
+}
+.homework-score-breakdown-table th {
+  background: #f8fafc;
+  font-weight: 700;
+  color: #334155;
+}
+.homework-score-breakdown-table td:first-child,
+.homework-score-breakdown-table th:first-child,
+.homework-score-breakdown-table td:nth-child(2),
+.homework-score-breakdown-table th:nth-child(2) {
+  text-align: right;
+}
+.homework-score-breakdown-table td:nth-child(2),
+.homework-score-breakdown-table th:nth-child(2) {
+  font-weight: 700;
+}
+.homework-score-breakdown-row-correct td {
+  background: #e6f5e8;
+}
+.homework-score-breakdown-row-partial td {
+  background: #fbf5d8;
+}
+.homework-score-breakdown-row-wrong td {
+  background: #f7e5ea;
 }
 .homework-auto-row-correct td {
   background: #e6f5e8;
@@ -971,6 +1029,41 @@ nav a {
 .homework-task-table tr th:nth-child(3),
 .homework-task-table tr td:nth-child(3) {
   width: 24%;
+}
+.homework-users-table tr th:last-child,
+.homework-users-table tr td:last-child {
+  width: 24px;
+  text-align: center;
+  white-space: nowrap;
+}
+.homework-users-table {
+  width: auto;
+  table-layout: auto;
+  border-spacing: 5px 0;
+}
+.homework-users-table tr:nth-child(even) td,
+.homework-users-table tr:nth-child(even) th {
+  background: #fafbfc;
+}
+.homework-users-table tr th:first-child,
+.homework-users-table tr td:first-child,
+.homework-users-table tr th:nth-child(2),
+.homework-users-table tr td:nth-child(2),
+.homework-users-table tr th:nth-child(3),
+.homework-users-table tr td:nth-child(3),
+.homework-users-table tr th:nth-child(4),
+.homework-users-table tr td:nth-child(4) {
+  width: auto;
+}
+.homework-users-table tr th:first-child,
+.homework-users-table tr td:first-child,
+.homework-users-table tr th:nth-child(2),
+.homework-users-table tr td:nth-child(2),
+.homework-users-table tr th:nth-child(3),
+.homework-users-table tr td:nth-child(3),
+.homework-users-table tr th:nth-child(4),
+.homework-users-table tr td:nth-child(4) {
+  white-space: normal;
 }
 .homework-student-homework-table {
   width: 100%;
@@ -1242,6 +1335,31 @@ nav a {
   border-left: 3px solid #cbd5e1;
   background: #f8fafc;
 }
+.homework-text-answer-box {
+  margin: 10px 0 12px;
+  font-family: Arial, sans-serif;
+}
+.homework-text-answer-title {
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid #d7dfec;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  background: #fbfcff;
+  font-size: 10.5pt;
+  line-height: 1.2;
+}
+.homework-text-answer-body {
+  padding: 8px 10px;
+  border: 1px solid #d7dfec;
+  border-radius: 0 0 10px 10px;
+  background: #ffffff;
+  font-size: 10.5pt;
+  line-height: 1.35;
+}
+.homework-text-answer-body p {
+  margin: 0;
+}
 .homework-student-second-part {
   margin: 0 0 2ex;
 }
@@ -1310,6 +1428,7 @@ nav a {
   gap: 8px;
   margin-top: 10px;
   font-family: Arial, sans-serif;
+  flex-wrap: wrap;
 }
 .homework-inline-problem-score label {
   margin: 0;
@@ -1606,6 +1725,15 @@ form[id^="submission-review-"] .form-actions {
 }
 .homework-review-grid-item input {
   width: 72px;
+}
+.homework-score-live-warning {
+  display: block;
+  width: 100%;
+  margin-top: 3px;
+  font-family: Arial, sans-serif;
+  font-size: 9.5pt;
+  line-height: 1.15;
+  color: #b42318;
 }
 .comment-image-field input {
   width: auto;

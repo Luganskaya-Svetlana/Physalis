@@ -5,9 +5,11 @@ from django.urls import reverse
 
 from problems.models import PartOfEGE, Problem, Source, TypeInEGE
 from variants.models import Variant
-from accounts.models import TeacherStudentLink
+from accounts.models import PlatformSettings, TeacherStudentLink
 from homework.models import (
     HomeworkAssignment,
+    HomeworkPracticeAttempt,
+    HomeworkPracticeAttemptAnswer,
     HomeworkSubmission,
     HomeworkSubmissionAnswer,
     HomeworkSubmissionSecondPartScore,
@@ -265,6 +267,120 @@ class HomeworkAssignmentFlowTests(TestCase):
         self.assertEqual(assignment.created_by, self.admin)
         self.assertEqual(assignment.submissions.count(), 2)
 
+    def test_student_cannot_delete_assignment_via_edit_endpoint(self):
+        assignment = HomeworkAssignment.objects.create(
+            variant=self.variant,
+            created_by=self.teacher,
+            title='Удалять нельзя',
+        )
+        assignment.target_students.add(self.student)
+        assignment.ensure_submissions()
+        self.client.force_login(self.student)
+
+        response = self.client.post(
+            reverse('homework:edit', kwargs={'pk': assignment.pk}),
+            {'action': 'delete_assignment'},
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(HomeworkAssignment.objects.filter(pk=assignment.pk).exists())
+
+
+class AccountAccessAndSignupTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.admin = User.objects.create_superuser(
+            username='adminx',
+            password='secret',
+            email='adminx@example.com',
+        )
+        self.teacher = User.objects.create_user(
+            username='teacherx',
+            password='secret',
+            first_name='Teach',
+            last_name='Er',
+            email='teacherx@example.com',
+        )
+        self.teacher.profile.approve_teacher()
+        self.teacher.profile.save()
+        self.student = User.objects.create_user(
+            username='studentx',
+            password='secret',
+            first_name='Stud',
+            last_name='Ent',
+            email='studentx@example.com',
+        )
+
+    def test_signup_requires_email_first_name_and_last_name_and_saves_telegram(self):
+        PlatformSettings.load()
+        response = self.client.post(
+            reverse('accounts:signup'),
+            {
+                'username': 'newuser',
+                'first_name': '',
+                'last_name': '',
+                'email': '',
+                'telegram_login': 'newuser_tg',
+                'role': 'student',
+                'password1': 'StrongPass123',
+                'password2': 'StrongPass123',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Обязательное поле')
+        self.assertFalse(User.objects.filter(username='newuser').exists())
+
+        response = self.client.post(
+            reverse('accounts:signup'),
+            {
+                'username': 'newuser',
+                'first_name': 'New',
+                'last_name': 'User',
+                'email': 'newuser@example.com',
+                'telegram_login': 'newuser_tg',
+                'role': 'student',
+                'password1': 'StrongPass123',
+                'password2': 'StrongPass123',
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(username='newuser')
+        self.assertEqual(user.profile.telegram_login, 'newuser_tg')
+
+    def test_signup_rejects_username_longer_than_20_chars(self):
+        response = self.client.post(
+            reverse('accounts:signup'),
+            {
+                'username': 'a' * 21,
+                'first_name': 'Long',
+                'last_name': 'User',
+                'email': 'long@example.com',
+                'role': 'student',
+                'password1': 'StrongPass123',
+                'password2': 'StrongPass123',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Логин не должен быть длиннее 20 символов.')
+
+    def test_teacher_and_student_cannot_access_admin_pages(self):
+        self.client.force_login(self.teacher)
+        response = self.client.get(reverse('accounts:users'))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('accounts:profile'))
+        response = self.client.get('/admin/')
+        self.assertNotEqual(response.status_code, 200)
+
+        self.client.force_login(self.student)
+        response = self.client.get(reverse('accounts:users'))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('accounts:profile'))
+        response = self.client.get('/admin/')
+        self.assertNotEqual(response.status_code, 200)
+
 
 class HomeworkStudentSubmissionTests(TestCase):
     def setUp(self):
@@ -345,7 +461,7 @@ class HomeworkStudentSubmissionTests(TestCase):
         response = self.client.get(reverse('homework:detail', kwargs={'pk': self.assignment.id}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Моя работа')
+        self.assertContains(response, 'Балл:')
         self.assertContains(response, 'Сдать работу')
 
     def test_student_can_save_draft_answers(self):
@@ -583,3 +699,57 @@ class HomeworkStudentSubmissionTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Вариант:')
+
+    def test_student_can_start_private_practice_attempt_after_submission(self):
+        self.client.force_login(self.student)
+        self.client.post(
+            reverse('homework:detail', kwargs={'pk': self.assignment.id}),
+            {
+                'action': 'submit',
+                f'answer_{self.problem_1.id}': '3.5',
+            },
+        )
+
+        response = self.client.post(reverse('homework:practice-start', kwargs={'pk': self.assignment.id}))
+
+        self.assertEqual(response.status_code, 302)
+        attempt = HomeworkPracticeAttempt.objects.get(assignment=self.assignment, student=self.student)
+        self.assertRedirects(
+            response,
+            reverse('homework:practice-detail', kwargs={'pk': self.assignment.id, 'attempt_id': attempt.id}),
+        )
+        self.assertEqual(attempt.status, HomeworkPracticeAttempt.Status.DRAFT)
+
+    def test_student_private_practice_attempt_is_checked_separately(self):
+        self.client.force_login(self.student)
+        self.client.post(
+            reverse('homework:detail', kwargs={'pk': self.assignment.id}),
+            {
+                'action': 'submit',
+                f'answer_{self.problem_1.id}': '3.5',
+            },
+        )
+        start_response = self.client.post(reverse('homework:practice-start', kwargs={'pk': self.assignment.id}))
+        attempt = HomeworkPracticeAttempt.objects.get(assignment=self.assignment, student=self.student)
+
+        response = self.client.post(
+            reverse('homework:practice-detail', kwargs={'pk': self.assignment.id, 'attempt_id': attempt.id}),
+            {
+                'action': 'submit',
+                f'answer_{self.problem_1.id}': '3.5',
+                f'answer_{self.problem_2.id}': '12',
+                f'answer_{self.problem_3.id}': '23',
+                f'answer_{self.problem_4.id}': '21',
+            },
+        )
+
+        self.assertEqual(start_response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
+        attempt.refresh_from_db()
+        self.submission.refresh_from_db()
+        self.assertEqual(attempt.status, HomeworkPracticeAttempt.Status.SUBMITTED)
+        self.assertEqual(float(attempt.auto_score), 4.0)
+        self.assertEqual(self.submission.status, HomeworkSubmission.Status.SUBMITTED)
+        self.assertEqual(float(self.submission.auto_score), 1.0)
+        answer = HomeworkPracticeAttemptAnswer.objects.get(attempt=attempt, problem=self.problem_4)
+        self.assertEqual(float(answer.score_awarded), 1.0)

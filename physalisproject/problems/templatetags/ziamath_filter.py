@@ -152,7 +152,11 @@ def render_formula(match, display_style=False):
         return svg
 
     except Exception as e:
-        return f'<span style="color: red;">Error formula: {str(e)}</span>'
+        formula_text = match.group(1)
+        return (
+            f'<span style="color: red;">Error formula: '
+            f'{formula_text} ({str(e)})</span>'
+        )
 
 
 @register.filter()

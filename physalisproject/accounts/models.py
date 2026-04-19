@@ -90,6 +90,16 @@ class UserProfile(models.Model):
         'разрешить внешнюю ссылку на статистику',
         default=False,
     )
+    telegram_login = models.CharField(
+        'логин в Telegram',
+        max_length=64,
+        blank=True,
+    )
+    admin_users_seen_at = models.DateTimeField(
+        'когда админ смотрел список пользователей',
+        null=True,
+        blank=True,
+    )
     created_at = models.DateTimeField('создан', auto_now_add=True)
     updated_at = models.DateTimeField('обновлен', auto_now=True)
 

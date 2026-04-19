@@ -2,6 +2,8 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path
 
 from .views import (
+    admin_users_view,
+    admin_user_edit_view,
     CustomLoginView,
     GroupInviteView,
     PublicStudentStatsView,
@@ -30,6 +32,8 @@ urlpatterns = [
     ),
     path('profile/', profile_view, name='profile'),
     path('profile/edit/', profile_edit_view, name='profile-edit'),
+    path('users/', admin_users_view, name='users'),
+    path('users/<int:user_id>/edit/', admin_user_edit_view, name='user-edit'),
     path('stats/', student_stats_view, name='stats'),
     path('students/<int:student_id>/stats/', teacher_student_stats_view, name='student-stats'),
     path('students/', teacher_students_view, name='students'),

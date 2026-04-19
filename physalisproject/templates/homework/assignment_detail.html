@@ -92,6 +92,43 @@
           <p>За вторую часть автоматически поставлено 0 баллов, потому что при сдаче не было ни файлов, ни текста ответа.</p>
         {% endif %}
       </div>
+      {% if student_submission.submitted_at and answerable_problems %}
+        <div class="homework-practice-row">
+          <form method="post" action="{% url 'homework:practice-start' assignment.id %}">
+            {% csrf_token %}
+            <button type="submit" class="button-secondary">Пройти тестовую часть еще раз</button>
+          </form>
+          <span class="compl">
+            {% if latest_practice_attempt and latest_practice_attempt.submitted_at %}
+              последний результат: {{ latest_practice_attempt.auto_score|floatformat:"0"|default:"0" }}/{{ latest_practice_attempt.max_score_snapshot|floatformat:"0"|default:"0" }}; 
+            {% endif %}
+            результат не отправляется учителю
+          </span>
+        </div>
+      {% endif %}
+      {% if student_submission.status == student_submission.Status.REVIEWED and has_second_part_per_problem_scores %}
+        <div class="homework-score-breakdown">
+          <p><b>Вторая часть по задачам:</b></p>
+          <table class="homework-score-breakdown-table">
+            <tr>
+              <th>Тип</th>
+              <th>№</th>
+              <th>Балл</th>
+              <th>Макс.</th>
+            </tr>
+            {% for item in second_part_problems %}
+              {% if item.score %}
+                <tr class="{% if item.score_state %}homework-score-breakdown-row-{{ item.score_state }}{% endif %}">
+                  <td>{% if item.problem.type_ege %}{{ item.problem.type_ege.number }}{% else %}-{% endif %}</td>
+                  <td>{{ item.display_number }}</td>
+                  <td>{{ item.score.score_awarded|floatformat:"0" }}</td>
+                  <td>{{ item.max_score|floatformat:"0"|default:"-" }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </table>
+        </div>
+      {% endif %}
       {% if answerable_problems and student_submission.status != student_submission.Status.ASSIGNED %}
         <h3>Проверено автоматически:</h3>
         <table class="homework-auto-table">
@@ -108,14 +145,12 @@
             <th class="homework-auto-col-score">Балл</th>
           </tr>
           {% for item in answerable_problems %}
-            {% if item.answer and item.answer.answer_text %}
-              <tr class="{% if item.answer_state %}homework-auto-row-{{ item.answer_state }}{% endif %}">
-                <td class="homework-auto-col-number">{{ forloop.counter }}</td>
-                <td class="homework-auto-col-answer">{{ item.answer.answer_text }}</td>
-                <td class="homework-auto-col-correct">{{ item.problem.answer|default:"-" }}</td>
-                <td class="homework-auto-col-score">{{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
-              </tr>
-            {% endif %}
+            <tr class="{% if item.answer_state %}homework-auto-row-{{ item.answer_state }}{% endif %}">
+              <td class="homework-auto-col-number">{{ forloop.counter }}</td>
+              <td class="homework-auto-col-answer">{{ item.answer.answer_text|default:"" }}</td>
+              <td class="homework-auto-col-correct">{{ item.problem.answer|default:"-" }}</td>
+              <td class="homework-auto-col-score">{{ item.answer.score_awarded|floatformat:"0"|default:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+            </tr>
           {% endfor %}
         </table>
         <p class="homework-auto-summary">
@@ -143,6 +178,11 @@
                       rows="5"
                       data-second-part-textarea
                     >{{ item.response.text_answer|default:'' }}</textarea>
+                  {% elif item.response and item.response.text_answer %}
+                    <div class="homework-text-answer-box">
+                      <p class="homework-text-answer-title"><b>Ответ ученика</b></p>
+                      <div class="homework-text-answer-body">{{ item.response.text_answer|linebreaksbr }}</div>
+                    </div>
                   {% endif %}
                 </div>
               {% endfor %}
@@ -208,7 +248,9 @@
               {% endfor %}
             </div>
           {% elif student_submission.can_student_edit %}
-            <p data-empty-attachments>Файлы пока не загружены.</p>
+            <div class="homework-second-part-help-box" data-empty-attachments>
+              <p class="homework-second-part-help">Файлы пока не загружены.</p>
+            </div>
             <div class="homework-attachments homework-attachments-grid" data-attachments-container data-attachments-scope="shared" hidden></div>
           {% endif %}
         {% endif %}
@@ -239,6 +281,11 @@
                   rows="5"
                   data-second-part-textarea
                 >{{ item.response.text_answer|default:'' }}</textarea>
+              {% elif item.response and item.response.text_answer %}
+                <div class="homework-text-answer-box">
+                  <p class="homework-text-answer-title"><b>Ответ ученика</b></p>
+                  <div class="homework-text-answer-body">{{ item.response.text_answer|linebreaksbr }}</div>
+                </div>
               {% endif %}
               {% if student_submission.can_student_edit %}
                 <form method="post" enctype="multipart/form-data" class="stack-form homework-upload-form" data-upload-form data-upload-scope="problem">
@@ -287,8 +334,10 @@
                     </div>
                   {% endfor %}
                 </div>
-              {% else %}
-                <p data-empty-attachments>Файлы для этого задания пока не загружены.</p>
+              {% elif student_submission.can_student_edit %}
+                <div class="homework-second-part-help-box" data-empty-attachments>
+                  <p class="homework-second-part-help">Файлы для этого задания пока не загружены.</p>
+                </div>
                 <div class="homework-attachments homework-attachments-grid" data-attachments-container data-attachments-scope="problem-{{ item.problem.id }}" hidden></div>
               {% endif %}
             </div>
@@ -445,6 +494,29 @@
         <p><b>Статус:</b> {{ item.submission.get_status_display }}</p>
         <p><b>Сдано:</b> {{ item.submission.submitted_at|default:"-" }}</p>
         <p><b>Балл:</b> {{ item.submission.total_score|floatformat:"0"|default:"-" }}/{{ item.submission.max_score_snapshot|floatformat:"0"|default:"-" }}</p>
+        {% if item.has_second_part_per_problem_scores %}
+          <div class="homework-score-breakdown">
+            <p><b>Вторая часть по задачам:</b></p>
+            <table class="homework-score-breakdown-table">
+              <tr>
+                <th>Тип</th>
+                <th>№</th>
+                <th>Балл</th>
+                <th>Макс.</th>
+              </tr>
+              {% for second_item in item.second_part_problems %}
+                {% if second_item.score %}
+                  <tr class="{% if second_item.score_state %}homework-score-breakdown-row-{{ second_item.score_state }}{% endif %}">
+                    <td>{% if second_item.problem.type_ege %}{{ second_item.problem.type_ege.number }}{% else %}-{% endif %}</td>
+                    <td>{{ second_item.display_number }}</td>
+                    <td>{{ second_item.score.score_awarded|floatformat:"0" }}</td>
+                    <td>{{ second_item.max_score|floatformat:"0"|default:"-" }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </table>
+          </div>
+        {% endif %}
         {% if item.pending_review %}
           <p><b>Требует проверки сейчас.</b></p>
         {% endif %}
@@ -468,14 +540,12 @@
               <th class="homework-auto-col-score">Балл</th>
           </tr>
           {% for answer_item in item.answerable_problems %}
-            {% if answer_item.answer and answer_item.answer.answer_text %}
-              <tr class="{% if answer_item.answer_state %}homework-auto-row-{{ answer_item.answer_state }}{% endif %}">
-                <td class="homework-auto-col-number">{{ forloop.counter }}</td>
-                <td class="homework-auto-col-answer">{{ answer_item.answer.answer_text }}</td>
-                <td class="homework-auto-col-correct">{{ answer_item.problem.answer|default:"-" }}</td>
-                <td class="homework-auto-col-score">{{ answer_item.answer.score_awarded|floatformat:"0" }}/{{ answer_item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
-              </tr>
-            {% endif %}
+            <tr class="{% if answer_item.answer_state %}homework-auto-row-{{ answer_item.answer_state }}{% endif %}">
+              <td class="homework-auto-col-number">{{ forloop.counter }}</td>
+              <td class="homework-auto-col-answer">{{ answer_item.answer.answer_text|default:"" }}</td>
+              <td class="homework-auto-col-correct">{{ answer_item.problem.answer|default:"-" }}</td>
+              <td class="homework-auto-col-score">{{ answer_item.answer.score_awarded|floatformat:"0"|default:"0" }}/{{ answer_item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+            </tr>
             {% endfor %}
           </table>
           <p class="homework-auto-summary">
@@ -517,7 +587,10 @@
               </div>
               <div class="problem">{{ second_item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
               {% if second_item.response and second_item.response.text_answer %}
-                <p>{{ second_item.response.text_answer|linebreaksbr }}</p>
+                <div class="homework-text-answer-box">
+                  <p class="homework-text-answer-title"><b>Ответ ученика</b></p>
+                  <div class="homework-text-answer-body">{{ second_item.response.text_answer|linebreaksbr }}</div>
+                </div>
               {% endif %}
               {% if second_item.attachments %}
                 <div class="homework-attachments homework-attachments-grid homework-attachments-grid-teacher">
@@ -553,9 +626,14 @@
                     form="submission-review-{{ item.submission.id }}"
                     step="1"
                     min="0"
+                    {% if second_item.max_score %}max="{{ second_item.max_score|floatformat:'0' }}"{% endif %}
                     inputmode="numeric"
+                    {% if second_item.max_score %}data-problem-max-score="{{ second_item.max_score|floatformat:'0' }}"{% endif %}
                     value="{{ second_item.score.score_awarded|floatformat:'0'|default:'' }}"
                   >
+                  {% if second_item.max_score %}
+                    <span class="homework-score-live-warning" hidden>Максимум за это задание: {{ second_item.max_score|floatformat:"0" }}</span>
+                  {% endif %}
                 </div>
               {% endif %}
             </div>
@@ -615,44 +693,49 @@
         </form>
         </div>
 
-        <h3>Проверка</h3>
-        <form method="post" class="stack-form" id="submission-review-{{ item.submission.id }}">
-          {% csrf_token %}
-          <input type="hidden" name="submission_id" value="{{ item.submission.id }}">
-          <div class="homework-review-summary-row">
-            <label for="{{ item.review_form.manual_score.id_for_label }}">Суммарный балл:</label>
-            <input
-              type="number"
-              name="{{ item.review_form.manual_score.html_name }}"
-              id="{{ item.review_form.manual_score.id_for_label }}"
-              step="1"
-              min="0"
-              inputmode="numeric"
-              value="{{ item.submission.manual_score|floatformat:'0'|default:'' }}"
-            >
-          </div>
-          {% if item.manual_score_overrides_problem_scores %}
-            <p class="homework-score-warning">Сейчас учитывается суммарный балл. Отдельные баллы по задачам сохранены для справки, но в итог не входят.</p>
-          {% endif %}
-          {% if item.second_part_problems and not allow_per_problem_second_part_uploads %}
-            <p class="compl">ЛИБО по задачам отдельно:</p>
-          {% endif %}
-          {% if item.second_part_problems and not allow_per_problem_second_part_uploads %}
-            <div class="homework-review-grid">
-              {% for second_item in item.second_part_problems %}
-                <div class="homework-review-grid-item">
-                  <label for="problem_score_{{ second_item.problem.id }}">№{{ second_item.display_number }}</label>
-                  <input type="number" name="problem_score_{{ second_item.problem.id }}" id="problem_score_{{ second_item.problem.id }}" step="1" min="0" inputmode="numeric" value="{{ second_item.score.score_awarded|floatformat:"0"|default:'' }}">
-                </div>
-              {% endfor %}
+        {% if item.submission.submitted_at %}
+          <h3>Проверка</h3>
+          <form method="post" class="stack-form" id="submission-review-{{ item.submission.id }}">
+            {% csrf_token %}
+            <input type="hidden" name="submission_id" value="{{ item.submission.id }}">
+            <div class="homework-review-summary-row">
+              <label for="{{ item.review_form.manual_score.id_for_label }}">Суммарный балл:</label>
+              <input
+                type="number"
+                name="{{ item.review_form.manual_score.html_name }}"
+                id="{{ item.review_form.manual_score.id_for_label }}"
+                step="1"
+                min="0"
+                inputmode="numeric"
+                value="{{ item.submission.manual_score|floatformat:'0'|default:'' }}"
+              >
             </div>
-          {% endif %}
-          <div class="form-actions">
-            <button type="submit" name="action" value="save_review" class="button-secondary">Сохранить балл</button>
-            <button type="submit" name="action" value="return_submission" class="button-secondary">Вернуть на доработку</button>
-            <button type="submit" name="action" value="mark_reviewed" class="button-primary">Проверено</button>
-          </div>
-        </form>
+            {% if item.manual_score_overrides_problem_scores %}
+              <p class="homework-score-warning">Сейчас учитывается суммарный балл. Отдельные баллы по задачам сохранены для справки, но в итог не входят.</p>
+            {% endif %}
+            {% if item.second_part_problems and not allow_per_problem_second_part_uploads %}
+              <p class="compl">ЛИБО по задачам отдельно:</p>
+            {% endif %}
+            {% if item.second_part_problems and not allow_per_problem_second_part_uploads %}
+              <div class="homework-review-grid">
+                {% for second_item in item.second_part_problems %}
+                  <div class="homework-review-grid-item">
+                    <label for="problem_score_{{ second_item.problem.id }}">№{{ second_item.display_number }}</label>
+                    <input type="number" name="problem_score_{{ second_item.problem.id }}" id="problem_score_{{ second_item.problem.id }}" step="1" min="0" {% if second_item.max_score %}max="{{ second_item.max_score|floatformat:'0' }}"{% endif %} inputmode="numeric" {% if second_item.max_score %}data-problem-max-score="{{ second_item.max_score|floatformat:'0' }}"{% endif %} value="{{ second_item.score.score_awarded|floatformat:"0"|default:'' }}">
+                    {% if second_item.max_score %}
+                      <span class="homework-score-live-warning" hidden>Максимум: {{ second_item.max_score|floatformat:"0" }}</span>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <div class="form-actions">
+              <button type="submit" name="action" value="save_review" class="button-secondary">Сохранить балл</button>
+              <button type="submit" name="action" value="return_submission" class="button-secondary">Вернуть на доработку</button>
+              <button type="submit" name="action" value="mark_reviewed" class="button-primary">Проверено</button>
+            </div>
+          </form>
+        {% endif %}
       </div>
     {% endfor %}
   {% endif %}
@@ -992,6 +1075,39 @@
         event.preventDefault();
         input.blur();
       }, {passive: false});
+    });
+    document.querySelectorAll('input[data-problem-max-score]').forEach((input) => {
+      const maxScore = Number(input.dataset.problemMaxScore);
+      const warning = input.parentElement?.querySelector('.homework-score-live-warning');
+      if (!Number.isFinite(maxScore)) {
+        return;
+      }
+      input.addEventListener('input', () => {
+        if (input.value === '') {
+          if (warning) {
+            warning.hidden = true;
+          }
+          input.setCustomValidity('');
+          return;
+        }
+        const numericValue = Number(input.value);
+        if (Number.isFinite(numericValue) && numericValue > maxScore) {
+          input.value = String(maxScore);
+          if (warning) {
+            warning.hidden = false;
+          }
+          input.setCustomValidity(`Максимум за это задание: ${maxScore}`);
+          input.reportValidity();
+        } else {
+          if (warning) {
+            warning.hidden = true;
+          }
+          input.setCustomValidity('');
+        }
+      });
+      input.addEventListener('blur', () => {
+        input.setCustomValidity('');
+      });
     });
   })();
 </script>

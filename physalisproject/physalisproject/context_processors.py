@@ -13,6 +13,7 @@ def runtime_flags(request):
     if getattr(request.user, 'is_authenticated', False):
         profile = getattr(request.user, 'profile', None)
         unread_comments = SubmissionComment.objects.exclude(author=request.user).exclude(read_receipts__user=request.user)
+        reviewed_count = 0
         if request.user.is_staff:
             unread_comment_count = unread_comments.count()
             pending_count = HomeworkSubmission.objects.filter(
@@ -43,9 +44,15 @@ def runtime_flags(request):
                     HomeworkSubmission.Status.RETURNED,
                 ],
             ).distinct().count()
+            reviewed_count = HomeworkSubmission.objects.filter(
+                student=request.user,
+                status=HomeworkSubmission.Status.REVIEWED,
+                reviewed_at__isnull=False,
+                student_review_seen_at__isnull=True,
+            ).distinct().count()
         else:
             pending_count = 0
-        cabinet_attention_count = unread_comment_count + pending_count
+        cabinet_attention_count = unread_comment_count + pending_count + reviewed_count
 
     return {
         'use_dummy_cache': getattr(settings, 'USE_DUMMY_CACHE', False),

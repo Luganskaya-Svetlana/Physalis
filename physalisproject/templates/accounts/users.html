@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow account-page">
+  <h1>Пользователи</h1>
+
+  <table class="homework-compact-table homework-task-table homework-users-table">
+    <tr>
+      <th>Логин</th>
+      <th>Роль</th>
+      <th>Почта</th>
+      <th>Зарегистрирован</th>
+      <th></th>
+    </tr>
+    {% for user_obj in users %}
+      <tr>
+        <td>{{ user_obj.username }}</td>
+        <td>
+          {% if user_obj.is_staff %}
+            админ
+          {% elif user_obj.profile.role == user_obj.profile.Role.TEACHER %}
+            учитель{% if user_obj.profile.teacher_approval_status == user_obj.profile.TeacherApprovalStatus.PENDING %} (ожидает одобрения){% endif %}
+          {% else %}
+            ученик
+          {% endif %}
+        </td>
+        <td>{{ user_obj.email|default:"-" }}</td>
+        <td>{{ user_obj.date_joined|date:"d.m.Y H:i" }}</td>
+        <td><a href="{% url 'accounts:user-edit' user_obj.id %}" aria-label="Редактировать пользователя" title="Редактировать пользователя">✎</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+</section>
+{% endblock %}

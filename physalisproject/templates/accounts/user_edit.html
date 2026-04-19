@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content narrow account-page">
+  <h1>Пользователь {{ user_obj.username }}</h1>
+
+  {% if user_groups %}
+    <p><b>Группы:</b> {% for group in user_groups %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+
+  <form method="post" class="stack-form" onsubmit="if (event.submitter && event.submitter.value === 'delete_user') { return confirm('Удалить пользователя?'); }">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-actions">
+      <button type="submit" class="button-primary">Сохранить</button>
+      <button type="submit" name="action" value="reset_password" class="button-secondary">Сбросить пароль</button>
+      <button type="submit" name="action" value="delete_user" class="button-secondary">Удалить пользователя</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

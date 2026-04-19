@@ -188,6 +188,11 @@ class HomeworkSubmission(models.Model):
     )
     submitted_at = models.DateTimeField('когда сдано', null=True, blank=True)
     reviewed_at = models.DateTimeField('когда проверено', null=True, blank=True)
+    student_review_seen_at = models.DateTimeField(
+        'когда ученик увидел проверку',
+        null=True,
+        blank=True,
+    )
     deleted_at = models.DateTimeField('когда удалено', null=True, blank=True)
     restored_at = models.DateTimeField('когда восстановлено', null=True, blank=True)
     last_student_activity_at = models.DateTimeField(
@@ -300,6 +305,108 @@ class HomeworkSubmissionAnswer(models.Model):
 
     def __str__(self):
         return f'ответ по задаче #{self.problem_id} в сдаче #{self.submission_id}'
+
+
+class HomeworkPracticeAttempt(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = 'draft', 'черновик'
+        SUBMITTED = 'submitted', 'проверено для себя'
+
+    assignment = models.ForeignKey(
+        HomeworkAssignment,
+        on_delete=models.CASCADE,
+        related_name='practice_attempts',
+        verbose_name='назначение',
+    )
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='homework_practice_attempts',
+        verbose_name='ученик',
+    )
+    status = models.CharField(
+        'статус',
+        max_length=20,
+        choices=Status.choices,
+        default=Status.DRAFT,
+    )
+    submitted_at = models.DateTimeField('когда проверено', null=True, blank=True)
+    auto_score = models.DecimalField(
+        'автоматический балл',
+        max_digits=7,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    max_score_snapshot = models.DecimalField(
+        'максимум баллов',
+        max_digits=7,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    created_at = models.DateTimeField('создано', auto_now_add=True)
+    updated_at = models.DateTimeField('обновлено', auto_now=True)
+
+    class Meta:
+        verbose_name = 'личная попытка'
+        verbose_name_plural = 'личные попытки'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'личная попытка #{self.pk} для {self.student}'
+
+    @property
+    def can_student_edit(self):
+        return self.status != self.Status.SUBMITTED
+
+
+class HomeworkPracticeAttemptAnswer(models.Model):
+    attempt = models.ForeignKey(
+        HomeworkPracticeAttempt,
+        on_delete=models.CASCADE,
+        related_name='answers',
+        verbose_name='попытка',
+    )
+    problem = models.ForeignKey(
+        'problems.Problem',
+        on_delete=models.CASCADE,
+        related_name='practice_attempt_answers',
+        verbose_name='задача',
+    )
+    answer_text = models.TextField('ответ ученика', blank=True)
+    normalized_answer = models.TextField('нормализованный ответ', blank=True)
+    is_correct = models.BooleanField('верно', default=False)
+    score_awarded = models.DecimalField(
+        'начислено баллов',
+        max_digits=7,
+        decimal_places=2,
+        default=0,
+    )
+    max_score_snapshot = models.DecimalField(
+        'максимум баллов',
+        max_digits=7,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    evaluation_payload = models.JSONField('детали проверки', default=dict, blank=True)
+    created_at = models.DateTimeField('создано', auto_now_add=True)
+    updated_at = models.DateTimeField('обновлено', auto_now=True)
+
+    class Meta:
+        verbose_name = 'ответ в личной попытке'
+        verbose_name_plural = 'ответы в личных попытках'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['attempt', 'problem'],
+                name='unique_practice_attempt_answer_per_problem',
+            ),
+        ]
+        ordering = ['problem_id']
+
+    def __str__(self):
+        return f'ответ по задаче #{self.problem_id} в попытке #{self.attempt_id}'
 
 
 class HomeworkSubmissionSecondPartResponse(models.Model):

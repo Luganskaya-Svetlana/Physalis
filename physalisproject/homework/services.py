@@ -4,6 +4,8 @@ from django.db import transaction
 from django.utils import timezone
 
 from .models import (
+    HomeworkPracticeAttempt,
+    HomeworkPracticeAttemptAnswer,
     HomeworkSubmission,
     HomeworkSubmissionAnswer,
     HomeworkSubmissionSecondPartResponse,
@@ -50,6 +52,23 @@ def ensure_submission_answers(submission):
         )
     if answers_to_create:
         HomeworkSubmissionAnswer.objects.bulk_create(answers_to_create)
+
+
+def ensure_practice_attempt_answers(attempt):
+    existing_ids = set(attempt.answers.values_list('problem_id', flat=True))
+    answers_to_create = []
+    for problem in get_answerable_problems(attempt.assignment):
+        if problem.id in existing_ids:
+            continue
+        answers_to_create.append(
+            HomeworkPracticeAttemptAnswer(
+                attempt=attempt,
+                problem=problem,
+                max_score_snapshot=getattr(getattr(problem, 'type_ege', None), 'max_score', None),
+            )
+        )
+    if answers_to_create:
+        HomeworkPracticeAttemptAnswer.objects.bulk_create(answers_to_create)
 
 
 def ensure_second_part_responses(submission):
@@ -183,6 +202,26 @@ def save_submission_answers(submission, answers_map, actor=None, autosaved=False
 
 
 @transaction.atomic
+def save_practice_attempt_answers(attempt, answers_map):
+    ensure_practice_attempt_answers(attempt)
+    changed_problem_ids = []
+    for answer in attempt.answers.select_related('problem', 'problem__type_ege'):
+        raw_value = (answers_map.get(str(answer.problem_id)) or answers_map.get(answer.problem_id) or '').strip()
+        if answer.answer_text == raw_value:
+            continue
+        answer.answer_text = raw_value
+        answer.save(update_fields=['answer_text', 'updated_at'])
+        changed_problem_ids.append(answer.problem_id)
+
+    if changed_problem_ids and attempt.status != HomeworkPracticeAttempt.Status.DRAFT:
+        attempt.status = HomeworkPracticeAttempt.Status.DRAFT
+        attempt.submitted_at = None
+        attempt.auto_score = None
+        attempt.save(update_fields=['status', 'submitted_at', 'auto_score', 'updated_at'])
+    return changed_problem_ids
+
+
+@transaction.atomic
 def submit_submission(submission, actor=None):
     ensure_submission_answers(submission)
     ensure_second_part_responses(submission)
@@ -251,6 +290,44 @@ def submit_submission(submission, actor=None):
             event_type=SubmissionEvent.EventType.REVIEWED,
             payload={'auto_zero_second_part': True},
         )
+    return auto_total
+
+
+@transaction.atomic
+def submit_practice_attempt(attempt):
+    ensure_practice_attempt_answers(attempt)
+    auto_total = Decimal('0')
+    for answer in attempt.answers.select_related('problem', 'problem__type_ege'):
+        evaluation = evaluate_answer(answer.problem, answer.answer_text)
+        answer.normalized_answer = evaluation['normalized_user_answer']
+        answer.score_awarded = evaluation['score_awarded']
+        answer.is_correct = evaluation['is_correct']
+        answer.evaluation_payload = evaluation['evaluation_payload']
+        answer.max_score_snapshot = (
+            answer.max_score_snapshot
+            or getattr(getattr(answer.problem, 'type_ege', None), 'max_score', None)
+        )
+        answer.save(
+            update_fields=[
+                'normalized_answer',
+                'score_awarded',
+                'is_correct',
+                'evaluation_payload',
+                'max_score_snapshot',
+                'updated_at',
+            ]
+        )
+        auto_total += answer.score_awarded or Decimal('0')
+
+    attempt.status = HomeworkPracticeAttempt.Status.SUBMITTED
+    attempt.submitted_at = timezone.now()
+    attempt.auto_score = auto_total
+    if attempt.max_score_snapshot is None:
+        attempt.max_score_snapshot = sum(
+            Decimal(str(getattr(getattr(problem, 'type_ege', None), 'max_score', 0) or 0))
+            for problem in get_answerable_problems(attempt.assignment)
+        )
+    attempt.save(update_fields=['status', 'submitted_at', 'auto_score', 'max_score_snapshot', 'updated_at'])
     return auto_total
 
 
@@ -419,7 +496,8 @@ def review_submission(submission, manual_score=None, actor=None, action='save'):
     elif action == 'reviewed':
         submission.status = HomeworkSubmission.Status.REVIEWED
         submission.reviewed_at = now
-        update_fields.extend(['status', 'reviewed_at'])
+        submission.student_review_seen_at = None
+        update_fields.extend(['status', 'reviewed_at', 'student_review_seen_at'])
         event_type = SubmissionEvent.EventType.REVIEWED
     else:
         if submission.status == HomeworkSubmission.Status.SUBMITTED:
@@ -477,6 +555,9 @@ def save_second_part_scores(submission, scores_map):
             ).delete()
             continue
         score = Decimal(str(raw_value))
+        max_score = getattr(getattr(problem, 'type_ege', None), 'max_score', None)
+        if max_score is not None:
+            score = min(score, Decimal(str(max_score)))
         HomeworkSubmissionSecondPartScore.objects.update_or_create(
             submission=submission,
             problem=problem,

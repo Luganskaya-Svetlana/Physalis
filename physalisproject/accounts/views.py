@@ -5,13 +5,16 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 from django.views.generic.detail import DetailView
+import secrets
 
 from accounts.permissions import get_manageable_groups, get_manageable_students
 from homework.models import HomeworkAssignment, HomeworkSubmission, SubmissionComment
 
 from .forms import (
+    AdminUserEditForm,
     CustomAuthenticationForm,
     ProfileForm,
     SignUpForm,
@@ -111,40 +114,55 @@ def _teacher_dashboard_context(request, profile):
     messages_count = len(unread_comment_links)
     groups_count = teacher_groups.count()
     students_count = manageable_students.count()
+    dashboard_cards = [
+        {
+            'title': 'Задания',
+            'value': tasks_count,
+            'description': 'назначенные ДЗ',
+            'url': reverse('tasks'),
+            'badge': None,
+        },
+        {
+            'title': 'Работы',
+            'value': pending_count,
+            'description': 'ждут проверки',
+            'url': reverse('homework:list'),
+            'badge': pending_count or None,
+        },
+        {
+            'title': 'Сообщения',
+            'value': messages_count,
+            'description': 'непрочитанные комментарии',
+            'url': reverse('accounts:messages'),
+            'badge': messages_count or None,
+        },
+        {
+            'title': 'Ученики',
+            'value': students_count,
+            'description': '',
+            'meta': _russian_count(groups_count, 'группа', 'группы', 'групп'),
+            'url': reverse('accounts:students'),
+            'badge': None,
+        },
+    ]
+    if request.user.is_staff:
+        total_users = User.objects.count()
+        seen_at = profile.admin_users_seen_at
+        new_users_count = User.objects.filter(date_joined__gt=seen_at).count() if seen_at else total_users
+        dashboard_cards.append(
+            {
+                'title': 'Пользователи',
+                'value': total_users,
+                'description': 'всего зарегистрировано',
+                'meta': f'новые: {new_users_count}' if new_users_count else None,
+                'url': reverse('accounts:users'),
+                'badge': new_users_count or None,
+            }
+        )
     return {
         'profile': profile,
         'title': 'Личный кабинет',
-        'dashboard_cards': [
-            {
-                'title': 'Задания',
-                'value': tasks_count,
-                'description': 'назначенные ДЗ',
-                'url': reverse('tasks'),
-                'badge': None,
-            },
-            {
-                'title': 'Работы',
-                'value': pending_count,
-                'description': 'ждут проверки',
-                'url': reverse('homework:list'),
-                'badge': pending_count or None,
-            },
-            {
-                'title': 'Сообщения',
-                'value': messages_count,
-                'description': 'непрочитанные комментарии',
-                'url': reverse('accounts:messages'),
-                'badge': messages_count or None,
-            },
-            {
-                'title': 'Ученики',
-                'value': students_count,
-                'description': '',
-                'meta': _russian_count(groups_count, 'группа', 'группы', 'групп'),
-                'url': reverse('accounts:students'),
-                'badge': None,
-            },
-        ],
+        'dashboard_cards': dashboard_cards,
     }
 
 
@@ -165,6 +183,12 @@ def _student_dashboard_context(request, profile):
         .select_related('assignment')
         .order_by('-updated_at')[:10]
     )
+    reviewed_unseen_count = HomeworkSubmission.objects.filter(
+        student=request.user,
+        status=HomeworkSubmission.Status.REVIEWED,
+        reviewed_at__isnull=False,
+        student_review_seen_at__isnull=True,
+    ).count()
     reviewed_count = HomeworkSubmission.objects.filter(
         student=request.user,
         total_score__isnull=False,
@@ -177,8 +201,9 @@ def _student_dashboard_context(request, profile):
                 'title': 'ДЗ',
                 'value': len(actionable_submissions),
                 'description': 'требуют решения',
+                'meta': f'новые проверенные работы: {reviewed_unseen_count}' if reviewed_unseen_count else None,
                 'url': reverse('homework:list'),
-                'badge': len(actionable_submissions) or None,
+                'badge': (len(actionable_submissions) + reviewed_unseen_count) or None,
             },
             {
                 'title': 'Сообщения',
@@ -340,6 +365,68 @@ def teacher_student_stats_view(request, student_id):
         request,
         student,
         title=f'Статистика ученика {student.username}',
+    )
+
+
+@login_required
+def admin_users_view(request):
+    if not request.user.is_staff:
+        return redirect('accounts:profile')
+
+    profile = request.user.profile
+    profile.admin_users_seen_at = timezone.now()
+    profile.save(update_fields=['admin_users_seen_at'])
+    users = User.objects.select_related('profile').order_by('-date_joined', '-id')
+    return render(
+        request,
+        'accounts/users.html',
+        {
+            'title': 'Пользователи',
+            'profile': profile,
+            'users': users,
+        },
+    )
+
+
+@login_required
+def admin_user_edit_view(request, user_id):
+    if not request.user.is_staff:
+        return redirect('accounts:profile')
+
+    user_obj = get_object_or_404(User.objects.select_related('profile'), pk=user_id)
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'delete_user':
+            if user_obj.pk == request.user.pk:
+                messages.error(request, 'Нельзя удалить самого себя.')
+            else:
+                user_obj.delete()
+                messages.success(request, 'Пользователь удален.')
+                return redirect('accounts:users')
+        elif action == 'reset_password':
+            alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'
+            temporary_password = ''.join(secrets.choice(alphabet) for _ in range(10))
+            user_obj.set_password(temporary_password)
+            user_obj.save(update_fields=['password'])
+            messages.success(request, f'Временный пароль для {user_obj.username}: {temporary_password}')
+            return redirect('accounts:user-edit', user_id=user_obj.id)
+        form = AdminUserEditForm(request.POST, instance=user_obj)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Данные пользователя обновлены.')
+            return redirect('accounts:users')
+    else:
+        form = AdminUserEditForm(instance=user_obj)
+    return render(
+        request,
+        'accounts/user_edit.html',
+        {
+            'title': f'Пользователь {user_obj.username}',
+            'profile': request.user.profile,
+            'user_obj': user_obj,
+            'user_groups': user_obj.student_study_groups.filter(is_active=True).order_by('name'),
+            'form': form,
+        },
     )
 
 

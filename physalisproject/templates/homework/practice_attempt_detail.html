@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+{% load ziamath_filter %}
+{% load abbr %}
+
+{% block content %}
+<section class="content">
+  <h1>Личная попытка</h1>
+  <p><a href="{{ assignment.get_absolute_url }}">← Вернуться к ДЗ</a></p>
+
+  <div class="account-dashboard-card homework-student-work-card homework-assignment-card-static">
+    <p><b>ДЗ:</b> {{ assignment.title|default:"Домашнее задание" }}</p>
+    <p><b>Статус попытки:</b> {{ attempt.get_status_display }}</p>
+    <p><b>Создана:</b> {{ attempt.created_at }}</p>
+    <p><b>Проверена:</b> {{ attempt.submitted_at|default:"-" }}</p>
+    {% if attempt.submitted_at %}
+      <p><b>Результат:</b> {{ attempt.auto_score|floatformat:"0"|default:"0" }}/{{ attempt.max_score_snapshot|floatformat:"0"|default:"0" }}</p>
+    {% endif %}
+    <p>Эта попытка видна только вам и не влияет на официальную сдачу ДЗ.</p>
+  </div>
+
+  {% if answerable_problems %}
+    {% if attempt.status == attempt.Status.SUBMITTED %}
+      <h3>Результат</h3>
+      <table class="homework-auto-table">
+        <colgroup>
+          <col class="homework-auto-colgroup-number">
+          <col class="homework-auto-colgroup-answer">
+          <col class="homework-auto-colgroup-correct">
+          <col class="homework-auto-colgroup-score">
+        </colgroup>
+        <tr>
+          <th class="homework-auto-col-number">№</th>
+          <th class="homework-auto-col-answer">Ответ</th>
+          <th class="homework-auto-col-correct">Правильный ответ</th>
+          <th class="homework-auto-col-score">Балл</th>
+        </tr>
+        {% for item in answerable_problems %}
+          <tr class="{% if item.answer_state %}homework-auto-row-{{ item.answer_state }}{% endif %}">
+            <td class="homework-auto-col-number">{{ forloop.counter }}</td>
+            <td class="homework-auto-col-answer">{{ item.answer.answer_text|default:"" }}</td>
+            <td class="homework-auto-col-correct">{{ item.problem.answer|default:"-" }}</td>
+            <td class="homework-auto-col-score">{{ item.answer.score_awarded|floatformat:"0"|default:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+      <p class="homework-auto-summary">
+        <b>Итог по тестовой части:</b> {{ attempt.auto_score|floatformat:"0"|default:"0" }}/{{ first_part_max_score|floatformat:"0"|default:"0" }}
+      </p>
+    {% endif %}
+
+    <form method="post" class="stack-form homework-submission-form" id="practice-attempt-form">
+      {% csrf_token %}
+      {% for item in answerable_problems %}
+        <div class="rel homework-answer-entry">
+          <div class="id-in-list">
+            <span class="id-in-var sans fs12 homework-answer-number{% if attempt.status == attempt.Status.SUBMITTED and item.answer_state %} homework-answer-number-{{ item.answer_state }}{% endif %}">
+              {{ forloop.counter }}
+            </span>
+            {% if item.problem.type_ege.number %}
+              <span class="compl">Тип {{ item.problem.type_ege.number }}</span>
+            {% endif %}
+            {% if attempt.status == attempt.Status.SUBMITTED and item.answer %}
+              <span class="compl">
+                Балл: {{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}
+              </span>
+            {% endif %}
+          </div>
+          <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+          <input
+            type="text"
+            id="answer_{{ item.problem.id }}"
+            name="answer_{{ item.problem.id }}"
+            value="{{ item.answer.answer_text|default:'' }}"
+            {% if not attempt.can_student_edit %}disabled{% endif %}
+          >
+          {% if attempt.status == attempt.Status.SUBMITTED and item.problem.solution %}
+            <div class="homework-solution-box">
+              <p><b>Решение:</b></p>
+              <div class="solution">{{ item.problem.solution|abbr|ziamath_filter|markdown|safe }}</div>
+            </div>
+          {% endif %}
+        </div>
+        <hr class="mb20">
+      {% endfor %}
+      {% if attempt.can_student_edit %}
+        <div class="form-actions">
+          <button type="submit" name="action" value="submit" class="button-primary">Проверить для себя</button>
+        </div>
+      {% else %}
+        </form>
+        <form method="post" action="{% url 'homework:practice-start' assignment.id %}">
+          {% csrf_token %}
+          <div class="form-actions">
+            <button type="submit" class="button-secondary">Новая попытка</button>
+          </div>
+        </form>
+      {% endif %}
+    {% if attempt.can_student_edit %}
+      </form>
+    {% endif %}
+  {% else %}
+    <p>Для этого ДЗ нет тестовой части с автоматической проверкой.</p>
+  {% endif %}
+</section>
+{% endblock %}

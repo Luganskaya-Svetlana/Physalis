@@ -35,19 +35,21 @@ class ProblemView(DetailView):
         import ziamath
         data['ziamath_version'] = ziamath.__version__
 
-        problem_pk = self.kwargs['pk']
+        problem_pk = int(self.kwargs['pk'])
 
-        data['next_problem'] = (
+        data['previous_problem_id'] = (
             Problem.objects
-            .all()
-            .filter(id=int(problem_pk) + 1)
-            .exists()
+            .filter(id__lt=problem_pk)
+            .order_by('-id')
+            .values_list('id', flat=True)
+            .first()
         )
-        data['previous_problem'] = (
+        data['next_problem_id'] = (
             Problem.objects
-            .all()
-            .filter(id=int(problem_pk) - 1)
-            .exists()
+            .filter(id__gt=problem_pk)
+            .order_by('id')
+            .values_list('id', flat=True)
+            .first()
         )
         return data
 
@@ -100,6 +102,7 @@ def get_game_queryset(only_with_justifications=True):
         )
         .prefetch_related(
             'solution_methods__laws',
+            'solution_methods__optional_laws',
             'solution_methods__justifications',
             'solution_methods__excluded_justifications',
             'solution_methods__justification_groups__justifications',
@@ -302,12 +305,14 @@ def choose_objects_with_limit(all_objects, required_ids, limit, seed):
 
 def get_choice_lists(methods, shuffle_seed):
     correct_law_ids = set()
+    optional_law_ids = set()
     required_justification_ids = set()
     grouped_justification_ids = set()
     excluded_justification_ids = set()
 
     for method in methods:
         correct_law_ids.update(method.laws.values_list('id', flat=True))
+        optional_law_ids.update(method.optional_laws.values_list('id', flat=True))
         required_justification_ids.update(
             method.justifications.values_list('id', flat=True)
         )
@@ -323,7 +328,7 @@ def get_choice_lists(methods, shuffle_seed):
     all_laws = list(Law.objects.all().order_by('order', 'name'))
     laws = choose_objects_with_limit(
         all_objects=all_laws,
-        required_ids=correct_law_ids,
+        required_ids=correct_law_ids | optional_law_ids,
         limit=MAX_GAME_LAWS,
         seed=f'{shuffle_seed}:laws',
     )
@@ -387,6 +392,8 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
 
     for method in methods:
         method_law_ids = set(method.laws.values_list('id', flat=True))
+        optional_law_ids = set(method.optional_laws.values_list('id', flat=True))
+        allowed_law_ids = method_law_ids | optional_law_ids
 
         required_justification_ids = get_method_required_justification_ids(method)
         excluded_justification_ids = get_method_excluded_justification_ids(method)
@@ -397,7 +404,7 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
         ) - excluded_justification_ids
 
         missing_laws = method_law_ids - selected_law_ids
-        extra_laws = selected_law_ids - method_law_ids
+        extra_laws = selected_law_ids - allowed_law_ids
 
         soft_messages = []
         missing_group_justifications = set()
@@ -434,7 +441,10 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
         no_justifications_required = (
             not required_justification_ids and not group_configs
         )
-        laws_match_exactly = method_law_ids == selected_law_ids
+        laws_match_exactly = (
+            method_law_ids.issubset(selected_law_ids)
+            and selected_law_ids.issubset(allowed_law_ids)
+        )
 
         if laws_match_exactly and no_justifications_required:
             missing_justifications = set()

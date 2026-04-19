@@ -34,6 +34,7 @@
       <span class="compl">Тип {{problem.type_ege.number}}</span>
       {% endif %}
       {% if problem.source %}<span class="compl">Источник: {{problem.source}}</span>{% endif %}
+      {% if request.user.is_authenticated %}
       <button
         type="button"
         class="variant-inline-toggle no-print"
@@ -43,6 +44,7 @@
       >
         <img src="{% static 'img/add.svg' %}" alt="" class="variant-inline-toggle-icon">
       </button>
+      {% endif %}
         {% if request.user.is_staff and problem.get_recent_variants %}
           <span class="compl no-solution">
             {% for variant in problem.get_recent_variants %}
@@ -68,5 +70,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+  {% if request.user.is_authenticated %}
   <script defer src={% static 'js/variant-builder.js' %}></script>
+  {% endif %}
 {% endblock %}

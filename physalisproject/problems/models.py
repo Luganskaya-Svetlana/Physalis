@@ -348,6 +348,12 @@ class ProblemSolutionMethod(models.Model):
         verbose_name='законы',
         blank=True,
     )
+    optional_laws = models.ManyToManyField(
+        Law,
+        related_name='optional_in_solution_methods',
+        verbose_name='необязательные законы',
+        blank=True,
+    )
     justifications = models.ManyToManyField(
         Justification,
         related_name='solution_methods',

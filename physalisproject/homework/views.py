@@ -14,13 +14,20 @@ from accounts.permissions import can_manage_homework, get_manageable_groups, get
 from variants.models import Variant
 
 from .forms import HomeworkAssignmentCreateForm, SubmissionCommentForm, SubmissionReviewForm
-from .models import HomeworkAssignment, HomeworkSubmission, SubmissionAttachment, SubmissionComment
+from .models import (
+    HomeworkAssignment,
+    HomeworkPracticeAttempt,
+    HomeworkSubmission,
+    SubmissionAttachment,
+    SubmissionComment,
+)
 from .services import (
     add_submission_attachment_for_problem,
     add_submission_attachments,
     add_submission_comment,
     delete_submission_comment,
     delete_submission_attachment,
+    ensure_practice_attempt_answers,
     ensure_submission_answers,
     ensure_second_part_responses,
     get_answerable_problems,
@@ -28,9 +35,11 @@ from .services import (
     mark_submission_comments_read,
     review_submission,
     rotate_submission_attachment,
+    save_practice_attempt_answers,
     save_submission_answers,
     save_second_part_scores,
     save_second_part_text_answers,
+    submit_practice_attempt,
     submit_submission,
 )
 
@@ -53,6 +62,16 @@ class HomeworkTeacherAccessMixin:
             return redirect_to_login(request.get_full_path())
         profile = getattr(request.user, 'profile', None)
         if not (can_manage_homework(request.user) or (profile and profile.role == profile.Role.STUDENT)):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
+class HomeworkStudentOnlyMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
+        profile = getattr(request.user, 'profile', None)
+        if not (profile and profile.role == profile.Role.STUDENT):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -318,6 +337,12 @@ class HomeworkSubmissionListView(HomeworkTeacherAccessMixin, ListView):
         context['title'] = 'Работы'
         context['is_student_view'] = is_student_view
         if is_student_view:
+            HomeworkSubmission.objects.filter(
+                student=self.request.user,
+                status=HomeworkSubmission.Status.REVIEWED,
+                reviewed_at__isnull=False,
+                student_review_seen_at__isnull=True,
+            ).update(student_review_seen_at=timezone.now())
             assignments = getattr(self, 'student_assignments', [])
             for assignment in assignments:
                 assignment.student_submission = next(
@@ -360,7 +385,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
     @staticmethod
     def get_answer_state(answer):
         if answer is None or not (answer.answer_text or '').strip():
-            return ''
+            return 'wrong'
         max_score = answer.max_score_snapshot or 0
         score = answer.score_awarded or 0
         if score <= 0:
@@ -372,6 +397,17 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
     @staticmethod
     def get_second_part_max_score(problem):
         return getattr(getattr(problem, 'type_ege', None), 'max_score', None)
+
+    @staticmethod
+    def get_second_part_score_state(score_obj, max_score):
+        if score_obj is None or score_obj.score_awarded is None:
+            return ''
+        score = score_obj.score_awarded
+        if score <= 0:
+            return 'wrong'
+        if max_score is not None and score >= max_score:
+            return 'correct'
+        return 'partial'
 
     @staticmethod
     def get_problem_label(problem, index):
@@ -410,6 +446,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                     'response': response_map.get(problem.id),
                     'attachments': [attachment for attachment in submission.attachments.all() if attachment.problem_id == problem.id],
                     'score': score,
+                    'score_state': self.get_second_part_score_state(score, max_score),
                     'max_score': max_score,
                     'display_number': variant_positions.get(problem.id, index),
                 }
@@ -419,6 +456,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
             'shared_attachments': [attachment for attachment in submission.attachments.all() if attachment.problem_id is None],
             'total_score': total_score,
             'total_max_score': total_max_score if has_full_max_score else None,
+            'has_per_problem_scores': any(item['score'] is not None for item in items),
         }
 
     def post(self, request, *args, **kwargs):
@@ -644,6 +682,9 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
             context['student_submission'] = submission
             context['comment_form'] = SubmissionCommentForm()
             if submission is not None:
+                if submission.status == submission.Status.REVIEWED and submission.reviewed_at and submission.student_review_seen_at is None:
+                    submission.student_review_seen_at = timezone.now()
+                    submission.save(update_fields=['student_review_seen_at'])
                 ensure_submission_answers(submission)
                 ensure_second_part_responses(submission)
                 mark_submission_comments_read(submission, self.request.user)
@@ -673,8 +714,15 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                 context['shared_second_part_attachments'] = second_part_context['shared_attachments']
                 context['second_part_total_score'] = second_part_context['total_score']
                 context['second_part_total_max_score'] = second_part_context['total_max_score']
+                context['has_second_part_per_problem_scores'] = second_part_context['has_per_problem_scores']
                 context['student_submission_has_manual_score'] = submission.manual_score is not None
                 context['student_submission_is_submitted'] = submission.status != submission.Status.ASSIGNED
+                practice_attempts = HomeworkPracticeAttempt.objects.filter(
+                    assignment=assignment,
+                    student=self.request.user,
+                ).order_by('-created_at')
+                context['latest_practice_attempt'] = practice_attempts.first()
+                context['practice_attempt_count'] = practice_attempts.count()
         else:
             selected_submission_id = self.request.GET.get('submission')
             detailed_submissions = []
@@ -698,6 +746,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                     'shared_second_part_attachments': second_part_context['shared_attachments'],
                     'second_part_total_score': second_part_context['total_score'],
                     'second_part_total_max_score': second_part_context['total_max_score'],
+                    'has_second_part_per_problem_scores': second_part_context['has_per_problem_scores'],
                     'review_form': SubmissionReviewForm(instance=submission),
                     'comment_form': SubmissionCommentForm(),
                     'pending_review': submission.teacher_needs_review,
@@ -752,6 +801,90 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
             else:
                 context['detailed_submissions'] = []
             context['teacher_submission_summaries'] = sorted_submissions
+        return context
+
+
+class HomeworkPracticeAttemptStartView(HomeworkStudentOnlyMixin, HomeworkAssignmentQuerysetMixin, View):
+    def post(self, request, *args, **kwargs):
+        assignment = get_object_or_404(self.get_queryset(), pk=kwargs['pk'])
+        submission = assignment.submissions.filter(student=request.user).first()
+        if submission is None or submission.submitted_at is None:
+            raise PermissionDenied
+
+        attempt = HomeworkPracticeAttempt.objects.filter(
+            assignment=assignment,
+            student=request.user,
+            status=HomeworkPracticeAttempt.Status.DRAFT,
+        ).order_by('-created_at').first()
+        if attempt is None:
+            first_part_max_score = sum(
+                getattr(getattr(problem, 'type_ege', None), 'max_score', None) or 0
+                for problem in get_answerable_problems(assignment)
+            )
+            attempt = HomeworkPracticeAttempt.objects.create(
+                assignment=assignment,
+                student=request.user,
+                max_score_snapshot=first_part_max_score,
+            )
+        return redirect('homework:practice-detail', pk=assignment.pk, attempt_id=attempt.pk)
+
+
+class HomeworkPracticeAttemptDetailView(HomeworkStudentOnlyMixin, HomeworkAssignmentQuerysetMixin, DetailView):
+    template_name = 'homework/practice_attempt_detail.html'
+    context_object_name = 'assignment'
+
+    def get_object(self, queryset=None):
+        queryset = queryset or self.get_queryset()
+        return get_object_or_404(queryset, pk=self.kwargs['pk'])
+
+    def get_attempt(self, assignment):
+        return get_object_or_404(
+            HomeworkPracticeAttempt.objects.prefetch_related('answers__problem__type_ege'),
+            pk=self.kwargs['attempt_id'],
+            assignment=assignment,
+            student=self.request.user,
+        )
+
+    def post(self, request, *args, **kwargs):
+        assignment = self.get_object()
+        attempt = self.get_attempt(assignment)
+        if not attempt.can_student_edit:
+            raise PermissionDenied
+
+        answers_map = {
+            key.removeprefix('answer_'): value
+            for key, value in request.POST.items()
+            if key.startswith('answer_')
+        }
+        save_practice_attempt_answers(attempt, answers_map)
+        if request.POST.get('action') == 'submit':
+            submit_practice_attempt(attempt)
+        return redirect('homework:practice-detail', pk=assignment.pk, attempt_id=attempt.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        assignment = context['assignment']
+        attempt = self.get_attempt(assignment)
+        ensure_practice_attempt_answers(attempt)
+        answer_map = {answer.problem_id: answer for answer in attempt.answers.all()}
+        context['attempt'] = attempt
+        context['title'] = 'Личная попытка'
+        context['answerable_problems'] = [
+            {
+                'problem': problem,
+                'answer': answer_map.get(problem.id),
+                'answer_state': HomeworkAssignmentDetailView.get_answer_state(answer_map.get(problem.id)),
+            }
+            for problem in get_answerable_problems(assignment)
+        ]
+        context['first_part_max_score'] = sum(
+            (
+                getattr(getattr(item['problem'], 'type_ege', None), 'max_score', None)
+                or (item['answer'].max_score_snapshot if item['answer'] else 0)
+                or 0
+            )
+            for item in context['answerable_problems']
+        )
         return context
 
 

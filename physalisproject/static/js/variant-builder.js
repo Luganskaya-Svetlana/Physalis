@@ -368,6 +368,16 @@ function bindCurrentSelectionInteractions() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const needsVariantBuilder = Boolean(
+    document.querySelector('[data-variant-nav]')
+    || document.querySelector('[data-variant-toggle]')
+    || document.getElementById('variant-current-content')
+  );
+
+  if (!needsVariantBuilder) {
+    return;
+  }
+
   refreshSelection().catch(() => {});
   bindCurrentSelectionInteractions();
 

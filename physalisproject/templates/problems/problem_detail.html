@@ -7,9 +7,10 @@
 {% block content %}
   <div class="card">
     <h1 class="card-title">Задача #{{problem.id}}
-      {% if previous_problem %}
-        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"-1"}}" title="#{{problem.id|add:"-1"}}">←</a>
+      {% if previous_problem_id %}
+        <a class="lnk_btn no-print" href="{% url 'problems:detail' previous_problem_id %}" title="#{{previous_problem_id}}">←</a>
       {% endif %}
+      {% if request.user.is_authenticated %}
       <button
         type="button"
         class="variant-inline-toggle variant-inline-toggle-detail no-print"
@@ -19,8 +20,9 @@
       >
         <img src="{% static 'img/add.svg' %}" alt="" class="variant-inline-toggle-icon">
       </button>
-      {% if next_problem %}
-        <a class="lnk_btn no-print" href="/problems/{{problem.id|add:"+1"}}" title="#{{problem.id|add:"+1"}}">→</a>
+      {% endif %}
+      {% if next_problem_id %}
+        <a class="lnk_btn no-print" href="{% url 'problems:detail' next_problem_id %}" title="#{{next_problem_id}}">→</a>
       {% endif %}
     </h1>
     <div class="problem">{{problem.text|abbr|ziamath_filter|markdown|safe}}</div>
@@ -74,5 +76,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+  {% if request.user.is_authenticated %}
   <script defer src={% static 'js/variant-builder.js' %}></script>
+  {% endif %}
 {% endblock %}

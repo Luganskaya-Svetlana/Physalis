@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.utils import timezone
 
 from .models import PlatformSettings, StudyGroup, TeacherStudentLink, UserProfile
 
@@ -9,13 +10,25 @@ User = get_user_model()
 
 
 class SignUpForm(UserCreationForm):
+    username = forms.CharField(
+        label='Логин',
+        max_length=20,
+        error_messages={'max_length': 'Логин не должен быть длиннее 20 символов.'},
+    )
+    first_name = forms.CharField(label='Имя', required=True, max_length=150)
+    last_name = forms.CharField(label='Фамилия', required=True, max_length=150)
     role = forms.ChoiceField(
         label='Кто вы',
         choices=UserProfile.Role.choices,
     )
     email = forms.EmailField(
         label='Почта',
+        required=True,
+    )
+    telegram_login = forms.CharField(
+        label='Логин в Telegram',
         required=False,
+        max_length=64,
     )
     teacher_login = forms.CharField(
         label='Укажите логин учителя, чтобы он мог задавать вам ДЗ (необязательно)',
@@ -25,15 +38,12 @@ class SignUpForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'role', 'teacher_login')
+        fields = ('username', 'first_name', 'last_name', 'email', 'telegram_login', 'role', 'teacher_login')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         platform_settings = PlatformSettings.load()
         self.platform_settings = platform_settings
-        self.fields['username'].label = 'Логин'
-        self.fields['first_name'].label = 'Имя'
-        self.fields['last_name'].label = 'Фамилия'
         self.fields['password1'].label = 'Пароль'
         self.fields['password2'].label = 'Подтверждение пароля'
         self.fields['password1'].widget.attrs.update({
@@ -43,12 +53,7 @@ class SignUpForm(UserCreationForm):
             'autocomplete': 'new-password',
             'onpaste': 'return false;',
         })
-        self.fields['email'].required = platform_settings.require_email_on_signup
-        self.fields['email'].help_text = (
-            'Обязательное поле.'
-            if platform_settings.require_email_on_signup
-            else 'Можно заполнить позже в личном кабинете.'
-        )
+        self.fields['email'].help_text = 'Обязательное поле.'
 
     def clean_email(self):
         email = (self.cleaned_data.get('email') or '').strip()
@@ -88,6 +93,7 @@ class SignUpForm(UserCreationForm):
             user.save()
             profile = user.profile
             profile.role = self.cleaned_data['role']
+            profile.telegram_login = (self.cleaned_data.get('telegram_login') or '').strip()
             if profile.role == UserProfile.Role.TEACHER:
                 profile.teacher_approval_status = UserProfile.TeacherApprovalStatus.PENDING
                 profile.teacher_approved_by = None
@@ -109,9 +115,10 @@ class SignUpForm(UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
-    email = forms.EmailField(label='Почта', required=False)
-    first_name = forms.CharField(label='Имя', required=False, max_length=150)
-    last_name = forms.CharField(label='Фамилия', required=False, max_length=150)
+    email = forms.EmailField(label='Почта', required=True)
+    first_name = forms.CharField(label='Имя', required=True, max_length=150)
+    last_name = forms.CharField(label='Фамилия', required=True, max_length=150)
+    telegram_login = forms.CharField(label='Логин в Telegram', required=False, max_length=64)
     teacher_login = forms.CharField(
         label='Укажите логин учителя, чтобы он мог задавать вам ДЗ (необязательно)',
         required=False,
@@ -136,6 +143,7 @@ class ProfileForm(forms.ModelForm):
         self.fields['email'].initial = user.email
         self.fields['first_name'].initial = user.first_name
         self.fields['last_name'].initial = user.last_name
+        self.fields['telegram_login'].initial = self.instance.telegram_login
         if self.instance.role != UserProfile.Role.STUDENT:
             self.fields.pop('statistics_share_enabled')
         if self.instance.role != UserProfile.Role.STUDENT:
@@ -169,6 +177,7 @@ class ProfileForm(forms.ModelForm):
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
+        profile.telegram_login = (self.cleaned_data.get('telegram_login') or '').strip()
         if commit:
             user.save(update_fields=['email', 'first_name', 'last_name'])
             profile.save()
@@ -238,6 +247,15 @@ class TeacherGroupUpdateForm(TeacherGroupCreateForm):
 
 
 class TeacherStudentEditForm(forms.ModelForm):
+    username = forms.CharField(
+        label='Логин',
+        max_length=20,
+        error_messages={'max_length': 'Логин не должен быть длиннее 20 символов.'},
+    )
+    first_name = forms.CharField(label='Имя', required=True, max_length=150)
+    last_name = forms.CharField(label='Фамилия', required=True, max_length=150)
+    email = forms.EmailField(label='Почта', required=True)
+
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
@@ -256,6 +274,81 @@ class TeacherStudentEditForm(forms.ModelForm):
         if queryset.exists():
             raise forms.ValidationError('Этот адрес электронной почты уже используется.')
         return email
+
+
+class AdminUserEditForm(forms.ModelForm):
+    username = forms.CharField(
+        label='Логин',
+        max_length=20,
+        error_messages={'max_length': 'Логин не должен быть длиннее 20 символов.'},
+    )
+    first_name = forms.CharField(label='Имя', required=True, max_length=150)
+    last_name = forms.CharField(label='Фамилия', required=True, max_length=150)
+    email = forms.EmailField(label='Почта', required=True)
+    telegram_login = forms.CharField(label='Логин в Telegram', required=False, max_length=64)
+    role = forms.ChoiceField(label='Роль', choices=UserProfile.Role.choices)
+    teacher_approval_status = forms.ChoiceField(
+        label='Статус учителя',
+        choices=UserProfile.TeacherApprovalStatus.choices,
+        required=False,
+    )
+    is_staff = forms.BooleanField(label='Админ', required=False)
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'is_staff')
+        labels = {
+            'username': 'Логин',
+            'first_name': 'Имя',
+            'last_name': 'Фамилия',
+            'email': 'Почта',
+            'is_staff': 'Админ',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        profile = self.instance.profile
+        self.fields['role'].initial = profile.role
+        self.fields['teacher_approval_status'].initial = profile.teacher_approval_status
+        self.fields['telegram_login'].initial = profile.telegram_login
+
+    def clean_email(self):
+        email = (self.cleaned_data.get('email') or '').strip()
+        if not email:
+            return ''
+        queryset = User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise forms.ValidationError('Этот адрес электронной почты уже используется.')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        role = cleaned_data.get('role')
+        approval_status = cleaned_data.get('teacher_approval_status')
+        if role == UserProfile.Role.STUDENT:
+            cleaned_data['teacher_approval_status'] = UserProfile.TeacherApprovalStatus.NOT_REQUIRED
+        elif approval_status == UserProfile.TeacherApprovalStatus.NOT_REQUIRED:
+            self.add_error('teacher_approval_status', 'Для учителя выберите осмысленный статус.')
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        profile = user.profile
+        profile.role = self.cleaned_data['role']
+        profile.teacher_approval_status = self.cleaned_data['teacher_approval_status']
+        profile.telegram_login = (self.cleaned_data.get('telegram_login') or '').strip()
+        if profile.role == UserProfile.Role.STUDENT:
+            profile.teacher_approved_by = None
+            profile.teacher_approved_at = None
+        elif profile.teacher_approval_status == UserProfile.TeacherApprovalStatus.APPROVED and not profile.teacher_approved_at:
+            profile.teacher_approved_at = timezone.now()
+        elif profile.teacher_approval_status != UserProfile.TeacherApprovalStatus.APPROVED:
+            profile.teacher_approved_by = None
+            profile.teacher_approved_at = None
+        if commit:
+            user.save()
+            profile.save()
+        return user
 
 
 class CustomAuthenticationForm(AuthenticationForm):
