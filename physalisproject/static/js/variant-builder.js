@@ -137,6 +137,18 @@ function buildMissingToggles() {
     }
     ensureProblemToggle(Number(match[0]), container, false);
   });
+
+  const detailTitle = document.querySelector('.card-title');
+  if (!detailTitle || detailTitle.querySelector('[data-variant-toggle]')) {
+    return;
+  }
+
+  const match = detailTitle.textContent.match(/#(\d+)/);
+  if (!match) {
+    return;
+  }
+
+  ensureProblemToggle(Number(match[1]), detailTitle, true);
 }
 
 function updateToggleButtons(summary) {

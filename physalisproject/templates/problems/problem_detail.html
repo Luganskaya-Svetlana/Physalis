@@ -10,17 +10,6 @@
       {% if previous_problem_id %}
         <a class="lnk_btn no-print" href="{% url 'problems:detail' previous_problem_id %}" title="#{{previous_problem_id}}">←</a>
       {% endif %}
-      {% if request.user.is_authenticated %}
-      <button
-        type="button"
-        class="variant-inline-toggle variant-inline-toggle-detail no-print"
-        data-variant-toggle
-        data-problem-id="{{ problem.id }}"
-        aria-label="Добавить в вариант"
-      >
-        <img src="{% static 'img/add.svg' %}" alt="" class="variant-inline-toggle-icon">
-      </button>
-      {% endif %}
       {% if next_problem_id %}
         <a class="lnk_btn no-print" href="{% url 'problems:detail' next_problem_id %}" title="#{{next_problem_id}}">→</a>
       {% endif %}
