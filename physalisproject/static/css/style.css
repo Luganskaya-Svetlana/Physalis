@@ -834,9 +834,6 @@ nav a {
 .homework-meta-box > p:only-child {
   grid-column: 1 / -1;
 }
-.homework-meta-box p {
-  margin: 0;
-}
 .homework-auto-table {
   max-width: 100%;
   display: table;
@@ -905,6 +902,24 @@ nav a {
   margin: 6px 0 20px;
   font-family: Arial, sans-serif;
   font-size: 10pt;
+  line-height: 1.2;
+}
+.homework-auto-summary-spaced {
+  margin-top: 10px;
+}
+.homework-result-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px 28px;
+  align-items: start;
+}
+.homework-result-column {
+  min-width: 0;
+}
+.homework-result-heading,
+.homework-result-column > h3,
+.homework-result-column .homework-score-breakdown > p {
+  margin-top: 0;
   line-height: 1.2;
 }
 .homework-score-breakdown {
@@ -1007,6 +1022,9 @@ nav a {
 }
 .homework-status-row-reviewed td {
   background: #e6f5e8;
+}
+.homework-status-row-selected td {
+  font-weight: 700;
 }
 .homework-task-table {
   width: 100%;
@@ -1308,9 +1326,6 @@ nav a {
 .ans-table + .homework-submission-box {
   margin-top: 22px;
 }
-.homework-meta-box > h2 {
-  margin: 0;
-}
 .variant-homework-list p {
   margin: 0.5ex 0 0;
 }
@@ -1337,7 +1352,6 @@ nav a {
   font-family: 'STIX Two Text', 'Times New Roman', Times, serif;
 }
 .homework-submission-form .id-in-list {
-  margin-bottom: -10px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1354,7 +1368,6 @@ nav a {
   margin-bottom: 10px;
 }
 .homework-conditions-preview .id-in-list {
-  margin-bottom: 11px;
   align-items: flex-end;
   line-height: 1.2;
 }
@@ -1410,11 +1423,17 @@ nav a {
   margin-top: 14px;
 }
 .homework-second-part-text .id-in-list {
-  margin-bottom: -10px;
+  margin-bottom: -18px;
 }
 .homework-second-part-block .id-in-var,
 .homework-second-part-text .id-in-var {
   margin-bottom: 1.5ex;
+}
+.homework-submission-box .homework-second-part-block .id-in-list {
+  align-items: flex-end;
+}
+.homework-submission-box .homework-second-part-block .id-in-var {
+  margin-bottom: 0;
 }
 .homework-second-part-text .id-in-var {
   margin-bottom: 0;
@@ -1645,6 +1664,9 @@ nav a {
 .homework-comment-actions {
   gap: 10px;
   margin-bottom: 10px;
+}
+.homework-conditions-button-row {
+  margin-top: 10px;
 }
 .homework-comment-upload-label .comment-image-input {
   position: absolute;

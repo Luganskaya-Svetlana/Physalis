@@ -106,56 +106,69 @@
           </span>
         </div>
       {% endif %}
-      {% if student_submission.status == student_submission.Status.REVIEWED and has_second_part_per_problem_scores %}
-        <div class="homework-score-breakdown">
-          <p><b>Вторая часть по задачам:</b></p>
-          <table class="homework-score-breakdown-table">
-            <tr>
-              <th>Тип</th>
-              <th>№</th>
-              <th>Балл</th>
-              <th>Макс.</th>
-            </tr>
-            {% for item in second_part_problems %}
-              {% if item.score %}
-                <tr class="{% if item.score_state %}homework-score-breakdown-row-{{ item.score_state }}{% endif %}">
-                  <td>{% if item.problem.type_ege %}{{ item.problem.type_ege.number }}{% else %}-{% endif %}</td>
-                  <td>{{ item.display_number }}</td>
-                  <td>{{ item.score.score_awarded|floatformat:"0" }}</td>
-                  <td>{{ item.max_score|floatformat:"0"|default:"-" }}</td>
+      {% if student_submission.submitted_at and answerable_problems or student_submission.submitted_at and has_second_part_per_problem_scores %}
+        <div class="homework-result-columns">
+          {% if answerable_problems %}
+            <div class="homework-result-column">
+              <h3 class="homework-result-heading">Первая часть</h3>
+              <table class="homework-auto-table">
+                <colgroup>
+                  <col class="homework-auto-colgroup-number">
+                  <col class="homework-auto-colgroup-answer">
+                  <col class="homework-auto-colgroup-correct">
+                  <col class="homework-auto-colgroup-score">
+                </colgroup>
+                <tr>
+                  <th class="homework-auto-col-number">№</th>
+                  <th class="homework-auto-col-answer">Ответ</th>
+                  <th class="homework-auto-col-correct">Правильный ответ</th>
+                  <th class="homework-auto-col-score">Балл</th>
                 </tr>
+                {% for item in answerable_problems %}
+                  <tr class="{% if item.answer_state %}homework-auto-row-{{ item.answer_state }}{% endif %}">
+                    <td class="homework-auto-col-number">{{ forloop.counter }}</td>
+                    <td class="homework-auto-col-answer">{{ item.answer.answer_text|default:"" }}</td>
+                    <td class="homework-auto-col-correct">{{ item.problem.answer|default:"-" }}</td>
+                    <td class="homework-auto-col-score">{{ item.answer.score_awarded|floatformat:"0"|default:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+                  </tr>
+                {% endfor %}
+              </table>
+              <p class="homework-auto-summary homework-auto-summary-spaced">
+                <b>Баллов за первую часть:</b> {{ student_submission.auto_score|floatformat:"0"|default:"0" }}/{{ first_part_max_score|floatformat:"0"|default:"0" }}
+              </p>
+            </div>
+          {% endif %}
+          {% if has_second_part_per_problem_scores %}
+            <div class="homework-result-column">
+              <div class="homework-score-breakdown">
+                <h3 class="homework-result-heading">Вторая часть</h3>
+                <table class="homework-score-breakdown-table">
+                  <tr>
+                    <th>Тип</th>
+                    <th>№</th>
+                    <th>Балл</th>
+                    <th>Макс.</th>
+                  </tr>
+                  {% for item in second_part_problems %}
+                    {% if item.score %}
+                      <tr class="{% if item.score_state %}homework-score-breakdown-row-{{ item.score_state }}{% endif %}">
+                        <td>{% if item.problem.type_ege %}{{ item.problem.type_ege.number }}{% else %}-{% endif %}</td>
+                        <td>{{ item.display_number }}</td>
+                        <td>{{ item.score.score_awarded|floatformat:"0" }}</td>
+                        <td>{{ item.max_score|floatformat:"0"|default:"-" }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                </table>
+              </div>
+              {% if second_part_total_max_score is not None %}
+                <p class="homework-auto-summary">
+                  <b>Баллов за вторую часть:</b> {{ second_part_total_score|floatformat:"0"|default:"0" }}/{{ second_part_total_max_score|floatformat:"0"|default:"0" }}
+                </p>
               {% endif %}
-            {% endfor %}
-          </table>
+            </div>
+          {% endif %}
         </div>
-      {% endif %}
-      {% if answerable_problems and student_submission.submitted_at %}
-        <h3>Проверено автоматически:</h3>
-        <table class="homework-auto-table">
-          <colgroup>
-            <col class="homework-auto-colgroup-number">
-            <col class="homework-auto-colgroup-answer">
-            <col class="homework-auto-colgroup-correct">
-            <col class="homework-auto-colgroup-score">
-          </colgroup>
-          <tr>
-            <th class="homework-auto-col-number">№</th>
-            <th class="homework-auto-col-answer">Ответ</th>
-            <th class="homework-auto-col-correct">Правильный ответ</th>
-            <th class="homework-auto-col-score">Балл</th>
-          </tr>
-          {% for item in answerable_problems %}
-            <tr class="{% if item.answer_state %}homework-auto-row-{{ item.answer_state }}{% endif %}">
-              <td class="homework-auto-col-number">{{ forloop.counter }}</td>
-              <td class="homework-auto-col-answer">{{ item.answer.answer_text|default:"" }}</td>
-              <td class="homework-auto-col-correct">{{ item.problem.answer|default:"-" }}</td>
-              <td class="homework-auto-col-score">{{ item.answer.score_awarded|floatformat:"0"|default:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
-            </tr>
-          {% endfor %}
-        </table>
-        <p class="homework-auto-summary">
-          <b>Итог по тестовой части:</b> {{ student_submission.auto_score|floatformat:"0"|default:"0" }}/{{ first_part_max_score|floatformat:"0"|default:"0" }}
-        </p>
       {% endif %}
       {% if not answerable_problems and student_submission.can_student_edit %}
         <form method="post" id="homework-main-form" class="stack-form homework-submission-form" data-homework-form data-autosave-url="{% url 'homework:autosave' assignment.id %}">
@@ -471,8 +484,8 @@
         <th>Балл</th>
       </tr>
         {% for item in teacher_submission_summaries %}
-          <tr class="homework-status-row-{{ item.summary_status_class }}">
-            <td><a href="{% url 'homework:detail' assignment.id %}?submission={{ item.submission.id }}">{{ item.submission.student }}</a></td>
+          <tr class="homework-status-row-{{ item.summary_status_class }}{% if selected_submission_id == item.submission.id %} homework-status-row-selected{% endif %}">
+            <td><a href="{% url 'homework:detail' assignment.id %}?submission={{ item.submission.id }}"{% if selected_submission_id == item.submission.id %} class="bold"{% endif %}>{{ item.submission.student }}</a></td>
             <td>{{ item.summary_status_label }}</td>
             <td>
               {% if item.submission.submitted_at %}
@@ -502,33 +515,7 @@
 
     {% for item in detailed_submissions %}
       <div class="homework-meta-box homework-submission-box">
-        <h2>{{ item.submission.student }}</h2>
-        <p><b>Статус:</b> {{ item.submission.get_status_display }}</p>
-        <p><b>Сдано:</b> {{ item.submission.submitted_at|default:"-" }}</p>
-        <p><b>Балл:</b> {{ item.submission.total_score|floatformat:"0"|default:"-" }}/{{ item.submission.max_score_snapshot|floatformat:"0"|default:"-" }}</p>
-        {% if item.has_second_part_per_problem_scores %}
-          <div class="homework-score-breakdown">
-            <p><b>Вторая часть по задачам:</b></p>
-            <table class="homework-score-breakdown-table">
-              <tr>
-                <th>Тип</th>
-                <th>№</th>
-                <th>Балл</th>
-                <th>Макс.</th>
-              </tr>
-              {% for second_item in item.second_part_problems %}
-                {% if second_item.score %}
-                  <tr class="{% if second_item.score_state %}homework-score-breakdown-row-{{ second_item.score_state }}{% endif %}">
-                    <td>{% if second_item.problem.type_ege %}{{ second_item.problem.type_ege.number }}{% else %}-{% endif %}</td>
-                    <td>{{ second_item.display_number }}</td>
-                    <td>{{ second_item.score.score_awarded|floatformat:"0" }}</td>
-                    <td>{{ second_item.max_score|floatformat:"0"|default:"-" }}</td>
-                  </tr>
-                {% endif %}
-              {% endfor %}
-            </table>
-          </div>
-        {% endif %}
+        <h2>Работа ученика {{ item.submission.student }}</h2>
         {% if item.pending_review %}
           <p><b>Требует проверки сейчас.</b></p>
         {% endif %}
@@ -553,34 +540,70 @@
           <div id="teacher-conditions-{{ item.submission.id }}" hidden></div>
         {% endif %}
 
-        {% if item.submission.submitted_at and item.answerable_problems %}
-          <h3>Проверено автоматически:</h3>
-          <table class="homework-auto-table">
-            <colgroup>
-              <col class="homework-auto-colgroup-number">
-              <col class="homework-auto-colgroup-answer">
-              <col class="homework-auto-colgroup-correct">
-              <col class="homework-auto-colgroup-score">
-            </colgroup>
-            <tr>
-              <th class="homework-auto-col-number">№</th>
-              <th class="homework-auto-col-answer">Ответ</th>
-              <th class="homework-auto-col-correct">Правильный ответ</th>
-              <th class="homework-auto-col-score">Балл</th>
-          </tr>
-          {% for answer_item in item.answerable_problems %}
-            <tr class="{% if answer_item.answer_state %}homework-auto-row-{{ answer_item.answer_state }}{% endif %}">
-              <td class="homework-auto-col-number">{{ forloop.counter }}</td>
-              <td class="homework-auto-col-answer">{{ answer_item.answer.answer_text|default:"" }}</td>
-              <td class="homework-auto-col-correct">{{ answer_item.problem.answer|default:"-" }}</td>
-              <td class="homework-auto-col-score">{{ answer_item.answer.score_awarded|floatformat:"0"|default:"0" }}/{{ answer_item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
-            </tr>
-            {% endfor %}
-          </table>
-          <p class="homework-auto-summary">
-            <b>Итог по тестовой части:</b> {{ item.submission.auto_score|floatformat:"0"|default:"0" }}/{{ item.first_part_max_score|floatformat:"0"|default:"0" }}
-          </p>
-          <p>
+        {% if item.submission.submitted_at and item.answerable_problems or item.submission.submitted_at and item.has_second_part_per_problem_scores %}
+          <div class="homework-result-columns">
+            {% if item.answerable_problems %}
+              <div class="homework-result-column">
+                <h3 class="homework-result-heading">Первая часть</h3>
+                <table class="homework-auto-table">
+                  <colgroup>
+                    <col class="homework-auto-colgroup-number">
+                    <col class="homework-auto-colgroup-answer">
+                    <col class="homework-auto-colgroup-correct">
+                    <col class="homework-auto-colgroup-score">
+                  </colgroup>
+                  <tr>
+                    <th class="homework-auto-col-number">№</th>
+                    <th class="homework-auto-col-answer">Ответ</th>
+                    <th class="homework-auto-col-correct">Правильный ответ</th>
+                    <th class="homework-auto-col-score">Балл</th>
+                </tr>
+                {% for answer_item in item.answerable_problems %}
+                  <tr class="{% if answer_item.answer_state %}homework-auto-row-{{ answer_item.answer_state }}{% endif %}">
+                    <td class="homework-auto-col-number">{{ forloop.counter }}</td>
+                    <td class="homework-auto-col-answer">{{ answer_item.answer.answer_text|default:"" }}</td>
+                    <td class="homework-auto-col-correct">{{ answer_item.problem.answer|default:"-" }}</td>
+                    <td class="homework-auto-col-score">{{ answer_item.answer.score_awarded|floatformat:"0"|default:"0" }}/{{ answer_item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}</td>
+                  </tr>
+                  {% endfor %}
+                </table>
+                <p class="homework-auto-summary homework-auto-summary-spaced">
+                  <b>Баллов за первую часть:</b> {{ item.submission.auto_score|floatformat:"0"|default:"0" }}/{{ item.first_part_max_score|floatformat:"0"|default:"0" }}
+                </p>
+              </div>
+            {% endif %}
+            {% if item.has_second_part_per_problem_scores %}
+              <div class="homework-result-column">
+                <div class="homework-score-breakdown">
+                  <h3 class="homework-result-heading">Вторая часть</h3>
+                  <table class="homework-score-breakdown-table">
+                    <tr>
+                      <th>Тип</th>
+                      <th>№</th>
+                      <th>Балл</th>
+                      <th>Макс.</th>
+                    </tr>
+                    {% for second_item in item.second_part_problems %}
+                      {% if second_item.score %}
+                        <tr class="{% if second_item.score_state %}homework-score-breakdown-row-{{ second_item.score_state }}{% endif %}">
+                          <td>{% if second_item.problem.type_ege %}{{ second_item.problem.type_ege.number }}{% else %}-{% endif %}</td>
+                          <td>{{ second_item.display_number }}</td>
+                          <td>{{ second_item.score.score_awarded|floatformat:"0" }}</td>
+                          <td>{{ second_item.max_score|floatformat:"0"|default:"-" }}</td>
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </table>
+                </div>
+                {% if item.second_part_total_max_score is not None %}
+                  <p class="homework-auto-summary">
+                    <b>Баллов за вторую часть:</b> {{ item.second_part_total_score|floatformat:"0"|default:"0" }}/{{ item.second_part_total_max_score|floatformat:"0"|default:"0" }}
+                  </p>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+          <p class="homework-conditions-button-row">
             <button
               type="button"
               class="button-secondary"
