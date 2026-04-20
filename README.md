@@ -70,6 +70,7 @@ For production with SQLite, also set:
 DEBUG=0
 SQLITE_PATH=/srv/physalis-data/db.sqlite3
 ALLOWED_HOSTS=phys.pro,www.phys.pro
+STATIC_ROOT=/home/slisakov/physalis-static
 ```
 
 ## Deploy
@@ -89,7 +90,8 @@ The deploy script should:
 - restart Gunicorn.
 
 This way, user data stays in the existing database file, and only schema
-changes from migrations are applied.
+changes from migrations are applied. Collected static files should go to a
+directory outside the git checkout, for example `/home/slisakov/physalis-static`.
 
 ## Developement and production
 For developement, set

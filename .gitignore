@@ -60,6 +60,7 @@ celerybeat.pid
 *.sage.py
 .env
 physalisproject/db.sqlite3
+physalisproject/staticfiles/
 .venv
 env/
 venv/

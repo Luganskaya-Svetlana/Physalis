@@ -29,12 +29,8 @@ def env_list(name, default=''):
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 DEBUG = env_bool('DEBUG', default=False)
 SHOW_LOGIN_LINK = env_bool('SHOW_LOGIN_LINK', default=True)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-if DEBUG:
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
 
 ALLOWED_HOSTS = env_list(
     'ALLOWED_HOSTS',
