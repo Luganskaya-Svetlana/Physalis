@@ -744,6 +744,7 @@ nav a {
   font-family: Tahoma, Arial, sans-serif;
   font-size: 10.5pt;
   color: #475569;
+  text-align: left;
 }
 .account-dashboard-card-badge {
   position: absolute;
