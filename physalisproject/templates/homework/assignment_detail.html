@@ -60,25 +60,27 @@
             </p>
           </div>
         {% endif %}
+        {% if assignment.instructions %}
+          <div class="homework-assignment-card-block">
+            <p><b>Комментарий учителя:</b> {{ assignment.instructions|linebreaksbr }}</p>
+          </div>
+        {% endif %}
       </div>
     </div>
   {% else %}
     {% if not student_submission_is_submitted and assignment.due_at %}
-      <div class="homework-meta-box">
+      <div class="account-dashboard-card homework-student-work-card homework-assignment-card-static">
         <p><b>Дедлайн:</b> {{ assignment.due_at }}</p>
       </div>
     {% endif %}
   {% endif %}
 
-  {% if assignment.instructions %}
-    <div class="instruction">
-      {{ assignment.instructions|linebreaksbr }}
-    </div>
-  {% endif %}
-
   {% if is_student_view %}
     {% if student_submission %}
       <div class="account-dashboard-card homework-student-work-card homework-assignment-card-static">
+        {% if assignment.instructions %}
+          <p><b>Комментарий учителя:</b> {{ assignment.instructions|linebreaksbr }}</p>
+        {% endif %}
         {% if student_submission.status != student_submission.Status.ASSIGNED %}
           <p><b>Статус:</b> {{ student_submission.get_status_display }}</p>
         {% endif %}

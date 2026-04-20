@@ -330,10 +330,16 @@ def _render_student_stats(request, student, title):
 
 
 def _build_stats_summary(submissions):
-    total_count = submissions.count()
-    submitted_count = submissions.filter(submitted_at__isnull=False).count()
+    if hasattr(submissions, 'filter'):
+        total_count = submissions.count()
+        submitted_count = submissions.filter(submitted_at__isnull=False).count()
+        iterable = submissions
+    else:
+        iterable = list(submissions)
+        total_count = len(iterable)
+        submitted_count = sum(1 for submission in iterable if submission.submitted_at is not None)
     scored_submissions = [
-        submission for submission in submissions
+        submission for submission in iterable
         if submission.total_score is not None and submission.max_score_snapshot
     ]
     average_score_100 = None
@@ -346,6 +352,27 @@ def _build_stats_summary(submissions):
             ) / len(scored_submissions)
         )
     return total_count, submitted_count, average_score_100
+
+
+def _decorate_students_for_table(students):
+    students = list(students)
+    if not students:
+        return students
+
+    student_ids = [student.id for student in students]
+    submissions = HomeworkSubmission.objects.filter(student_id__in=student_ids).select_related('student')
+    submissions_by_student_id = {}
+    for submission in submissions:
+        submissions_by_student_id.setdefault(submission.student_id, []).append(submission)
+
+    for student in students:
+        student.active_group_names = list(
+            student.student_study_groups.filter(is_active=True).order_by('name').values_list('name', flat=True)
+        )
+        student.total_homework_count, student.submitted_homework_count, student.average_score_100 = _build_stats_summary(
+            submissions_by_student_id.get(student.id, [])
+        )
+    return students
 
 
 @login_required
@@ -551,7 +578,12 @@ def teacher_students_view(request):
         )
         for group in hidden_teacher_groups
     ]
-    ungrouped_students = manageable_students.exclude(student_study_groups__is_active=True).distinct()
+    manageable_students = _decorate_students_for_table(manageable_students)
+    for group, _form in active_group_forms:
+        group.student_table_rows = _decorate_students_for_table(group.students.all())
+    for group, _form in hidden_group_forms:
+        group.student_table_rows = _decorate_students_for_table(group.students.all())
+    ungrouped_students = [student for student in manageable_students if not student.active_group_names]
 
     return render(
         request,

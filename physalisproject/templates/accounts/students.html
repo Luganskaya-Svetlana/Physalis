@@ -6,20 +6,26 @@
 
   <h2>Без групп</h2>
   {% if ungrouped_students %}
-    <table class="change ans-table homework-compact-table homework-task-table homework-students-table">
+    <div class="homework-users-table-wrap">
+    <table class="homework-compact-table homework-task-table homework-users-table homework-students-table">
       <tr>
         <th>Логин</th>
         <th>Имя</th>
-        <th>Действия</th>
+        <th>Фамилия</th>
+        <th>Ср. балл</th>
+        <th>Работ</th>
       </tr>
       {% for student in ungrouped_students %}
         <tr>
-          <td><a href="{% url 'accounts:student-edit' student.id %}">{{ student.username }}</a></td>
-          <td>{{ student.get_full_name|default:"-" }}</td>
-          <td><a href="{% url 'accounts:student-edit' student.id %}">Личные данные</a> · <a href="{% url 'accounts:student-stats' student.id %}">Статистика</a></td>
+          <td><a href="{% url 'accounts:student-edit' student.id %}" class="homework-users-table-login-link">{{ student.username }}</a></td>
+          <td class="homework-users-table-nowrap-cell" title="{{ student.first_name|default:'' }}">{{ student.first_name|default:"-"|truncatechars:20 }}</td>
+          <td class="homework-users-table-nowrap-cell" title="{{ student.last_name|default:'' }}">{{ student.last_name|default:"-"|truncatechars:20 }}</td>
+          <td class="homework-users-table-nowrap-cell"><a href="{% url 'accounts:student-stats' student.id %}">{% if student.average_score_100 is not None %}{{ student.average_score_100 }}%{% else %}-{% endif %}</a></td>
+          <td class="homework-users-table-nowrap-cell">{{ student.submitted_homework_count }}/{{ student.total_homework_count }}</td>
         </tr>
       {% endfor %}
     </table>
+    </div>
   {% else %}
     <p>Все ученики уже распределены по группам.</p>
   {% endif %}
@@ -66,21 +72,27 @@
           <input type="hidden" name="action" value="update_group">
           <input type="hidden" name="group_id" value="{{ group.id }}">
           {{ form.as_p }}
-          {% if group.students.all %}
-            <table class="change ans-table homework-compact-table homework-task-table homework-students-table">
+          {% if group.student_table_rows %}
+            <div class="homework-users-table-wrap">
+            <table class="homework-compact-table homework-task-table homework-users-table homework-students-table">
               <tr>
                 <th>Логин</th>
                 <th>Имя</th>
-                <th>Действия</th>
+                <th>Фамилия</th>
+                <th>Ср. балл</th>
+                <th>Работ</th>
               </tr>
-              {% for student in group.students.all %}
+              {% for student in group.student_table_rows %}
                 <tr>
-                  <td><a href="{% url 'accounts:student-edit' student.id %}">{{ student.username }}</a></td>
-                  <td>{{ student.get_full_name|default:"-" }}</td>
-                  <td><a href="{% url 'accounts:student-edit' student.id %}">Личные данные</a> · <a href="{% url 'accounts:student-stats' student.id %}">Статистика</a></td>
+                  <td><a href="{% url 'accounts:student-edit' student.id %}" class="homework-users-table-login-link">{{ student.username }}</a></td>
+                  <td class="homework-users-table-nowrap-cell" title="{{ student.first_name|default:'' }}">{{ student.first_name|default:"-"|truncatechars:20 }}</td>
+                  <td class="homework-users-table-nowrap-cell" title="{{ student.last_name|default:'' }}">{{ student.last_name|default:"-"|truncatechars:20 }}</td>
+                  <td class="homework-users-table-nowrap-cell"><a href="{% url 'accounts:student-stats' student.id %}">{% if student.average_score_100 is not None %}{{ student.average_score_100 }}%{% else %}-{% endif %}</a></td>
+                  <td class="homework-users-table-nowrap-cell">{{ student.submitted_homework_count }}/{{ student.total_homework_count }}</td>
                 </tr>
               {% endfor %}
             </table>
+            </div>
           {% endif %}
         </form>
         <p class="account-group-invite"><b>Ссылка-приглашение:</b>
@@ -141,21 +153,27 @@
           <input type="hidden" name="action" value="update_group">
           <input type="hidden" name="group_id" value="{{ group.id }}">
           {{ form.as_p }}
-          {% if group.students.all %}
-            <table class="change ans-table homework-compact-table homework-task-table homework-students-table">
+          {% if group.student_table_rows %}
+            <div class="homework-users-table-wrap">
+            <table class="homework-compact-table homework-task-table homework-users-table homework-students-table">
               <tr>
                 <th>Логин</th>
                 <th>Имя</th>
-                <th>Действия</th>
+                <th>Фамилия</th>
+                <th>Ср. балл</th>
+                <th>Работ</th>
               </tr>
-              {% for student in group.students.all %}
+              {% for student in group.student_table_rows %}
                 <tr>
-                  <td><a href="{% url 'accounts:student-edit' student.id %}">{{ student.username }}</a></td>
-                  <td>{{ student.get_full_name|default:"-" }}</td>
-                  <td><a href="{% url 'accounts:student-edit' student.id %}">Личные данные</a> · <a href="{% url 'accounts:student-stats' student.id %}">Статистика</a></td>
+                  <td><a href="{% url 'accounts:student-edit' student.id %}" class="homework-users-table-login-link">{{ student.username }}</a></td>
+                  <td class="homework-users-table-nowrap-cell" title="{{ student.first_name|default:'' }}">{{ student.first_name|default:"-"|truncatechars:20 }}</td>
+                  <td class="homework-users-table-nowrap-cell" title="{{ student.last_name|default:'' }}">{{ student.last_name|default:"-"|truncatechars:20 }}</td>
+                  <td class="homework-users-table-nowrap-cell"><a href="{% url 'accounts:student-stats' student.id %}">{% if student.average_score_100 is not None %}{{ student.average_score_100 }}%{% else %}-{% endif %}</a></td>
+                  <td class="homework-users-table-nowrap-cell">{{ student.submitted_homework_count }}/{{ student.total_homework_count }}</td>
                 </tr>
               {% endfor %}
             </table>
+            </div>
           {% endif %}
         </form>
         <p class="account-group-invite"><b>Ссылка-приглашение:</b>
