@@ -16,3 +16,4 @@ sqlparse==0.4.3
 ziafont==0.11
 ziamath==0.13
 zipp==3.13.0
+gunicorn
