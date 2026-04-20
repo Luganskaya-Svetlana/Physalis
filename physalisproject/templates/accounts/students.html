@@ -14,7 +14,7 @@
       </tr>
       {% for student in ungrouped_students %}
         <tr>
-          <td>{{ student.username }}</td>
+          <td><a href="{% url 'accounts:student-edit' student.id %}">{{ student.username }}</a></td>
           <td>{{ student.get_full_name|default:"-" }}</td>
           <td><a href="{% url 'accounts:student-edit' student.id %}">Личные данные</a> · <a href="{% url 'accounts:student-stats' student.id %}">Статистика</a></td>
         </tr>
@@ -60,7 +60,7 @@
     <h2>Редактирование групп</h2>
     <div class="homework-list">
     {% for group, form in group_forms %}
-      <div class="homework-help-box" id="group-edit-{{ group.id }}">
+      <div class="homework-help-box account-group-edit-box" id="group-edit-{{ group.id }}">
         <form method="post" class="stack-form" id="group-form-{{ group.id }}">
           {% csrf_token %}
           <input type="hidden" name="action" value="update_group">
@@ -75,18 +75,20 @@
               </tr>
               {% for student in group.students.all %}
                 <tr>
-                  <td>{{ student.username }}</td>
+                  <td><a href="{% url 'accounts:student-edit' student.id %}">{{ student.username }}</a></td>
                   <td>{{ student.get_full_name|default:"-" }}</td>
                   <td><a href="{% url 'accounts:student-edit' student.id %}">Личные данные</a> · <a href="{% url 'accounts:student-stats' student.id %}">Статистика</a></td>
                 </tr>
               {% endfor %}
             </table>
           {% endif %}
-          <p><b>Ссылка-приглашение:</b> <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}">{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}</a></p>
         </form>
-        <p><b>Ссылка-приглашение:</b> <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}">{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}</a>
-          <button type="button" class="button-secondary copy-icon-button" data-copy-link-button data-copy-link-value="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}" aria-label="Скопировать ссылку-приглашение" title="Скопировать ссылку-приглашение">🔗</button>
-          <span class="copy-link-popup" data-copy-link-popup hidden>Скопировано</span>
+        <p class="account-group-invite"><b>Ссылка-приглашение:</b>
+          <span class="account-group-invite-row">
+            <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}" class="account-group-invite-link">{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}</a>
+            <button type="button" class="button-secondary copy-icon-button account-group-copy-button" data-copy-link-button data-copy-link-value="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}" aria-label="Скопировать ссылку-приглашение" title="Скопировать ссылку-приглашение">🔗</button>
+            <span class="copy-link-popup" data-copy-link-popup hidden>Скопировано</span>
+          </span>
         </p>
         <div class="form-actions group-actions">
           <button type="submit" class="button-primary" form="group-form-{{ group.id }}">Сохранить группу</button>
@@ -121,7 +123,7 @@
           <td>{{ group.students.count }}</td>
           <td>
             {% for student in group.students.all %}
-              {{ student.username }}{% if not forloop.last %}, {% endif %}
+              <a href="{% url 'accounts:student-edit' student.id %}">{{ student.username }}</a>{% if not forloop.last %}, {% endif %}
             {% empty %}
               -
             {% endfor %}
@@ -133,7 +135,7 @@
 
     <div class="homework-list">
     {% for group, form in hidden_group_forms %}
-      <div class="homework-help-box" id="group-edit-{{ group.id }}">
+      <div class="homework-help-box account-group-edit-box" id="group-edit-{{ group.id }}">
         <form method="post" class="stack-form" id="group-form-{{ group.id }}">
           {% csrf_token %}
           <input type="hidden" name="action" value="update_group">
@@ -148,7 +150,7 @@
               </tr>
               {% for student in group.students.all %}
                 <tr>
-                  <td>{{ student.username }}</td>
+                  <td><a href="{% url 'accounts:student-edit' student.id %}">{{ student.username }}</a></td>
                   <td>{{ student.get_full_name|default:"-" }}</td>
                   <td><a href="{% url 'accounts:student-edit' student.id %}">Личные данные</a> · <a href="{% url 'accounts:student-stats' student.id %}">Статистика</a></td>
                 </tr>
@@ -156,9 +158,12 @@
             </table>
           {% endif %}
         </form>
-        <p><b>Ссылка-приглашение:</b> <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}">{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}</a>
-          <button type="button" class="button-secondary copy-icon-button" data-copy-link-button data-copy-link-value="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}" aria-label="Скопировать ссылку-приглашение" title="Скопировать ссылку-приглашение">🔗</button>
-          <span class="copy-link-popup" data-copy-link-popup hidden>Скопировано</span>
+        <p class="account-group-invite"><b>Ссылка-приглашение:</b>
+          <span class="account-group-invite-row">
+            <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}" class="account-group-invite-link">{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}</a>
+            <button type="button" class="button-secondary copy-icon-button account-group-copy-button" data-copy-link-button data-copy-link-value="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:group-invite' group.invite_token %}" aria-label="Скопировать ссылку-приглашение" title="Скопировать ссылку-приглашение">🔗</button>
+            <span class="copy-link-popup" data-copy-link-popup hidden>Скопировано</span>
+          </span>
         </p>
         <div class="form-actions group-actions">
           <button type="submit" class="button-primary" form="group-form-{{ group.id }}">Сохранить группу</button>

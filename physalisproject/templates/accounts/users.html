@@ -4,31 +4,61 @@
 <section class="content narrow account-page">
   <h1>Пользователи</h1>
 
-  <table class="homework-compact-table homework-task-table homework-users-table">
-    <tr>
-      <th>Логин</th>
-      <th>Роль</th>
-      <th>Почта</th>
-      <th>Зарегистрирован</th>
-      <th></th>
-    </tr>
-    {% for user_obj in users %}
+  <div class="homework-users-table-wrap">
+    <table class="homework-compact-table homework-task-table homework-users-table">
       <tr>
-        <td>{{ user_obj.username }}</td>
-        <td>
-          {% if user_obj.is_staff %}
-            админ
-          {% elif user_obj.profile.role == user_obj.profile.Role.TEACHER %}
-            учитель{% if user_obj.profile.teacher_approval_status == user_obj.profile.TeacherApprovalStatus.PENDING %} (ожидает одобрения){% endif %}
-          {% else %}
-            ученик
-          {% endif %}
-        </td>
-        <td>{{ user_obj.email|default:"-" }}</td>
-        <td>{{ user_obj.date_joined|date:"d.m.Y H:i" }}</td>
-        <td><a href="{% url 'accounts:user-edit' user_obj.id %}" aria-label="Редактировать пользователя" title="Редактировать пользователя">✎</a></td>
+      {% for column in sort_columns %}
+          <th>
+            <a
+              href="?sort={{ column.key }}&dir={{ column.next_direction }}"
+              class="homework-users-table-sort-link{% if column.is_active %} is-active{% endif %}"
+            >
+              {% if column.key == 'date_joined' %}Joined{% else %}{{ column.label }}{% endif %}
+              {% if column.is_active %}
+                <strong class="homework-users-table-sort-arrow">{% if column.direction == 'asc' %}▴{% else %}▾{% endif %}</strong>
+              {% endif %}
+            </a>
+          </th>
+        {% endfor %}
       </tr>
-    {% endfor %}
-  </table>
+      {% for user_obj in users %}
+        <tr>
+          <td><a href="{% url 'accounts:user-edit' user_obj.id %}" class="homework-users-table-login-link">{{ user_obj.username }}</a></td>
+          <td class="homework-users-table-nowrap-cell" title="{{ user_obj.first_name|default:'' }}">{{ user_obj.first_name|default:"-"|truncatechars:20 }}</td>
+          <td class="homework-users-table-nowrap-cell" title="{{ user_obj.last_name|default:'' }}">{{ user_obj.last_name|default:"-"|truncatechars:20 }}</td>
+          <td class="homework-users-table-nowrap-cell">
+            {% if user_obj.is_staff %}
+              админ
+            {% elif user_obj.profile.role == user_obj.profile.Role.TEACHER %}
+              учитель{% if user_obj.profile.teacher_approval_status == user_obj.profile.TeacherApprovalStatus.PENDING %} (ожидает одобрения){% endif %}
+            {% else %}
+              ученик
+            {% endif %}
+          </td>
+          <td>
+            {% if not user_obj.is_staff and user_obj.profile.role == user_obj.profile.Role.STUDENT %}
+              {% with groups=user_obj.student_study_groups.all %}
+                {% if groups %}
+                  {% for group in groups %}{% if not forloop.first %}, {% endif %}<span title="{{ group.description|default:group.name }}">{{ group.name }}</span>{% endfor %}
+                {% else %}
+                  -
+                {% endif %}
+              {% endwith %}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td class="homework-users-table-email-cell">
+            {% if user_obj.email %}
+              <a href="mailto:{{ user_obj.email }}" class="homework-users-table-email-link" title="{{ user_obj.email }}">{{ user_obj.email }}</a>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>{{ user_obj.date_joined|date:"d.m.y" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
 </section>
 {% endblock %}

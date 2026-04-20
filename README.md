@@ -39,6 +39,13 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
+By default, SQLite database is stored in `physalisproject/db.sqlite3`.
+For production, it is better to set `SQLITE_PATH` in `.env` and keep the
+database file outside the git checkout, for example:
+```env
+SQLITE_PATH=/srv/physalis-data/db.sqlite3
+```
+
 For creating superuser (to get access to the admin panel) use:
 ```bash
 cd physalisproject
@@ -57,6 +64,32 @@ In settings.py there are default values of SECRET_KEY, DEBUG and ALLOWED_HOSTS,
 so you can just run the project. But if you want to change the default values,
 create .env file, copy text from env.example, paste it to .env and make desired
 changes.
+
+For production with SQLite, also set:
+```env
+DEBUG=0
+SQLITE_PATH=/srv/physalis-data/db.sqlite3
+ALLOWED_HOSTS=phys.pro,www.phys.pro
+```
+
+## Deploy
+For a live site, do not commit the production database file into git. Keep the
+database file outside the repository and deploy only code plus migrations.
+
+Example deploy flow on the server:
+```bash
+git pull
+./scripts/deploy.sh
+```
+
+The deploy script should:
+- install or update Python dependencies;
+- run `python manage.py migrate`;
+- run `python manage.py collectstatic --noinput`;
+- restart Gunicorn.
+
+This way, user data stays in the existing database file, and only schema
+changes from migrations are applied.
 
 ## Developement and production
 For developement, set

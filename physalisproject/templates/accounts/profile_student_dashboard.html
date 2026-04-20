@@ -15,10 +15,7 @@
         {% endif %}
       </a>
     {% endfor %}
-  </div>
-
-  <div class="account-dashboard-grid account-dashboard-grid-secondary">
-    <a href="{% url 'accounts:profile-edit' %}" class="account-dashboard-card account-dashboard-card-secondary">
+    <a href="{% url 'accounts:profile-edit' %}" class="account-dashboard-card">
       <span class="account-dashboard-card-title">✎ Личные данные</span>
       <span class="account-dashboard-card-description">почта, привязка к учителю и настройки статистики</span>
     </a>

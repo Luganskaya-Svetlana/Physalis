@@ -1,9 +1,11 @@
 from pathlib import Path
+import hashlib
 import re
 import xml.etree.ElementTree as ET
 
 import ziamath as zm
 from django import template
+from django.core.cache import cache
 
 ET.register_namespace("", "http://www.w3.org/2000/svg")
 
@@ -17,6 +19,8 @@ zm.config.math.mathfont = str(FONT_PATH)
 zm.config.svg2 = False
 zm.config.decimal_separator = ','
 # zm.config.math.variant = 'sans'
+
+FORMULA_CACHE_TIMEOUT = 30 * 24 * 60 * 60
 
 
 register = template.Library()
@@ -122,9 +126,27 @@ def replace_shortcuts(formula):
         raise e
 
 
+def build_formula_cache_key(formula, display_style):
+    payload = '||'.join((
+        getattr(zm, '__version__', 'unknown'),
+        str(FONT_PATH),
+        str(zm.config.svg2),
+        str(zm.config.decimal_separator),
+        'display' if display_style else 'inline',
+        formula,
+    ))
+    digest = hashlib.sha256(payload.encode('utf-8')).hexdigest()
+    return f'ziamath:formula:{digest}'
+
+
 def render_formula(match, display_style=False):
     try:
         formula = match.group(1)
+        cache_key = build_formula_cache_key(formula, display_style)
+        cached_svg = cache.get(cache_key)
+        if cached_svg is not None:
+            return cached_svg
+
         formula = replace_shortcuts(formula)
         math_obj = zm.Math.fromlatex(formula, size=19)
         svg = math_obj.svg()
@@ -149,6 +171,7 @@ def render_formula(match, display_style=False):
 
         # return svg + f'<span class="hidden" data-content="{formula}"></span>'
         # version = importlib.metadata.version('ziamath')
+        cache.set(cache_key, svg, FORMULA_CACHE_TIMEOUT)
         return svg
 
     except Exception as e:

@@ -3,7 +3,6 @@
 {% block content %}
 <section class="content narrow account-page">
   <h1>Личные данные</h1>
-
   {% if request.user.is_staff %}
     <p><b>Роль:</b> админ</p>
   {% elif profile.role == profile.Role.TEACHER %}

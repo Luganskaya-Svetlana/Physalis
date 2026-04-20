@@ -59,6 +59,7 @@ celerybeat-schedule
 celerybeat.pid
 *.sage.py
 .env
+physalisproject/db.sqlite3
 .venv
 env/
 venv/

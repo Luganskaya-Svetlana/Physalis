@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Case, CharField, IntegerField, OuterRef, Prefetch, Q, Subquery, Value, When
+from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -376,7 +377,61 @@ def admin_users_view(request):
     profile = request.user.profile
     profile.admin_users_seen_at = timezone.now()
     profile.save(update_fields=['admin_users_seen_at'])
-    users = User.objects.select_related('profile').order_by('-date_joined', '-id')
+    sort = request.GET.get('sort', 'date_joined')
+    direction = request.GET.get('dir', 'desc')
+    if direction not in {'asc', 'desc'}:
+        direction = 'desc'
+
+    primary_group_name = Subquery(
+        StudyGroup.objects.filter(is_active=True, students=OuterRef('pk')).order_by('name').values('name')[:1],
+        output_field=CharField(),
+    )
+    users = User.objects.select_related('profile').prefetch_related(
+        Prefetch(
+            'student_study_groups',
+            queryset=StudyGroup.objects.filter(is_active=True).order_by('name'),
+        )
+    ).annotate(
+        primary_group_name=primary_group_name,
+        username_sort=Lower('username'),
+        role_sort=Case(
+            When(is_staff=True, then=Value(0)),
+            When(profile__role=UserProfile.Role.TEACHER, then=Value(1)),
+            default=Value(2),
+            output_field=IntegerField(),
+        ),
+    )
+
+    sort_fields = {
+        'username': ['username_sort', 'id'],
+        'first_name': ['first_name', 'id'],
+        'last_name': ['last_name', 'id'],
+        'role': ['role_sort', 'username', 'id'],
+        'group': ['primary_group_name', 'username', 'id'],
+        'email': ['email', 'username', 'id'],
+        'date_joined': ['date_joined', 'id'],
+    }
+    if sort not in sort_fields:
+        sort = 'date_joined'
+    ordering = sort_fields[sort]
+    if direction == 'desc':
+        ordering = [f'-{field}' for field in ordering]
+    users = users.order_by(*ordering)
+
+    sort_columns = [
+        {'key': 'username', 'label': 'Логин'},
+        {'key': 'first_name', 'label': 'Имя'},
+        {'key': 'last_name', 'label': 'Фамилия'},
+        {'key': 'role', 'label': 'Роль'},
+        {'key': 'group', 'label': 'Группа'},
+        {'key': 'email', 'label': 'Почта'},
+        {'key': 'date_joined', 'label': 'Зарегистрирован'},
+    ]
+    for column in sort_columns:
+        is_active = column['key'] == sort
+        column['is_active'] = is_active
+        column['direction'] = direction if is_active else None
+        column['next_direction'] = 'asc' if not is_active or direction == 'desc' else 'desc'
     return render(
         request,
         'accounts/users.html',
@@ -384,6 +439,7 @@ def admin_users_view(request):
             'title': 'Пользователи',
             'profile': profile,
             'users': users,
+            'sort_columns': sort_columns,
         },
     )
 
@@ -399,6 +455,7 @@ def admin_user_edit_view(request, user_id):
         if action == 'delete_user':
             if user_obj.pk == request.user.pk:
                 messages.error(request, 'Нельзя удалить самого себя.')
+                return redirect('accounts:user-edit', user_id=user_obj.id)
             else:
                 user_obj.delete()
                 messages.success(request, 'Пользователь удален.')
