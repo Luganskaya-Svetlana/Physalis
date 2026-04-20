@@ -1353,6 +1353,22 @@ nav a {
 .homework-submission-form .problem {
   margin-bottom: 10px;
 }
+.homework-conditions-preview .id-in-list {
+  margin-bottom: 11px;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+.homework-conditions-preview .id-in-var {
+  margin-bottom: 0;
+  align-self: flex-end;
+}
+.homework-conditions-preview .compl {
+  align-self: flex-end;
+  margin-bottom: 2px;
+}
+.homework-conditions-preview .problem {
+  margin-bottom: 12px;
+}
 .homework-submission-form input[type="text"] {
   max-width: 220px;
 }

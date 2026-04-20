@@ -414,7 +414,8 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
         number = getattr(getattr(problem, 'type_ege', None), 'number', None)
         return number or index
 
-    def build_second_part_context(self, assignment, submission):
+    @staticmethod
+    def build_second_part_context(assignment, submission):
         variant_positions = {
             problem.id: index
             for index, problem in enumerate(assignment.variant.get_problems(), start=1)
@@ -432,7 +433,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
         total_max_score = 0
         has_full_max_score = True
         for index, problem in enumerate(get_second_part_problems(assignment), start=1):
-            max_score = self.get_second_part_max_score(problem)
+            max_score = HomeworkAssignmentDetailView.get_second_part_max_score(problem)
             score = score_map.get(problem.id)
             if score is not None and score.score_awarded is not None:
                 total_score += score.score_awarded
@@ -446,7 +447,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                     'response': response_map.get(problem.id),
                     'attachments': [attachment for attachment in submission.attachments.all() if attachment.problem_id == problem.id],
                     'score': score,
-                    'score_state': self.get_second_part_score_state(score, max_score),
+                    'score_state': HomeworkAssignmentDetailView.get_second_part_score_state(score, max_score),
                     'max_score': max_score,
                     'display_number': variant_positions.get(problem.id, index),
                 }
@@ -825,6 +826,33 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                 context['detailed_submissions'] = []
             context['teacher_submission_summaries'] = sorted_submissions
         return context
+
+
+class HomeworkTeacherSubmissionConditionsView(HomeworkTeacherAccessMixin, View):
+    def get(self, request, *args, **kwargs):
+        if not can_manage_homework(request.user):
+            raise PermissionDenied
+        assignment = get_object_or_404(
+            HomeworkAssignment.objects.select_related('variant'),
+            pk=kwargs['pk'],
+        )
+        if not request_user_can_manage_assignment(request.user, assignment):
+            raise PermissionDenied
+        submission = get_object_or_404(
+            assignment.submissions.select_related('student'),
+            pk=kwargs['submission_id'],
+        )
+        requested_part = request.GET.get('part')
+        answerable_problems = list(get_answerable_problems(assignment))
+        second_part_context = HomeworkAssignmentDetailView.build_second_part_context(assignment, submission)
+        return render(
+            request,
+            'homework/_teacher_submission_conditions.html',
+            {
+                'answerable_problems': answerable_problems if requested_part != 'second' else [],
+                'second_part_problems': second_part_context['items'] if requested_part != 'first' else [],
+            },
+        )
 
 
 class HomeworkPracticeAttemptStartView(HomeworkStudentOnlyMixin, HomeworkAssignmentQuerysetMixin, View):

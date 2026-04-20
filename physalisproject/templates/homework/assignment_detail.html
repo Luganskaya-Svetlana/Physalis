@@ -221,6 +221,9 @@
                 <div class="homework-second-part-text">
                   <div class="id-in-list">
                     <span class="id-in-var sans fs12">{{ item.display_number }}</span>
+                    {% if item.problem.type_ege.number %}
+                      <span class="compl">Тип {{ item.problem.type_ege.number }} <a href="{{ item.problem.get_absolute_url }}">#{{ item.problem.id }}</a></span>
+                    {% endif %}
                     {% if item.score %}<span class="compl">Балл: {{ item.score.score_awarded|floatformat:"0" }}{% if item.max_score %}/{{ item.max_score|floatformat:"0" }}{% endif %}</span>{% endif %}
                   </div>
                   <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
@@ -312,6 +315,9 @@
             <div class="homework-second-part-block">
               <div class="id-in-list">
                 <span class="id-in-var sans fs12">{{ item.display_number }}</span>
+                {% if item.problem.type_ege.number %}
+                  <span class="compl">Тип {{ item.problem.type_ege.number }} <a href="{{ item.problem.get_absolute_url }}">#{{ item.problem.id }}</a></span>
+                {% endif %}
                 {% if item.score %}<span class="compl">Балл: {{ item.score.score_awarded|floatformat:"0" }}{% if item.max_score %}/{{ item.max_score|floatformat:"0" }}{% endif %}</span>{% endif %}
               </div>
               <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
@@ -530,7 +536,24 @@
           <p><b>Вторая часть:</b> автоматический ноль, потому что ученик не приложил ни файлов, ни текста.</p>
         {% endif %}
 
-        {% if item.answerable_problems %}
+        {% if not item.submission.submitted_at %}
+          <p>
+            <button
+              type="button"
+              class="button-secondary"
+              data-conditions-toggle
+              data-conditions-url="{% url 'homework:submission-conditions' assignment.id item.submission.id %}"
+              data-target-id="teacher-conditions-{{ item.submission.id }}"
+              data-open-label="Показать условия"
+              data-close-label="Скрыть условия"
+            >
+              Показать условия
+            </button>
+          </p>
+          <div id="teacher-conditions-{{ item.submission.id }}" hidden></div>
+        {% endif %}
+
+        {% if item.submission.submitted_at and item.answerable_problems %}
           <h3>Проверено автоматически:</h3>
           <table class="homework-auto-table">
             <colgroup>
@@ -557,8 +580,22 @@
           <p class="homework-auto-summary">
             <b>Итог по тестовой части:</b> {{ item.submission.auto_score|floatformat:"0"|default:"0" }}/{{ item.first_part_max_score|floatformat:"0"|default:"0" }}
           </p>
+          <p>
+            <button
+              type="button"
+              class="button-secondary"
+              data-conditions-toggle
+              data-conditions-url="{% url 'homework:submission-conditions' assignment.id item.submission.id %}?part=first"
+              data-target-id="teacher-first-part-{{ item.submission.id }}"
+              data-open-label="Загрузить первую часть"
+              data-close-label="Скрыть первую часть"
+            >
+              Загрузить первую часть
+            </button>
+          </p>
+          <div id="teacher-first-part-{{ item.submission.id }}" hidden></div>
         {% endif %}
-
+        {% if item.submission.submitted_at %}
         <h3>Вторая часть</h3>
         {% if item.shared_second_part_attachments or item.second_part_problems %}
           {% if item.shared_second_part_attachments %}
@@ -589,6 +626,9 @@
             <div class="homework-second-part-block">
               <div class="id-in-list">
                 <span class="id-in-var sans fs12">{{ second_item.display_number }}</span>
+                {% if second_item.problem.type_ege.number %}
+                  <span class="compl">Тип {{ second_item.problem.type_ege.number }} <a href="{{ second_item.problem.get_absolute_url }}">#{{ second_item.problem.id }}</a></span>
+                {% endif %}
                 {% if second_item.score %}<span class="compl">Балл: {{ second_item.score.score_awarded|floatformat:"0" }}{% if second_item.max_score %}/{{ second_item.max_score|floatformat:"0" }}{% endif %}</span>{% endif %}
               </div>
               <div class="problem">{{ second_item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
@@ -646,6 +686,7 @@
           {% endfor %}
         {% else %}
           <p>Файлы не загружены.</p>
+        {% endif %}
         {% endif %}
 
         <h3>Комментарии{% if not item.submission.comments.all %} (пока нет){% endif %}</h3>
@@ -1177,6 +1218,31 @@
       });
       input.addEventListener('blur', () => {
         input.setCustomValidity('');
+      });
+    });
+    document.querySelectorAll('[data-conditions-toggle]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const target = document.getElementById(button.dataset.targetId);
+        if (!target) {
+          return;
+        }
+        if (target.hidden && !target.dataset.loaded) {
+          button.disabled = true;
+          const response = await fetch(button.dataset.conditionsUrl, {
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+          });
+          button.disabled = false;
+          if (!response.ok) {
+            return;
+          }
+          target.innerHTML = await response.text();
+          target.dataset.loaded = '1';
+        }
+        const willShow = target.hidden;
+        target.hidden = !target.hidden;
+        button.textContent = willShow
+          ? (button.dataset.closeLabel || 'Скрыть')
+          : (button.dataset.openLabel || 'Показать');
       });
     });
   })();

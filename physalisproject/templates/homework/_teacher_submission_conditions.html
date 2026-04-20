@@ -1,0 +1,36 @@
+{% load markdown_extras %}
+{% load ziamath_filter %}
+{% load abbr %}
+
+<div class="homework-submission-form homework-conditions-preview">
+  {% if answerable_problems %}
+    <h3>Первая часть</h3>
+    {% for problem in answerable_problems %}
+      <div class="rel homework-answer-entry">
+        <div class="id-in-list">
+          <span class="id-in-var sans fs12">{{ forloop.counter }}</span>
+          {% if problem.type_ege.number %}
+            <span class="compl">Тип {{ problem.type_ege.number }} <a href="{{ problem.get_absolute_url }}">#{{ problem.id }}</a></span>
+          {% endif %}
+        </div>
+        <div class="problem">{{ problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+      </div>
+      <hr class="mb20">
+    {% endfor %}
+  {% endif %}
+
+  {% if second_part_problems %}
+    <h3>Вторая часть</h3>
+    {% for second_item in second_part_problems %}
+      <div class="homework-second-part-block">
+        <div class="id-in-list">
+          <span class="id-in-var sans fs12">{{ second_item.display_number }}</span>
+          {% if second_item.problem.type_ege.number %}
+            <span class="compl">Тип {{ second_item.problem.type_ege.number }} <a href="{{ second_item.problem.get_absolute_url }}">#{{ second_item.problem.id }}</a></span>
+          {% endif %}
+        </div>
+        <div class="problem">{{ second_item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
