@@ -470,6 +470,27 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
             submission = assignment.submissions.filter(student=request.user).first()
             if submission is None:
                 raise PermissionDenied
+            def persist_current_student_inputs():
+                answers_map = {
+                    key.removeprefix('answer_'): value
+                    for key, value in request.POST.items()
+                    if key.startswith('answer_')
+                }
+                if answers_map:
+                    save_submission_answers(
+                        submission,
+                        answers_map,
+                        actor=request.user,
+                        autosaved=False,
+                        mark_as_draft=True,
+                    )
+                responses_map = {
+                    key.removeprefix('second_part_text_'): value
+                    for key, value in request.POST.items()
+                    if key.startswith('second_part_text_')
+                }
+                if submission.assignment.allow_second_part_text and responses_map:
+                    save_second_part_text_answers(submission, responses_map)
             if action in {'save_draft', 'submit'}:
                 if not submission.can_student_edit:
                     raise PermissionDenied
@@ -497,6 +518,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
             elif action == 'upload_attachments':
                 if not submission.can_student_edit:
                     raise PermissionDenied
+                persist_current_student_inputs()
                 files = request.FILES.getlist('attachments')
                 if files:
                     created = add_submission_attachments(submission, files, request.user)
@@ -521,6 +543,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
             elif action == 'upload_problem_attachments':
                 if not submission.can_student_edit:
                     raise PermissionDenied
+                persist_current_student_inputs()
                 problem = get_object_or_404(
                     assignment.variant.problems.all(),
                     pk=request.POST.get('problem_id'),

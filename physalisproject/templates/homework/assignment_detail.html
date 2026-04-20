@@ -129,7 +129,7 @@
           </table>
         </div>
       {% endif %}
-      {% if answerable_problems and student_submission.status != student_submission.Status.ASSIGNED %}
+      {% if answerable_problems and student_submission.submitted_at %}
         <h3>Проверено автоматически:</h3>
         <table class="homework-auto-table">
           <colgroup>
@@ -156,6 +156,59 @@
         <p class="homework-auto-summary">
           <b>Итог по тестовой части:</b> {{ student_submission.auto_score|floatformat:"0"|default:"0" }}/{{ first_part_max_score|floatformat:"0"|default:"0" }}
         </p>
+      {% endif %}
+      {% if not answerable_problems and student_submission.can_student_edit %}
+        <form method="post" id="homework-main-form" class="stack-form homework-submission-form" data-homework-form data-autosave-url="{% url 'homework:autosave' assignment.id %}">
+          {% csrf_token %}
+          <div class="homework-autosave-status sans" data-homework-autosave-status></div>
+        </form>
+      {% endif %}
+      {% if answerable_problems %}
+        <form method="post" id="homework-main-form" class="stack-form homework-submission-form" data-homework-form data-autosave-url="{% url 'homework:autosave' assignment.id %}">
+          {% csrf_token %}
+          <div class="homework-autosave-status sans" data-homework-autosave-status></div>
+          {% for item in answerable_problems %}
+            <div class="rel homework-answer-entry">
+              <div class="id-in-list">
+                <span class="id-in-var sans fs12 homework-answer-number{% if student_submission.submitted_at and item.answer_state %} homework-answer-number-{{ item.answer_state }}{% endif %}">
+                  {{ forloop.counter }}
+                </span>
+                {% if item.problem.type_ege.number %}
+                  <span class="compl">Тип {{ item.problem.type_ege.number }}</span>
+                {% endif %}
+                {% if item.answer and student_submission.status == student_submission.Status.SUBMITTED and item.answer.answer_text %}
+                  <span class="compl">
+                    Балл: {{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}
+                  </span>
+                {% endif %}
+              </div>
+              <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
+              <input
+                type="text"
+                id="answer_{{ item.problem.id }}"
+                name="answer_{{ item.problem.id }}"
+                value="{{ item.answer.answer_text|default:'' }}"
+                {% if student_submission.submitted_at and student_submission.status != student_submission.Status.RETURNED %}
+                  disabled
+                {% elif not student_submission.can_student_edit %}
+                  disabled
+                {% endif %}
+              >
+              {% if student_submission.submitted_at %}
+                <div class="homework-solution-box">
+                  <p><b>Ответ:</b> {{ item.problem.answer|default:"—" }}</p>
+                  {% if item.problem.solution %}
+                    <p><b>Решение:</b></p>
+                    <div class="solution">{{ item.problem.solution|abbr|ziamath_filter|markdown|safe }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+            <hr class="mb20">
+          {% endfor %}
+        </form>
+      {% elif not has_second_part %}
+        <p>Для этой работы пока нет онлайн-части с автоматической проверкой.</p>
       {% endif %}
       {% if answerable_problems %}
         <h2>Вторая часть</h2>
@@ -350,7 +403,6 @@
           <button type="submit" name="action" value="submit" class="button-primary" form="homework-main-form">Сдать работу</button>
         </div>
       {% endif %}
-
       <h2>Комментарии{% if not student_submission.comments.all %} (пока нет){% endif %}</h2>
       <div class="homework-comments-section">
         <div class="homework-comments">
@@ -398,52 +450,6 @@
           </div>
         </form>
       </div>
-      {% if not answerable_problems and student_submission.can_student_edit %}
-        <form method="post" id="homework-main-form" class="stack-form homework-submission-form" data-homework-form data-autosave-url="{% url 'homework:autosave' assignment.id %}">
-          {% csrf_token %}
-          <div class="homework-autosave-status sans" data-homework-autosave-status></div>
-        </form>
-      {% endif %}
-      {% if answerable_problems %}
-        <form method="post" id="homework-main-form" class="stack-form homework-submission-form" data-homework-form data-autosave-url="{% url 'homework:autosave' assignment.id %}">
-          {% csrf_token %}
-          <div class="homework-autosave-status sans" data-homework-autosave-status></div>
-          {% for item in answerable_problems %}
-            <div class="rel homework-answer-entry">
-              <div class="id-in-list">
-                <span class="id-in-var sans fs12 homework-answer-number{% if item.answer_state %} homework-answer-number-{{ item.answer_state }}{% endif %}">
-                  {{ forloop.counter }}
-                </span>
-                {% if item.problem.type_ege.number %}
-                  <span class="compl">Тип {{ item.problem.type_ege.number }}</span>
-                {% endif %}
-                {% if item.answer and student_submission.status == student_submission.Status.SUBMITTED and item.answer.answer_text %}
-                  <span class="compl">
-                    Балл: {{ item.answer.score_awarded|floatformat:"0" }}/{{ item.answer.max_score_snapshot|floatformat:"0"|default:"-" }}
-                  </span>
-                {% endif %}
-              </div>
-              <div class="problem">{{ item.problem.text|abbr|ziamath_filter|markdown|safe }}</div>
-              <input
-                type="text"
-                id="answer_{{ item.problem.id }}"
-                name="answer_{{ item.problem.id }}"
-                value="{{ item.answer.answer_text|default:'' }}"
-                {% if not student_submission.can_student_edit %}disabled{% endif %}
-              >
-              {% if student_submission.status == student_submission.Status.SUBMITTED and item.answer and item.answer.answer_text and item.problem.solution %}
-                <div class="homework-solution-box">
-                  <p><b>Решение:</b></p>
-                  <div class="solution">{{ item.problem.solution|abbr|ziamath_filter|markdown|safe }}</div>
-                </div>
-              {% endif %}
-            </div>
-            <hr class="mb20">
-          {% endfor %}
-        </form>
-      {% elif not has_second_part %}
-        <p>Для этой работы пока нет онлайн-части с автоматической проверкой.</p>
-      {% endif %}
     {% else %}
       <p>Данные по работе пока не найдены.</p>
     {% endif %}
@@ -912,6 +918,19 @@
       });
     }
 
+    function appendCurrentHomeworkDraftFields(formData) {
+      const homeworkForm = document.querySelector('[data-homework-form]');
+      if (!homeworkForm) {
+        return;
+      }
+      homeworkForm.querySelectorAll('input[name^="answer_"], textarea[name^="second_part_text_"]').forEach((field) => {
+        if (field.disabled) {
+          return;
+        }
+        formData.append(field.name, field.value);
+      });
+    }
+
     const form = document.querySelector('[data-homework-form]');
     if (form) {
       const statusNode = form.querySelector('[data-homework-autosave-status]');
@@ -967,6 +986,7 @@
           const formData = new FormData(uploadForm);
           formData.delete('attachments');
           formData.append('attachments', imageFile, imageFile.name || 'clipboard-image.png');
+          appendCurrentHomeworkDraftFields(formData);
           const response = await fetch(window.location.href, {
             method: 'POST',
             body: formData,
@@ -1001,6 +1021,56 @@
             selectedFiles.appendChild(item);
           });
         }
+      });
+      uploadForm.addEventListener('submit', () => {
+        uploadForm.querySelectorAll('[data-homework-mirror]').forEach((node) => node.remove());
+        const homeworkForm = document.querySelector('[data-homework-form]');
+        if (!homeworkForm) {
+          return;
+        }
+        homeworkForm.querySelectorAll('input[name^="answer_"], textarea[name^="second_part_text_"]').forEach((field) => {
+          if (field.disabled) {
+            return;
+          }
+          const hidden = buildHiddenInput(field.name, field.value);
+          hidden.dataset.homeworkMirror = '1';
+          uploadForm.appendChild(hidden);
+        });
+      });
+      uploadForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        uploadForm.querySelectorAll('[data-homework-mirror]').forEach((node) => node.remove());
+        const homeworkForm = document.querySelector('[data-homework-form]');
+        if (homeworkForm) {
+          homeworkForm.querySelectorAll('input[name^="answer_"], textarea[name^="second_part_text_"]').forEach((field) => {
+            if (field.disabled) {
+              return;
+            }
+            const hidden = buildHiddenInput(field.name, field.value);
+            hidden.dataset.homeworkMirror = '1';
+            uploadForm.appendChild(hidden);
+          });
+        }
+        submit.disabled = true;
+        const formData = new FormData(uploadForm);
+        const response = await fetch(window.location.href, {
+          method: 'POST',
+          body: formData,
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+        });
+        if (!response.ok) {
+          submit.disabled = !input.files.length;
+          return;
+        }
+        const payload = await response.json();
+        const scopeNode = uploadForm.closest('.homework-second-part-block, .homework-student-second-part');
+        appendAttachmentsToScope(scopeNode, payload.attachments || []);
+        input.value = '';
+        if (selectedFiles) {
+          selectedFiles.innerHTML = '';
+        }
+        submit.disabled = true;
+        uploadForm.querySelectorAll('[data-homework-mirror]').forEach((node) => node.remove());
       });
     });
     document.querySelectorAll('[data-attachment-action-form]').forEach((actionForm) => {
