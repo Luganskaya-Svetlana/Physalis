@@ -26,6 +26,7 @@ def env_list(name, default=''):
         if item.strip()
     ]
 
+
 SECRET_KEY = os.getenv('SECRET_KEY', default='pretty-key234')
 DEBUG = env_bool('DEBUG', default=False)
 SHOW_LOGIN_LINK = env_bool('SHOW_LOGIN_LINK', default=True)

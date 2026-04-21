@@ -17,10 +17,12 @@ from .models import (
     TypeInEGE,
 )
 
+
 class ImageInline(admin.TabularInline):
     form = ImageForm
     model = Image
     fields = ('path_to_image',)
+
 
 class JustificationGroupInline(admin.TabularInline):
     model = JustificationGroup
@@ -29,6 +31,7 @@ class JustificationGroupInline(admin.TabularInline):
     show_change_link = True
     verbose_name = 'группа обоснований'
     verbose_name_plural = 'группы обоснований'
+
 
 class ProblemSolutionMethodInline(admin.TabularInline):
     model = ProblemSolutionMethod
@@ -247,6 +250,7 @@ class PartOfEGEAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
+
 
 admin.site.register(Category)
 admin.site.register(Subcategory)

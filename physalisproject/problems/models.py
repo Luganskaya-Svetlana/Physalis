@@ -293,7 +293,6 @@ class Image(models.Model):
     def __str__(self):
         return (f'одно из изображений для {self.problem}')
 
-# problems/models.py
 
 class Law(models.Model):
     name = models.CharField('закон / принцип', max_length=255, unique=True)
@@ -327,6 +326,7 @@ class Justification(models.Model):
 
     def __str__(self):
         return self.text[:80]
+
 
 class ProblemSolutionMethod(models.Model):
     problem = models.ForeignKey(

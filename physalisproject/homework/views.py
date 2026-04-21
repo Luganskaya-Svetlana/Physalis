@@ -471,6 +471,7 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
             submission = assignment.submissions.filter(student=request.user).first()
             if submission is None:
                 raise PermissionDenied
+
             def persist_current_student_inputs():
                 answers_map = {
                     key.removeprefix('answer_'): value
@@ -713,10 +714,6 @@ class HomeworkAssignmentDetailView(HomeworkTeacherAccessMixin, HomeworkAssignmen
                 ensure_second_part_responses(submission)
                 mark_submission_comments_read(submission, self.request.user)
                 answer_map = {answer.problem_id: answer for answer in submission.answers.all()}
-                second_part_response_map = {
-                    response.problem_id: response
-                    for response in submission.second_part_responses.all()
-                }
                 context['answerable_problems'] = [
                     {
                         'problem': problem,

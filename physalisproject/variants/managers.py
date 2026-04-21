@@ -27,7 +27,7 @@ class VariantManager(models.Manager):
                     'show_original_number',
                     'show_solution_link',
                     'owner_id',
-                )
+            )
         )
 
     def answers(self):

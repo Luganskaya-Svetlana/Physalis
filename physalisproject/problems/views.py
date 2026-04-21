@@ -135,12 +135,10 @@ def get_group_min_select(group):
     return getattr(group, 'min_select', getattr(group, 'min_selected', 0))
 
 
-
 def get_group_max_select(group):
     if hasattr(group, 'max_select'):
         return group.max_select
     return getattr(group, 'max_selected', None)
-
 
 
 def get_method_group_configs(method):
@@ -169,10 +167,8 @@ def get_method_required_justification_ids(method):
     return set(method.justifications.values_list('id', flat=True))
 
 
-
 def get_method_excluded_justification_ids(method):
     return set(method.excluded_justifications.values_list('id', flat=True))
-
 
 
 def get_revealed_justification_ids(method):
@@ -183,7 +179,6 @@ def get_revealed_justification_ids(method):
         revealed_ids.update(cfg['ids'][:cfg['min_select']])
 
     return revealed_ids
-
 
 
 def build_group_soft_message(group_cfg, selected_ids):
@@ -207,7 +202,6 @@ def build_group_soft_message(group_cfg, selected_ids):
     }
 
 
-
 def remember_game_problem(request, problem_id):
     seen_ids = request.session.get(GAME_SEEN_SESSION_KEY, [])
     if problem_id not in seen_ids:
@@ -215,13 +209,11 @@ def remember_game_problem(request, problem_id):
         request.session[GAME_SEEN_SESSION_KEY] = seen_ids
 
 
-
 def remember_solved_game_problem(request, problem_id):
     solved_ids = request.session.get(GAME_SOLVED_SESSION_KEY, [])
     if problem_id not in solved_ids:
         solved_ids.append(problem_id)
         request.session[GAME_SOLVED_SESSION_KEY] = solved_ids
-
 
 
 def get_random_game_problem_id(
@@ -261,7 +253,6 @@ def get_random_game_problem_id(
     return problem_id
 
 
-
 def get_active_methods(problem):
     methods = []
     for method in problem.solution_methods.all():
@@ -276,14 +267,12 @@ def get_active_methods(problem):
     return methods
 
 
-
 def parse_selected_ids(values):
     return {
         int(value)
         for value in values
         if str(value).isdigit()
     }
-
 
 
 def choose_objects_with_limit(all_objects, required_ids, limit, seed):
@@ -300,7 +289,6 @@ def choose_objects_with_limit(all_objects, required_ids, limit, seed):
     rnd = random.Random(f'{seed}:final')
     rnd.shuffle(result)
     return result
-
 
 
 def get_choice_lists(methods, shuffle_seed):
@@ -356,7 +344,6 @@ def get_choice_lists(methods, shuffle_seed):
     return laws, justifications
 
 
-
 def build_choice_items(
     objects,
     selected_ids,
@@ -384,7 +371,6 @@ def build_choice_items(
             'state': state,
         })
     return items
-
 
 
 def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
@@ -501,7 +487,6 @@ def evaluate_answer(methods, selected_law_ids, selected_justification_ids):
     }
 
 
-
 def other_methods_message(count):
     if count <= 0:
         return ''
@@ -517,7 +502,6 @@ def other_methods_message(count):
         word = 'способов'
 
     return f'Есть и другие способы решения: ещё {count} {word}.'
-
 
 
 def build_game_progress(request, current_problem_id, only_with_justifications):

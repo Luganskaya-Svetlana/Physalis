@@ -1,8 +1,5 @@
 from django.contrib.auth import get_user_model
 
-from .models import StudyGroup
-
-
 User = get_user_model()
 
 
