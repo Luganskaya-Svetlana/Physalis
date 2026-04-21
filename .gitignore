@@ -60,6 +60,7 @@ celerybeat.pid
 *.sage.py
 .env
 physalisproject/db.sqlite3
+physalisproject/media/
 physalisproject/staticfiles/
 .venv
 env/
@@ -77,4 +78,3 @@ dmypy.json
 .pyre/
 physalisproject/django.log
 get-pip.py
-physalisproject/media/video/*.mp4

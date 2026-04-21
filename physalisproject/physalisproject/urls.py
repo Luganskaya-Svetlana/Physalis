@@ -1,11 +1,11 @@
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
 from homework.views import HomeworkTeacherTaskListView
 from problems.views import GameStartView, ProblemGameView
+from .media_views import serve_media_or_redirect
 from .sitemap import FlatPageSitemap, ProblemSitemap, StaticViewSitemap
 
 sitemaps = {
@@ -37,4 +37,7 @@ urlpatterns = [
     ),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += [
+        path('media/<path:path>', serve_media_or_redirect, name='media-fallback'),
+    ]

@@ -70,6 +70,7 @@ For production with SQLite, also set:
 DEBUG=0
 SQLITE_PATH=/srv/physalis-data/db.sqlite3
 ALLOWED_HOSTS=phys.pro,www.phys.pro
+MEDIA_ROOT=/home/slisakov/physalis-media
 STATIC_ROOT=/home/slisakov/physalis-static
 ```
 
@@ -92,6 +93,15 @@ The deploy script should:
 This way, user data stays in the existing database file, and only schema
 changes from migrations are applied. Collected static files should go to a
 directory outside the git checkout, for example `/home/slisakov/physalis-static`.
+Uploaded media files should also live outside the git checkout, for example
+`/home/slisakov/physalis-media`.
+
+For local development you can keep a local media cache outside the repository
+and fall back to production media for files that are missing locally:
+```env
+MEDIA_ROOT=/Users/slisakov/physalis-data/media
+REMOTE_MEDIA_URL=https://phys.pro/media/
+```
 
 ## Developement and production
 For developement, set
