@@ -255,16 +255,35 @@ class TeacherStudentEditForm(forms.ModelForm):
     first_name = forms.CharField(label='Имя', required=True, max_length=150)
     last_name = forms.CharField(label='Фамилия', required=True, max_length=150)
     email = forms.EmailField(label='Почта', required=True)
+    study_group = forms.ModelChoiceField(
+        label='Группа',
+        queryset=StudyGroup.objects.none(),
+        required=False,
+        empty_label='Без группы',
+    )
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('username', 'first_name', 'last_name', 'email', 'study_group')
         labels = {
             'username': 'Логин',
             'first_name': 'Имя',
             'last_name': 'Фамилия',
             'email': 'Почта',
+            'study_group': 'Группа',
         }
+
+    def __init__(self, *args, actor=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if actor is not None:
+            if actor.is_staff:
+                manageable_groups = StudyGroup.objects.filter(is_active=True).order_by('name')
+            else:
+                manageable_groups = StudyGroup.objects.filter(is_active=True, teachers=actor).order_by('name')
+            self.fields['study_group'].queryset = manageable_groups
+            self.fields['study_group'].initial = (
+                self.instance.student_study_groups.filter(id__in=manageable_groups.values('id')).order_by('name').first()
+            )
 
     def clean_email(self):
         email = (self.cleaned_data.get('email') or '').strip()
@@ -274,6 +293,15 @@ class TeacherStudentEditForm(forms.ModelForm):
         if queryset.exists():
             raise forms.ValidationError('Этот адрес электронной почты уже используется.')
         return email
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        study_group = self.cleaned_data.get('study_group')
+        manageable_groups = self.fields['study_group'].queryset
+        user.student_study_groups.remove(*manageable_groups)
+        if study_group is not None:
+            study_group.students.add(user)
+        return user
 
 
 class AdminUserEditForm(forms.ModelForm):

@@ -4,6 +4,13 @@
 <section class="content narrow account-page">
   <h1>Ученик {{ student_obj.username }}</h1>
   <p><a href="{% url 'accounts:student-stats' student_obj.id %}">Посмотреть статистику ученика</a></p>
+  <p><b>Группа:</b>
+    {% for group in student_groups %}
+      {{ group.name }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+      -
+    {% endfor %}
+  </p>
 
   <form method="post" class="stack-form">
     {% csrf_token %}

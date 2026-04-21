@@ -614,13 +614,13 @@ def teacher_student_edit_view(request, student_id):
         return redirect('accounts:profile')
     student = get_object_or_404(get_manageable_students(request.user), pk=student_id)
     if request.method == 'POST':
-        form = TeacherStudentEditForm(request.POST, instance=student)
+        form = TeacherStudentEditForm(request.POST, instance=student, actor=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Данные ученика обновлены.')
             return redirect('accounts:students')
     else:
-        form = TeacherStudentEditForm(instance=student)
+        form = TeacherStudentEditForm(instance=student, actor=request.user)
     return render(
         request,
         'accounts/student_edit.html',
@@ -629,6 +629,7 @@ def teacher_student_edit_view(request, student_id):
             'profile': profile,
             'student_obj': student,
             'form': form,
+            'student_groups': student.student_study_groups.filter(is_active=True).order_by('name'),
         },
     )
 
